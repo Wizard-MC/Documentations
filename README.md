@@ -1,7 +1,6 @@
 # WizardMC — Docs « Coven SMP » (V4)
 
 > **Source de vérité design** pour le positionnement **SMP Semi-RPG**.  
-> Les documents Faction V3 restent dans le dossier parent (`../`) comme **archive**.
 
 ## Vision
 
@@ -25,16 +24,6 @@ WizardMC – *Les Terres Fracturées* : les joueurs forment des **Covens**, dév
 | [cdc_compagnons.md](cdc_compagnons.md) | Stub Compagnons SMP |
 | [cdc_spawn_map.md](cdc_spawn_map.md) | Stub Spawn & map |
 
-## Archive Faction V3
-
-Documents historiques (ne plus étendre) :
-
-- [`../gdd.md`](../gdd.md)
-- [`../cdc_nexus.md`](../cdc_nexus.md), [`../cdc_autels_sacres.md`](../cdc_autels_sacres.md), [`../cdc_mana_brut.md`](../cdc_mana_brut.md)
-- [`../cdc_evolution_du_nexus.md`](../cdc_evolution_du_nexus.md), [`../cdc_cycle_de_vie.md`](../cdc_cycle_de_vie.md)
-- [`../cdc_exp_client.md`](../cdc_exp_client.md), [`../cdc_boutique_monetisation.md`](../cdc_boutique_monetisation.md)
-- [`../archive/ROADMAP_V3_FACTION.md`](../archive/ROADMAP_V3_FACTION.md) — anciennes phases 0–8
-- [`../ROADMAP.md`](../ROADMAP.md) — redirect vers ce dossier
 
 ## Principes techniques transverses
 
