@@ -139,7 +139,7 @@ Publier = déposer les blobs, puis déplacer le pointeur. Revenir en arrière = 
 | **WC-04** | Un chemin de fichier est refusé s'il est absolu, contient `..`, ou sort du dossier client une fois résolu. |
 | **WC-05** | La publication est atomique : le pointeur de canal n'est déplacé qu'après vérification que **tous** les blobs référencés sont présents et intègres côté serveur. |
 | **WC-06** | Le launcher ne télécharge que les fichiers dont l'empreinte locale diffère. Un fichier absent ou corrompu est **réparé**, pas ignoré (`D-02`). |
-| **WC-07** | Les fichiers présents localement mais absents du manifeste sont retirés — sauf ceux d'une liste d'exclusion (`options.txt`, `saves/`, `screenshots/`, `resourcepacks/`, `shaderpacks/`). |
+| **WC-07** | Le nettoyage porte **uniquement sur ce que WizardCloud a lui-même posé**, d'après l'état local — jamais sur le contenu du dossier. S'en remettre au dossier emporterait `libraries/`, `natives/` et `versions/`, soit les cent sept mégaoctets que le launcher tire de chez Mojang, à retélécharger à chaque publication. Une liste d'exclusion protège en outre les données du joueur (`options.txt`, `saves/`, `screenshots/`, `resourcepacks/`, `shaderpacks/`) et, par sécurité, les dossiers gérés par le launcher. |
 | **WC-08** | Les téléchargements reprennent via `Range` (`D-03`). |
 | **WC-09** | Un manifeste déclarant plus de 10 000 fichiers ou plus de 4 Gio cumulés est refusé. |
 | **WC-10** | La publication exige un jeton porté par l'en-tête `Authorization`, **cantonné à un canal**. Un jeton `beta` ne peut pas publier sur `stable`. |
@@ -209,6 +209,8 @@ Publier = déposer les blobs, puis déplacer le pointeur. Revenir en arrière = 
 ```
 
 **Cache d'empreintes locales.** Recalculer le SHA-256 de 26 Mo à chaque démarrage est inutile : le cache retient `(chemin, taille, date de modification) → sha256` et n'invalide que si taille ou date changent. Le cache n'est jamais une preuve — il n'évite qu'un recalcul, et l'étape 6 vérifie toujours ce qui vient d'être écrit.
+
+> La date est retenue **à la nanoseconde**. À la seconde, un fichier corrompu juste après son installation garderait taille et date inchangées : le cache le donnerait pour intact, et il le resterait à chaque démarrage sans que rien ne le signale.
 
 **Reprise.** Un `.part` conservé entre deux lancements reprend au bon offset. Sa validité n'est jamais présumée : l'empreinte est vérifiée sur le fichier complet.
 
@@ -337,7 +339,7 @@ wizardcloud/
 | **C0** | `wizardcloud-core` : manifeste, empreintes, chemins, signature — **fait** |
 | **C1** | `wizardcloud-server` : blobs, canaux, publication atomique, jetons — **fait** |
 | **C2** | `wizardcloud-cli` : `keygen`, `token`, `publish`, `rollback`, `history` — **fait** |
-| **C3** | `wizardcloud-sdk` : synchronisation, reprise, réparation |
+| **C3** | `wizardcloud-sdk` : synchronisation, reprise, réparation — **fait** |
 | **C4** | Intégration launcher, avec repli sur l'archive `.zip` |
 | **C5** | Dashboard |
 | **C6** | Migration du client 1.0.0, retrait du repli |
