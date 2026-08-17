@@ -340,6 +340,6 @@ wizardcloud/
 | **C1** | `wizardcloud-server` : blobs, canaux, publication atomique, jetons — **fait** |
 | **C2** | `wizardcloud-cli` : `keygen`, `token`, `publish`, `rollback`, `history` — **fait** |
 | **C3** | `wizardcloud-sdk` : synchronisation, reprise, réparation — **fait** |
-| **C4** | Intégration launcher, avec repli sur l'archive `.zip` |
+| **C4** | Intégration launcher, avec repli sur l'archive `.zip` — **fait** |
 | **C5** | Dashboard |
 | **C6** | Migration du client 1.0.0, retrait du repli |
