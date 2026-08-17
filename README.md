@@ -23,6 +23,7 @@ WizardMC – *Les Terres Fracturées* : les joueurs forment des **Covens**, dév
 | [cdc_magie.md](cdc_magie.md) | Stub Magie (12 écoles + utilitaires) |
 | [cdc_compagnons.md](cdc_compagnons.md) | Stub Compagnons SMP |
 | [cdc_spawn_map.md](cdc_spawn_map.md) | Stub Spawn & map |
+| [cdc_wizardcloud.md](cdc_wizardcloud.md) | **WizardCloud** — distribution et mise à jour du client MCP |
 
 
 ## Principes techniques transverses
