@@ -217,13 +217,18 @@ Publier = déposer les blobs, puis déplacer le pointeur. Revenir en arrière = 
 ## 8. Publication
 
 ```bash
+export WIZARDCLOUD_TOKEN=…
+
 wizardcloud publish \
+  --server https://cloud.wizardmc.fr/wizardcloud \
   --channel stable \
   --version 1.4.2 \
   --from ./dist/client \
   --entry ./client.json \
   --key ~/.wizardcloud/publish.pem
 ```
+
+Le jeton passe par l'environnement plutôt que par la ligne de commande : un argument figure dans l'historique du shell et dans la table des processus, visible de tout compte de la machine.
 
 Déroulement :
 
@@ -331,7 +336,7 @@ wizardcloud/
 | :--- | :--- |
 | **C0** | `wizardcloud-core` : manifeste, empreintes, chemins, signature — **fait** |
 | **C1** | `wizardcloud-server` : blobs, canaux, publication atomique, jetons — **fait** |
-| **C2** | `wizardcloud-cli` : `publish`, `rollback`, `gc` |
+| **C2** | `wizardcloud-cli` : `keygen`, `token`, `publish`, `rollback`, `history` — **fait** |
 | **C3** | `wizardcloud-sdk` : synchronisation, reprise, réparation |
 | **C4** | Intégration launcher, avec repli sur l'archive `.zip` |
 | **C5** | Dashboard |
