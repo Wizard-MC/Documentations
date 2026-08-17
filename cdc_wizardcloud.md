@@ -143,7 +143,7 @@ Publier = déposer les blobs, puis déplacer le pointeur. Revenir en arrière = 
 | **WC-08** | Les téléchargements reprennent via `Range` (`D-03`). |
 | **WC-09** | Un manifeste déclarant plus de 10 000 fichiers ou plus de 4 Gio cumulés est refusé. |
 | **WC-10** | La publication exige un jeton porté par l'en-tête `Authorization`, **cantonné à un canal**. Un jeton `beta` ne peut pas publier sur `stable`. |
-| **WC-11** | Les jetons sont stockés hachés (Argon2id). Ils sont affichés une seule fois, à la création. |
+| **WC-11** | Les jetons sont tirés au sort sur 256 bits et stockés hachés en SHA-256. Une fonction lente type Argon2 protège d'une attaque par dictionnaire sur un secret devinable, ce qu'un tirage aléatoire n'est pas ; elle ne ferait ici que ralentir chaque publication. Le secret n'est affiché qu'à la création. |
 | **WC-12** | Toute publication est journalisée : canal, version, auteur, empreinte du manifeste, horodatage. Le journal est en ajout seul. |
 | **WC-13** | Les blobs ne sont jamais supprimés par une publication. Le ramassage se fait par une commande distincte, avec période de rétention. |
 | **WC-14** | HTTPS exclusivement. Aucun repli en clair, y compris sur redirection. |
@@ -176,11 +176,16 @@ Publier = déposer les blobs, puis déplacer le pointeur. Revenir en arrière = 
 
 | Méthode | Route | Rôle |
 | :--- | :--- | :--- |
-| `POST` | `/v1/blobs` | dépose un blob (corps brut, empreinte vérifiée) |
+| `POST` | `/v1/blobs/{sha256}` | dépose un blob (corps brut, empreinte vérifiée contre celle de l'URL) |
 | `HEAD` | `/v1/blobs/{sha256}` | le blob est-il déjà présent ? évite de renvoyer l'existant |
-| `POST` | `/v1/channels/{canal}` | publie un manifeste et déplace le pointeur |
+| `POST` | `/v1/channels/{canal}/publish` | publie un manifeste et déplace le pointeur |
 | `GET` | `/v1/channels/{canal}/history` | historique des publications |
 | `POST` | `/v1/channels/{canal}/rollback` | repointe sur une publication antérieure |
+
+> **L'authentification précède l'analyse du corps.** Un cadriciel qui décode le
+> corps avant d'exécuter le gestionnaire répondrait « 422 » en décrivant le
+> schéma attendu à un appelant qui n'a présenté aucun jeton. Le corps est donc
+> reçu brut et analysé une fois le porteur reconnu.
 
 ---
 
@@ -324,8 +329,8 @@ wizardcloud/
 
 | Phase | Contenu |
 | :--- | :--- |
-| **C0** | `wizardcloud-core` : manifeste, empreintes, chemins, signature — avec tests |
-| **C1** | `wizardcloud-server` : blobs, canaux, publication atomique, jetons |
+| **C0** | `wizardcloud-core` : manifeste, empreintes, chemins, signature — **fait** |
+| **C1** | `wizardcloud-server` : blobs, canaux, publication atomique, jetons — **fait** |
 | **C2** | `wizardcloud-cli` : `publish`, `rollback`, `gc` |
 | **C3** | `wizardcloud-sdk` : synchronisation, reprise, réparation |
 | **C4** | Intégration launcher, avec repli sur l'archive `.zip` |
