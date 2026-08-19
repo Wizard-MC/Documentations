@@ -65,6 +65,27 @@ La règle est maintenant explicite, et vérifiée par
 Si un modèle montre ce que le sort *fait*, il va dans l'attaque. S'il montre ce
 que le lanceur *prépare*, il va dans la concentration.
 
+### Bouclée, étirée, ou jouée une fois
+
+Trois façons de dérouler une animation, et une seule est juste pour chaque
+étape :
+
+| Mode | Ce que ça fait | Pour quoi |
+|---|---|---|
+| **une fois** (défaut) | l'animation joue sa longueur puis tient sa dernière pose | impacts, attaques |
+| `loop(true)` | l'animation repart au début tant que l'étape dure | sceaux au sol, auras, projectiles en vol |
+| `stretch(true)` | l'animation est ramenée à la durée annoncée par le serveur | cercle d'incantation |
+
+Le cercle d'incantation était bouclé. Sur une incantation de cinq secondes, son
+animation d'une seconde et demie se redessinait trois fois et demie : le joueur
+voyait un motif tourner, pas un sort se préparer, et rien n'indiquait le moment
+où il allait partir. Étiré, il se trace une seule fois, du premier trait au
+sceau achevé, quelle que soit la durée du cast.
+
+Les deux modes s'excluent : `stretch(true)` annule `loop(true)`. Sans durée
+annoncée par le serveur, l'étirement n'a pas de cible et le clip retombe sur sa
+longueur naturelle.
+
 ### Une étape déclarée doit être jouée
 
 Un emplacement rempli dans le catalogue mais qu'aucune phase ne dépêche ne

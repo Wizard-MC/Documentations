@@ -38,10 +38,9 @@ serveur. Voir [la conception des attaques](../conception/vfx_attaques.md).
 
 | Étape | Phase serveur | Modèle | Animation | Durée | Ancre | Orientation | Taille |
 |---|---|---|---|---|---|---|---|
-| Cercle d'incantation | `CAST_START` / `CAST_STATE` | `incantation_circle.bbmodel` | `animation` | 1.5 s (bouclé) | WAND | FACE_CAST | 2 bloc(s) |
+| Cercle d'incantation | `CAST_START` / `CAST_STATE` | `incantation_circle.bbmodel` | `animation` | 1.5 s (étirée sur l'incantation) | WAND | FACE_CAST | 2 bloc(s) |
 | Concentration | `CAST_START` | `fire_charge.bbmodel` | `animation` | 2.8 s | WAND | FACE_CAST | 2.4 bloc(s) |
 | Impact | `IMPACT` | `impact_burst.bbmodel` | `animation` | 0.75 s | TARGET | WORLD | 3 bloc(s) |
-| Aura | `CAST_START` | `fire_ground_crack.bbmodel` | `spawn` | 3 s | TARGET | WORLD | 4 bloc(s) |
 
 Les étapes absentes de ce tableau ne sont pas jouées pour ce sort.
 

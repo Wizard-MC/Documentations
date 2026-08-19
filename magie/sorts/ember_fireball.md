@@ -1,17 +1,17 @@
-# Torche de Braise — `ember_torch`
+# Boule de Feu — `ember_fireball`
 
-> Projectile plaçant une lumière / petit feu contrôlé.
+> Projectile de braise qui explose au contact.
 
 *Fiche générée par `MagicDocGenerator` depuis le catalogue et le profil VFX.*
 *Les paramètres d'effet — dégâts, durées, rayons — ne sont pas recopiés ici :*
-*ils font foi dans `WizardCore/src/main/resources/spells.yml`, entrée `ember_torch`.*
+*ils font foi dans `WizardCore/src/main/resources/spells.yml`, entrée `ember_fireball`.*
 
 ## Identité
 
 | | |
 |---|---|
 | École | **Braises** (`FIRE`) |
-| Incantation | *Ignis fax* |
+| Incantation | *Ignis sphaera* |
 | Mode | Projectile |
 | Couleur | `#FF6A3D` |
 | Animation de baguette | `wand_thrust` |
@@ -28,7 +28,7 @@
 
 ## Intention
 
-Projectile utilitaire qui pose une lumière. Le premier sort de Braises, pensé pour l'exploration avant le combat.
+Le premier sort offensif d'un apprenti : une bille de braise qui part droit devant et éclate au contact. Il posait auparavant une torche, ce qui faisait de la première école de combat un outil d'éclairage. Ses dégâts restent modestes — c'est un sort de niveau 0 — mais il apprend à viser.
 
 ## Étapes VFX
 
@@ -37,10 +37,9 @@ serveur. Voir [la conception des attaques](../conception/vfx_attaques.md).
 
 | Étape | Phase serveur | Modèle | Animation | Durée | Ancre | Orientation | Taille |
 |---|---|---|---|---|---|---|---|
-| Cercle d'incantation | `CAST_START` / `CAST_STATE` | `incantation_circle.bbmodel` | `animation` | 1.5 s (bouclé) | WAND | FACE_CAST | 2 bloc(s) |
+| Cercle d'incantation | `CAST_START` / `CAST_STATE` | `incantation_circle.bbmodel` | `animation` | 1.5 s (étirée sur l'incantation) | WAND | FACE_CAST | 2 bloc(s) |
 | Projectile | `PROJECTILE` | `projectile_fireball.bbmodel` | `animation` | 0.25 s (bouclé) | ORIGIN | TOWARD_TARGET | 0.9 bloc(s) |
 | Impact | `IMPACT` | `impact_burst.bbmodel` | `animation` | 0.75 s | TARGET | WORLD | 3 bloc(s) |
-| Aura | `CAST_START` | `fire_ground_crack.bbmodel` | `spawn` | 3 s | TARGET | WORLD | 4 bloc(s) |
 
 Les étapes absentes de ce tableau ne sont pas jouées pour ce sort.
 
@@ -70,8 +69,8 @@ transmise par le serveur : tous les clients voient la même chose.
 ## Essai en jeu
 
 ```text
-/magicvfx test ember_torch cast_start
-/magicvfx test ember_torch impact
+/magicvfx test ember_fireball cast_start
+/magicvfx test ember_fireball impact
 ```
 
 Ces commandes rejouent la présentation localement, sans lancer le sort ni

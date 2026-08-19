@@ -20,7 +20,7 @@
 
 | Sort | Mode | Essence | Niveau | Fiche |
 |---|---|---|---|---|
-| Torche de Braise | Projectile | 10 | 0 | [`ember_torch`](../sorts/ember_torch.md) |
+| Boule de Feu | Projectile | 10 | 0 | [`ember_fireball`](../sorts/ember_fireball.md) |
 | Embrasement | Incantation | 22 | 2 | [`ember_flare`](../sorts/ember_flare.md) |
 
 ## Modèles VFX
