@@ -332,7 +332,35 @@ Perdre sa baguette pendant une incantation interrompt le sort
 À tout moment entre 4 et 6, une interruption coupe la séquence : phase
 `INTERRUPT` ou `CANCEL`, cercle brisé côté client, 50 % de l'Essence rendue.
 
-### 7.2 Interruption
+### 7.2 L'amorce d'incantation
+
+Un sort a **deux phases distinctes** : on l'incante, puis on le lâche. Pour
+`CAST_TIME` et `CHANNEL`, la première dure le temps déclaré par le sort. Pour
+`INSTANT` et `PROJECTILE`, elle ne durait rien : le serveur envoyait
+`CAST_START` puis `RELEASE` dans le même tick, si bien que le client ouvrait son
+cercle d'incantation et le refermait dans la même image. Le cercle ne manquait
+pas — il ne durait pas.
+
+Ces deux modes passent donc par une **amorce** de `cast.windupTicks`
+(8 ticks, 0,4 s par défaut), pendant laquelle le cercle s'inscrit et le son de
+lancement se joue. Elle emprunte la machinerie des casts chronométrés, et hérite
+donc de tout ce qui va avec : interruption, remboursement partiel, barre de
+progression chez les témoins.
+
+Trois bornes l'encadrent :
+
+- **plafond dur à 20 ticks.** Au-delà ce n'est plus une amorce mais un temps de
+  cast, et celui-là se déclare sort par sort dans `spells.yml` ;
+- **jamais plus longue que le GCD**, sinon la cadence de jeu changerait et pas
+  seulement l'habillage ;
+- **`0` rétablit le comportement d'origine**, pour un serveur qui préférerait la
+  réactivité brute.
+
+Conséquence à assumer : un sort instantané devient interruptible pendant son
+amorce, s'il se déclare `interruptible`. C'est cohérent avec le reste du
+système — une incantation, même courte, est une prise de risque.
+
+### 7.3 Interruption
 
 | Cause | Déclencheur |
 |---|---|
@@ -347,7 +375,7 @@ Un sort à incantation est donc toujours une prise de risque. C'est le levier
 principal d'équilibrage du combat magique : plus un sort est fort, plus son
 incantation est longue, plus il est facile à couper.
 
-### 7.3 Global cooldown
+### 7.4 Global cooldown
 
 Un GCD de 10 ticks s'applique à tout lancement, quel que soit le sort. Il
 empêche l'enchaînement instantané de plusieurs sorts et rend les rotations
