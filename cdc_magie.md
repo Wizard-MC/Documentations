@@ -242,8 +242,20 @@ Deux garde-fous rendent cette promesse vérifiable plutôt que déclarative :
    accordé. Un preset ne peut donc jamais équiper un sort auquel son
    propriétaire n'a pas droit — même forgé par un client modifié, même
    enregistré avant une perte de niveau.
-2. **Les emplacements se créditent uniquement par `/magic presetslot`**,
-   exécutable par la console. Le client ne peut pas s'en accorder.
+2. **Le client ne peut pas s'accorder d'emplacement.** Ils viennent de la
+   boutique (SKU `magic_preset_slot`, catégorie Confort) ou de la commande
+   console `/magic presetslot`.
+
+En boutique, l'emplacement coûte 60 Gemmes **ou** 4 000 Poussière d'Étoile — la
+monnaie gratuite. Un joueur qui joue peut donc l'obtenir sans payer : le
+paiement fait gagner du temps, pas un accès exclusif. Le détail du SKU et la
+comparaison avec un « claim slot » sont dans
+[`cdc_boutique.md`](cdc_boutique.md) §2.1.
+
+Le compteur d'emplacements achetés vit sur le **compte boutique**, pas sur le
+profil magie : celui-ci peut être reconstruit, et un achat réel ne doit pas
+disparaître avec lui. Le profil est réaligné sur le compte à chaque connexion,
+sans jamais rien retirer.
 
 Le tier de baguette n'est volontairement **pas** exigé à l'équipement : on
 prépare une barre pour une baguette qu'on n'a pas encore en main, et c'est le
