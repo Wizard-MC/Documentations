@@ -13,6 +13,7 @@ Documents liés :
 - [`magie/README.md`](magie/README.md) — index des fiches par école et par sort
 - [`magie/conception/vfx_attaques.md`](magie/conception/vfx_attaques.md) — conception des VFX d'attaque
 - [`magie/conception/bbmodel_attaque.md`](magie/conception/bbmodel_attaque.md) — fabrication des modèles
+- [`magie/conception/grimoire.md`](magie/conception/grimoire.md) — l'interface du grimoire
 - [`cdc_pouvoirs.md`](cdc_pouvoirs.md), [`cdc_covens.md`](cdc_covens.md), [`cdc_autels_sacres.md`](cdc_autels_sacres.md) — systèmes voisins
 
 ---
@@ -190,6 +191,65 @@ que le précédent, ce qui rend le touche-à-tout compétitif face au spécialis
 Un sort ne peut être lancé que si les trois conditions sont réunies : sort
 appris, niveau d'école suffisant, tier de baguette suffisant.
 
+### 5.5 Amélioration des sorts
+
+Un sort appris part au **rang I** et peut être poussé jusqu'au **rang V**.
+
+| Ce qu'un rang change | Effet |
+|---|---|
+| Coût en Essence | −6 % par rang au-delà du premier (−24 % au rang V) |
+| Cooldown | −5 % par rang (−20 % au rang V) |
+| Dégâts | **aucun changement** |
+
+L'absence de gain de dégâts n'est pas un oubli. Le plafond de dégâts (§10) est
+ce qui garantit qu'aucun sort ne tue en un coup ; une amélioration qui le
+repousserait viderait la règle de son sens. Un rang rend un sort *plus
+confortable*, pas plus meurtrier.
+
+La réduction de cooldown est en outre **bornée par les planchers
+d'équilibrage** : cinq rangs cumulés ne ramènent jamais un sort hostile sous
+50 ticks, ni un sort V2 sous 70. L'amélioration s'arrête à la règle au lieu de
+la contourner.
+
+**Ce que ça coûte.** De l'XP d'école, et rien d'autre — jamais de monnaie
+réelle (MG-12 / MG-13). Le coût est `30 + 25 × (rang − 1) + 10 × niveau requis`,
+et chaque rang exige deux niveaux d'école de plus que le précédent. Améliorer un
+sort de haut niveau reste donc un vrai investissement, et suit la progression
+de l'école au lieu de constituer une file d'attente parallèle.
+
+### 5.6 Presets de barre
+
+Huit emplacements permettent d'enregistrer une barre de sorts complète et de la
+rappeler d'un clic.
+
+| Emplacements | Origine |
+|---|---|
+| 1 – 2 | Offerts à tout le monde |
+| 3 – 5 | Ouverts aux niveaux d'école moyens 3, 6 et 9 |
+| 6 – 8 | Emplacements d'agrément, disponibles en boutique |
+
+**Pourquoi un emplacement payant ne contredit pas le « zéro P2W ».** La règle
+interdit d'acheter de la *puissance* : dégâts, cooldown, Essence, niveau,
+déblocage de sort, saut de progression. Un emplacement de preset n'est rien de
+tout cela. Il n'enregistre que des identifiants de sorts que le joueur possède
+déjà, et tout ce qu'il fait gagner est du **temps de clic** — sans lui, la même
+barre se refait à la main en quelques secondes.
+
+Deux garde-fous rendent cette promesse vérifiable plutôt que déclarative :
+
+1. **Le chargement revalide chaque sort** contre ce que le joueur a réellement
+   appris et son niveau d'école. Un emplacement qui ne passe pas est vidé, pas
+   accordé. Un preset ne peut donc jamais équiper un sort auquel son
+   propriétaire n'a pas droit — même forgé par un client modifié, même
+   enregistré avant une perte de niveau.
+2. **Les emplacements se créditent uniquement par `/magic presetslot`**,
+   exécutable par la console. Le client ne peut pas s'en accorder.
+
+Le tier de baguette n'est volontairement **pas** exigé à l'équipement : on
+prépare une barre pour une baguette qu'on n'a pas encore en main, et c'est le
+lancement qui refusera. L'exiger viderait la barre d'un joueur qui change
+simplement de baguette.
+
 ---
 
 ## 6. Baguettes
@@ -207,6 +267,29 @@ Progression type : `fracture_oak` (tier 1, polyvalente, donnée au premier
 join) → baguette d'affinité tier 2 (−10 % coût et cooldown) → tier 3
 (−15 %). L'affinité ne débloque rien : elle rend une école plus confortable.
 Un mage peut jouer toutes les écoles avec une seule baguette, moins bien.
+
+**Les neuf écoles actives ont chacune une baguette d'affinité.** L'Esprit est
+resté sans la sienne pendant toute la V1.5 sans que rien ne le signale : ses
+sorts se jouaient toujours au tarif plein. `echo_alder` (tier 3) comble ce
+trou, et un contrôle automatique refuse désormais un catalogue où une école
+active n'aurait pas de baguette.
+
+| Baguette | Affinité | Tier |
+|---|---|---|
+| `fracture_oak` | — | 1 |
+| `ember_ash` | Braises | 2 |
+| `frost_pine` | Givre | 2 |
+| `stonebinder`, `grove_willow` | Roc | 2 |
+| `arcane_crystal` | Arcane | 3 |
+| `aurora_birch` | Aurore | 3 |
+| `stormglass` | Tempête | 3 |
+| `shadowthorn`, `bloodiron` | Ombre | 3 |
+| `echo_alder` | Esprit | 3 |
+| `chronoglass` | Vide | 3 |
+| `fracture_prime` | — | 4 |
+
+Deux baguettes peuvent partager une affinité : ce sont des variantes, avec leur
+nom et leur apparence, pas des paliers de puissance.
 
 Perdre sa baguette pendant une incantation interrompt le sort
 (`InterruptReason.WAND_LOST`).
@@ -463,8 +546,18 @@ non chargé), le sort reste audible.
 
 ## 14. Réseau
 
-Un seul canal : le packet **128**, avec les actions `SYNC`, `SELECT`, `CAST`,
-`LEARN`, `ERROR`, `FX_PLAY`, `CAST_STATE`.
+Un seul canal : le packet **128**.
+
+| Sens | Actions |
+|---|---|
+| Serveur → client | `SYNC`, `ERROR`, `FX_PLAY`, `CAST_STATE` |
+| Client → serveur | `SELECT`, `CAST`, `LEARN`, `BIND`, `UPGRADE`, `PRESET` |
+
+Les trois actions montantes du grimoire ne portent qu'une **intention** :
+`BIND` un emplacement et un identifiant, `UPGRADE` un identifiant, `PRESET` une
+opération et un index. Le serveur vérifie tout, débite, applique, puis renvoie
+un `SYNC`. Le client n'anticipe rien localement — un rang affiché puis retiré
+serait pire qu'un rang qui met un aller-retour à apparaître.
 
 Un événement de présentation porte : phase, portée, graine, horodatage serveur,
 durée en ticks, entité concernée, entité ciblée. Onze phases sont définies :
@@ -475,10 +568,17 @@ durée en ticks, entité concernée, entité ciblée. Onze phases sont définies
 Quatre portées : `SELF`, `TARGET`, `OBSERVERS`, `PUBLIC` — un même sort ne
 montre pas la même chose au lanceur, à la victime et aux spectateurs.
 
-**Compatibilité.** L'extension VFX est écrite en fin de trame, précédée d'un
-marqueur. Un client qui ne la connaît pas lit la trame historique et ignore la
-suite ; un serveur qui ne l'émet pas laisse le client retomber sur une
-présentation par défaut. Les deux sens dégradent proprement.
+**Compatibilité.** Deux blocs d'extension sont écrits en fin de trame, chacun
+précédé d'un marqueur et de sa longueur : l'extension **VFX** sur `FX_PLAY`, et
+l'extension **grimoire** sur `SYNC` — rangs des sorts, presets, droits
+d'emplacement.
+
+La longueur explicite est ce qui rend la compatibilité vraie dans les deux
+sens : un client d'une version antérieure lit la trame historique et s'arrête
+avant le bloc ; un client plus récent face à un bloc d'une version qu'il ne
+connaît pas le saute exactement, sans tenter de l'interpréter. Un grimoire
+ouvert sur un serveur antérieur affiche donc des rangs I et aucun preset, et
+reste utilisable.
 
 **Coût.** Un cast complet représente une poignée de paquets — un par phase.
 Jamais un paquet par particule, jamais un paquet par frame.

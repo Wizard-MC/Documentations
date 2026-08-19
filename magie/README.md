@@ -14,6 +14,7 @@ profils VFX réellement exécutés. Les régénérer après toute modification.*
 | [`../cdc_magie.md`](../cdc_magie.md) | Cahier des charges du système |
 | [`conception/vfx_attaques.md`](conception/vfx_attaques.md) | Conception des VFX d'attaque : étapes, ancres, orientations |
 | [`conception/bbmodel_attaque.md`](conception/bbmodel_attaque.md) | Concevoir le bbmodel d'une attaque, de Blockbench au jeu |
+| [`conception/grimoire.md`](conception/grimoire.md) | L'interface du grimoire : chapitres, géométrie du livre, page qui se tourne |
 
 ## Écoles
 
