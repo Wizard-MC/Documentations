@@ -77,8 +77,54 @@ cherchant ligne par ligne où le parchemin clair commence et s'arrête :
 | Reliure | x ≈ 604 | 0,504 |
 
 Ces fractions restent valables quelle que soit la taille d'affichage : changer
-l'échelle du panneau ne demande aucun recalcul. Une marge intérieure de neuf
-points tient le texte à l'écart du liseré doré.
+l'échelle du panneau ne demande aucun recalcul. Une marge intérieure tient le
+texte à l'écart du liseré doré.
+
+Une dernière mesure ne concerne pas les pages : le livre dessiné **s'arrête à
+383 sur 400**. En dessous, la texture n'est plus qu'une ombre portée
+transparente. C'est ce qui borne le bandeau des chapitres.
+
+### Le livre prend la place disponible
+
+Le panneau était posé à **360×240 points**, quelle que soit la résolution.
+Chaque page n'offrait alors qu'une centaine de points de large, ce qui avait
+obligé à écrire le corps de texte à 40 % de la taille de la police — environ
+quatre pixels de haut. C'était illisible, et aucun réglage de police n'y pouvait
+rien tant que le livre restait aussi petit : les caractères n'y tenaient pas.
+
+Le livre occupe donc maintenant la place disponible, dans la limite de la
+**taille native de la texture (600×400)** ; au-delà on ne gagnerait que du flou.
+Le rapport 3:2 est conservé, et la contrainte joue sur les deux dimensions — sur
+un écran large mais court, c'est la hauteur qui commande.
+
+Tout le reste en découle : marges, hauteur de ligne, taille du texte, côté d'un
+emplacement, hauteur des plaques. Changer la borne redimensionne l'interface
+entière.
+
+| Écran virtuel | Panneau | Corps de texte | Caractères / ligne | Lignes / page |
+|---|---|---|---|---|
+| 960×540 (échelle 2) | 600×400 | 0,8 | 40 | 15 |
+| 640×360 (échelle 3) | 504×336 | 0,65 | 41 | 14 |
+| 480×270 (échelle 4) | 369×246 | 0,65 | 30 | 12 |
+| *avant* | *360×240* | *0,4* | *22* | *7* |
+
+`GrimoireLayoutTest` pose les invariants qu'on ne peut pas voir en lisant le
+code : le texte ne redescend jamais sous un plancher de lisibilité, les neuf
+écoles tiennent toujours sur une page sans défilement, le livre ne rétrécit
+jamais quand l'écran grandit, et rien ne dépasse du parchemin.
+
+### Les chapitres sont revenus dans le livre
+
+Les quatre chapitres étaient des signets posés **à côté** du livre, dans le
+vide — et si étroits qu'ils ne portaient que leur initiale, avec le nom complet
+réservé à l'infobulle. Ils forment maintenant une rangée de plaques dans la
+tranche basse, entre le bas des pages et le bord du livre, chacune avec son nom
+écrit dedans. Le bouton de fermeture les suit, dans la marge droite du même
+bandeau.
+
+Le titre flottant « Grimoire · Écoles » a disparu avec eux : il était écrit
+au-dessus du livre, là où la texture est transparente, donc en encre sombre sur
+fond sombre. Le chapitre ouvert se reconnaît désormais à sa plaque allumée.
 
 ---
 
@@ -124,11 +170,30 @@ d'école, chaque école étant un chapitre du répertoire.
 | Élément | Aspect | Pour quoi |
 |---|---|---|
 | **Zone de page** | invisible au repos, voile chaud au survol | naviguer : choisir une école, un sort, un emplacement |
-| **Plaque d'action** | fond encré, filet doré, texte centré | engager quelque chose : apprendre, améliorer, enregistrer, charger, effacer |
+| **Plaque d'action** | `button_normal.png`, `button_hovered.png` au survol, libellé écrit dedans | engager quelque chose : apprendre, améliorer, enregistrer, charger, effacer — et changer de chapitre |
 
 La distinction n'est pas cosmétique. Une navigation ne coûte rien et doit
 s'effacer devant le texte ; une action dépense de l'XP ou écrase une
 configuration, et doit se voir.
+
+Les plaques étaient dessinées à la main — un rectangle translucide bordé d'un
+filet doré, avec le libellé à la moitié de la taille de la police. Sur le
+parchemin, la plaque se voyait à peine et le texte encore moins. Elles reprennent
+maintenant les plaques d'interface du client, comme le reste des écrans
+WizardMC : fond sombre, liseré runique doré, **libellé écrit dedans**, en clair,
+là où l'encre brune du livre se serait noyée dans le parchemin.
+
+Trois états, tous portés par la texture et la couleur du libellé :
+
+| État | Texture | Libellé |
+|---|---|---|
+| Repos | `button_normal` | doré |
+| Survol | `button_hovered` | blanc |
+| Sélectionné (chapitre ouvert, école choisie) | `button_hovered` | blanc |
+| Indisponible | `button_normal` | gris éteint |
+
+Les runes gravées aux deux extrémités de la plaque mangent environ un dixième
+de sa largeur de chaque côté : le libellé est tronqué avant de les chevaucher.
 
 Le texte des zones de page n'est pas dessiné par le bouton mais par la page
 elle-même, ce qui laisse chaque chapitre libre de sa mise en page : deux

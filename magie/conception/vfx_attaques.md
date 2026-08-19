@@ -36,14 +36,43 @@ CastService                    MagicVFXRuntime
 | Étape | Déclenchée par | Rôle | Exemple |
 |---|---|---|---|
 | **Cercle d'incantation** | `CAST_START`, entretenue par `CAST_STATE` | Annonce le sort, occupe le temps de cast | sceau devant la baguette |
-| **Concentration** | `CAST_START` (modes à incantation) | Montre la puissance qui s'accumule | boule de braise qui grossit |
+| **Concentration** | `CAST_START` (modes à incantation) | Montre la puissance qui s'accumule **chez le lanceur** | boule de braise qui grossit au bout de la baguette |
 | **Projectile** | `PROJECTILE` | Le corps qui vole | boule de feu, orbe de foudre |
 | **Libération** | `RELEASE` | Le trait entre le lanceur et sa visée | rayon d'un sort instantané |
-| **Impact** | `IMPACT` | La résolution au point touché | explosion, éclat |
+| **Attaque** | `IMPACT` | Le corps de l'effet, **au point touché** | gerbe de pics de givre, vague de roche |
+| **Impact** | `IMPACT` | L'éclat bref, par-dessus l'attaque | explosion, flash |
 | **Effet sur la cible** | `IMPACT` + entité ciblée | Ce qui reste sur la victime | gangue de glace, chaînes |
-| **Aura** | `CAST_START` | Ce qui reste sur le lanceur | anneau de pierre, voile d'ombre |
+| **Aura** | `RELEASE` | Ce qui reste sur le lanceur | anneau de pierre, voile d'ombre |
 
-Une étape absente n'est pas jouée : un sort n'a pas besoin des sept.
+Une étape absente n'est pas jouée : un sort n'a pas besoin des huit.
+
+### Concentration ou attaque : la distinction qui compte
+
+C'est la confusion qui a coûté le plus cher. La gerbe de pics de givre, la
+vague de roche et la colonne de lumière avaient été rangées dans l'étape de
+**concentration**, ancrée aux pieds du lanceur. L'attaque se jouait donc en
+entier sur le mage, et la cible ne recevait qu'un éclat de moins de deux blocs.
+Rien ne le signalait : les deux ancrages sont légitimes, pris séparément.
+
+La règle est maintenant explicite, et vérifiée par
+`VfxModelCatalogTest.testStagesAreAnchoredWhereTheyBelong` :
+
+- **concentration** et **aura** sont ancrées sur le lanceur — `CASTER_FEET`,
+  `CASTER_EYES`, `WAND` ;
+- **attaque** et **impact** sont ancrés sur le point touché — `TARGET`,
+  `TARGET_ENTITY`.
+
+Si un modèle montre ce que le sort *fait*, il va dans l'attaque. S'il montre ce
+que le lanceur *prépare*, il va dans la concentration.
+
+### Une étape déclarée doit être jouée
+
+Un emplacement rempli dans le catalogue mais qu'aucune phase ne dépêche ne
+produit rien, et ne lève aucune erreur. L'aura a vécu ainsi plusieurs versions :
+Voile d'Ombre, anneau de Roc et feux-follets d'Esprit étaient chargés au
+démarrage et n'apparaissaient jamais.
+`VfxModelCatalogTest.testEveryStageIsPlayedByTheRuntime` relit la source du
+runtime et échoue si un emplacement cesse d'y être dépêché.
 
 ### Étape entretenue ou ponctuelle
 
