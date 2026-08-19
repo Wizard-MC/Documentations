@@ -27,7 +27,8 @@ Stack : MCP `wizardmc-clean` · `WizardSpigot` · `WizardCore` · cible `WizardC
 | Ères 45j | [cdc_eres.md](cdc_eres.md) | `EraAPI` + `SeasonAPI` compat ✅ | **Phase S4 complète** |
 | WizardCovens | [cdc_covens.md](cdc_covens.md) | absent | **À faire** (T0 = FactionAdapter) |
 | Boutique | [cdc_boutique.md](cdc_boutique.md) | non | À faire |
-| Magie / Compagnons / Spawn | stubs | non | Backlog design |
+| Magie | [cdc_magie.md](cdc_magie.md) | livré ✅ | 12 écoles, 31 sorts, runtime VFX client |
+| Compagnons / Spawn | stubs | non | Backlog design |
 
 **Transition sociale**
 
@@ -165,7 +166,6 @@ Prioriser après S1–S6 selon capacité :
 
 | Module | Doc | Notes |
 | :--- | :--- | :--- |
-| Magie | [cdc_magie.md](cdc_magie.md) | 12 écoles, utilitaire first |
 | Compagnons | [cdc_compagnons.md](cdc_compagnons.md) | rôles build/commerce/guerre |
 | Spawn & map | [cdc_spawn_map.md](cdc_spawn_map.md) | zones + POI Autels |
 
