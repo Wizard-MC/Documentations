@@ -7,9 +7,9 @@
 | | |
 |---|---|
 | Couleur | `#FF6A3D` |
-| Sprite dominant | `4` |
-| Sprite d'appoint | `3` |
-| Sprite d'accent | `12` |
+| Sprite dominant | `EMBER` |
+| Sprite d'appoint | `SMOKE` |
+| Sprite d'accent | `FLARE` |
 | Mélange | additif (émet de la lumière) |
 | Gravité des particules | 0.01 |
 | Runes du cercle | 6 |

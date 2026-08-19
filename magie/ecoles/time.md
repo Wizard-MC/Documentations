@@ -1,29 +1,35 @@
-# Chronos — école `TIME`
+# Chronos — tradition `TIME`
 
-> Chronos accélère et ralentit. École de nuance, sans sort décisif.
+> Chronos accélère et ralentit. Tradition de nuance, sans sort décisif, rattachée au Vide.
 
-## Identité visuelle
+**Ce n'est plus une école.** Chronos a été regroupée dans
+[Vide](void.md) (CDC Magie §16) : c'est là que se gagne le niveau,
+là que se paie l'apprentissage, et de là que viennent les modèles VFX.
+
+Ses sorts n'ont rien perdu : même identifiant, même effet, même
+présentation. Ce qui subsiste ici est leur **grain visuel** — sprites,
+couleur, densité de runes — qui reste celui de la tradition et les distingue
+des autres sorts de leur nouvelle école.
+
+## Grain visuel conservé
 
 | | |
 |---|---|
 | Couleur | `#E8D5B7` |
-| Sprite dominant | `6` |
-| Sprite d'appoint | `14` |
-| Sprite d'accent | `0` |
+| Sprite dominant | `RING` |
+| Sprite d'appoint | `SWIRL` |
+| Sprite d'accent | `GLOW` |
 | Mélange | additif (émet de la lumière) |
 | Gravité des particules | 0 |
 | Runes du cercle | 12 |
 | Intensité | 1.05 |
-| Voix d'incantation | `wizardmc.magic.voice.time_1..3` |
+| Modèles VFX | ceux de l'école Vide |
+| Voix d'incantation | celle de l'école Vide — la tradition n'a pas de prises |
 
-## Sorts
+## Sorts de cette tradition
 
-| Sort | Mode | Essence | Niveau | Fiche |
+| Sort | École actuelle | Mode | Essence | Fiche |
 |---|---|---|---|---|
-| Empressement | Instant | 12 | 0 | [`time_haste`](../sorts/time_haste.md) |
-| Ralentissement | Projectile | 14 | 1 | [`time_slow`](../sorts/time_slow.md) |
-| Distorsion | Incantation | 18 | 2 | [`time_warp`](../sorts/time_warp.md) |
-
-## Modèles VFX
-
-Cette école n'a pas encore de modèle dédié : elle utilise le jeu générique (cercle arcanique, orbe d'énergie teinté, impact standard). Voir [la conception des attaques](../conception/vfx_attaques.md) pour en ajouter.
+| Empressement | Vide | Instant | 12 | [`time_haste`](../sorts/time_haste.md) |
+| Ralentissement | Vide | Projectile | 14 | [`time_slow`](../sorts/time_slow.md) |
+| Distorsion | Vide | Incantation | 18 | [`time_warp`](../sorts/time_warp.md) |

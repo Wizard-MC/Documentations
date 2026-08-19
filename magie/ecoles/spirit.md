@@ -7,9 +7,9 @@
 | | |
 |---|---|
 | Couleur | `#A0E7E5` |
-| Sprite dominant | `9` |
-| Sprite d'appoint | `0` |
-| Sprite d'accent | `13` |
+| Sprite dominant | `ORB` |
+| Sprite d'appoint | `GLOW` |
+| Sprite d'accent | `BUBBLE` |
 | Mélange | additif (émet de la lumière) |
 | Gravité des particules | 0 |
 | Runes du cercle | 7 |

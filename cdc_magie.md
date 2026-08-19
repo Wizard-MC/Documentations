@@ -5,8 +5,8 @@ progression, baguettes, lancement des sorts, effets, équilibrage, présentation
 (VFX / audio), réseau, performance et persistance.
 
 **État : livré.** Le système est implémenté côté serveur (`WizardCore`) et côté
-client (fork MCP 1.7.10). Ce document décrit ce qui existe, les règles qui le
-gouvernent, et la proposition de réalignement de la §16.
+client (fork MCP 1.7.10). Ce document décrit ce qui existe et les règles qui le
+gouvernent. Le regroupement des écoles décrit en §16 est **appliqué**.
 
 Documents liés :
 
@@ -44,6 +44,7 @@ Trois engagements structurent tout le reste :
 |---|---|
 | **Essence** | Ressource de lancement, propre au joueur, régénérée avec le temps |
 | **École** | Famille de magie (Braises, Givre, Aurore…), progressant indépendamment |
+| **Tradition** | Filiation d'un sort — son école d'origine avant le regroupement (§16) |
 | **Sort** | Entrée du catalogue : coût, mode, portée, effets, présentation |
 | **Effet** | Brique de gameplay appliquée à la résolution (`damage_target`, `crop_boost`…) |
 | **Baguette** | Objet requis pour lancer ; porte un tier et parfois une affinité d'école |
@@ -105,27 +106,44 @@ intéressante à provoquer.
 
 ## 5. Écoles et progression
 
-### 5.1 Les douze écoles
+### 5.1 Les neuf écoles
 
 | Code | Nom | Vocation |
 |---|---|---|
 | `LIGHT` | Aurore | Lumière, soin |
-| `NATURE` | Sylvanie | Cultures, récolte |
-| `EARTH` | Roc | Terrain, construction, stabilité |
+| `EARTH` | Roc | Terrain, construction, récolte, stabilité |
 | `ARCANE` | Arcane | Prospection, projectile générique |
 | `FROST` | Givre | Conservation, ralentissement, entrave |
 | `FIRE` | Braises | Feu contrôlé, dégâts de zone |
 | `STORM` | Tempête | Déplacement, poussée, foudre |
-| `SHADOW` | Ombre | Furtivité, affaiblissement |
+| `SHADOW` | Ombre | Furtivité, affaiblissement, sacrifice |
 | `SPIRIT` | Esprit | Soin, purge, protection |
-| `BLOOD` | Sang | Sacrifice de vie contre puissance |
-| `TIME` | Chronos | Accélération, ralentissement |
-| `VOID` | Vide | Résistance, silence, faille |
+| `VOID` | Vide | Résistance, silence, faille, distorsion |
 
 Chaque école progresse **séparément** : un joueur peut être niveau 6 en Roc et
 niveau 0 en Ombre. Il n'y a pas de niveau global de mage.
 
-### 5.2 XP et niveaux
+### 5.2 Les trois traditions
+
+Le système comptait douze écoles ; trois ont été regroupées (§16) parce
+qu'elles n'avaient pas d'identité visuelle propre.
+
+| Tradition | Nom | École d'accueil | Sorts concernés |
+|---|---|---|---|
+| `NATURE` | Sylvanie | Roc | `nature_growth`, `nature_harvest` |
+| `BLOOD` | Sang | Ombre | `blood_rite`, `blood_surge`, `blood_lance` |
+| `TIME` | Chronos | Vide | `time_haste`, `time_slow`, `time_warp` |
+
+Une tradition **n'est pas une école** : on n'y gagne aucun niveau, aucun sort
+ne s'y apprend. Elle nomme la filiation d'un sort et détermine son **grain
+visuel** — sprites, couleur, densité de runes. C'est ce qui permet à une Lance
+de Sang d'appartenir à l'Ombre tout en gardant ses braises rouges.
+
+Elle porte aussi les contraintes d'équilibrage héritées : les seuils « V2 »
+(§10) s'appliquent selon la tradition, jamais selon l'école d'accueil. Changer
+d'école ne relâche pas un plafond.
+
+### 5.3 XP et niveaux
 
 | Paramètre | Valeur |
 |---|---|
@@ -147,13 +165,14 @@ dans le vide.
 L'XP est gagnée dans l'école du sort lancé. Progresser dans une école demande
 donc d'en jouer les sorts, pas d'en acheter le niveau.
 
-### 5.3 Apprentissage
+### 5.4 Apprentissage
 
 Douze sorts sont **appris d'office** (`autoLearn`) : `light_glimmer`,
 `nature_growth`, `arcane_sense`, `frost_preserve`, `ember_torch`,
 `earth_brace`, `storm_breeze`, `shadow_veil`, `spirit_soothe`, `blood_rite`,
-`time_haste`, `void_ward` — un par école. Un joueur qui reçoit sa baguette de
-départ a de quoi jouer immédiatement partout.
+`time_haste`, `void_ward`. Un joueur qui reçoit sa baguette de départ a de quoi
+jouer immédiatement dans chacune des neuf écoles — trois d'entre elles en
+comptent deux, héritage du regroupement.
 
 Les dix-neuf autres s'obtiennent par l'une des trois voies :
 
@@ -321,16 +340,23 @@ Elles sont vérifiées automatiquement au chargement du catalogue
 |---|---|
 | Coût maximum d'un sort | 40 Essence |
 | Cooldown minimum d'un sort hostile | 50 ticks |
-| Cooldown minimum d'un sort hostile V2 (Sang / Chronos / Vide) | 70 ticks |
+| Cooldown minimum d'un sort hostile V2 (traditions Sang / Chronos, école Vide) | 70 ticks |
 | Plafond de dégâts d'un effet | 6.0 |
 | Plafond de dégâts V2 | 5.0 |
 | Dégâts déclarés ≤ plafond déclaré | obligatoire |
-| Un sort hostile doit porter un effet de dégâts | obligatoire |
+| Un sort hostile doit produire un effet sur sa cible | obligatoire |
+
+La dernière règle mérite une précision : elle exige un effet — dégâts **ou**
+contrôle — et non des dégâts. Elle existe pour attraper un sort déclaré hostile
+qui ne fait rien : il paierait le cooldown durci et la barrière de claim sans
+rien produire. La Geôle de Givre immobilise sans infliger le moindre point de
+dégât ; c'est son intérêt de design, pas une anomalie.
 
 S'y ajoute un **soft cap PvP global** de 6.0 appliqué à la résolution : quelle
 que soit la configuration, un sort ne peut pas dépasser ce seuil contre un
-joueur. Les écoles V2, arrivées plus tard, sont volontairement plus contraintes
-que les écoles historiques.
+joueur. Le lot V2, arrivé plus tard, est volontairement plus contraint que les
+sorts historiques — et le reste après le regroupement, puisque la contrainte
+suit la tradition (§16.3).
 
 ---
 
@@ -339,42 +365,42 @@ que les écoles historiques.
 Chaque sort a sa fiche détaillée dans [`magie/sorts/`](magie/sorts/).
 `spells.yml` fait foi pour les valeurs.
 
-| Sort | École | Mode | Essence | CD | Niv. | Tier | Hostile |
-|---|---|---|---|---|---|---|---|
-| `light_glimmer` | Aurore | Instant | 8 | 100 | 0 | 1 | non |
-| `light_mend` | Aurore | Incantation | 18 | 180 | 2 | 1 | non |
-| `nature_growth` | Sylvanie | Incantation | 14 | 200 | 0 | 1 | non |
-| `nature_harvest` | Sylvanie | Instant | 10 | 300 | 1 | 1 | non |
-| `earth_lift` | Roc | Canalisation | 16 | 120 | 1 | 1 | non |
-| `earth_brace` | Roc | Instant | 10 | 200 | 0 | 1 | non |
-| `arcane_sense` | Arcane | Instant | 18 | 600 | 0 | 1 | non |
-| `arcane_bolt` | Arcane | Projectile | 14 | 55 | 1 | 1 | **oui** |
-| `frost_preserve` | Givre | Instant | 12 | 240 | 0 | 1 | non |
-| `frost_shard` | Givre | Projectile | 15 | 65 | 1 | 1 | **oui** |
-| `frost_prison` | Givre | Incantation | 26 | 600 | 3 | 2 | **oui** |
-| `ember_torch` | Braises | Projectile | 10 | 90 | 0 | 1 | non |
-| `ember_flare` | Braises | Incantation | 22 | 140 | 2 | 2 | **oui** |
-| `storm_breeze` | Tempête | Instant | 10 | 160 | 0 | 1 | non |
-| `storm_gust` | Tempête | Instant | 14 | 100 | 1 | 1 | non |
-| `storm_spark` | Tempête | Projectile | 14 | 55 | 1 | 2 | **oui** |
-| `shadow_veil` | Ombre | Instant | 16 | 280 | 0 | 1 | non |
-| `shadow_step` | Ombre | Instant | 12 | 200 | 1 | 2 | non |
-| `shadow_hex` | Ombre | Projectile | 16 | 70 | 2 | 2 | **oui** |
-| `spirit_soothe` | Esprit | Instant | 12 | 160 | 0 | 1 | non |
-| `spirit_cleanse` | Esprit | Incantation | 18 | 220 | 1 | 1 | non |
-| `spirit_ward` | Esprit | Instant | 16 | 240 | 2 | 1 | non |
-| `blood_rite` | Sang | Instant | 6 | 180 | 0 | 1 | non |
-| `blood_surge` | Sang | Instant | 8 | 200 | 2 | 2 | non |
-| `blood_lance` | Sang | Projectile | 16 | 80 | 2 | 2 | **oui** |
-| `time_haste` | Chronos | Instant | 12 | 160 | 0 | 1 | non |
-| `time_slow` | Chronos | Projectile | 14 | 75 | 1 | 2 | **oui** |
-| `time_warp` | Chronos | Incantation | 18 | 240 | 2 | 2 | non |
-| `void_ward` | Vide | Instant | 12 | 200 | 0 | 1 | non |
-| `void_rift` | Vide | Projectile | 16 | 80 | 1 | 2 | **oui** |
-| `void_mute` | Vide | Projectile | 18 | 90 | 2 | 2 | **oui** |
+| Sort | École | Tradition | Mode | Essence | CD | Niv. | Tier | Hostile |
+|---|---|---|---|---|---|---|---|---|
+| `light_glimmer` | Aurore | — | Instant | 8 | 100 | 0 | 1 | non |
+| `light_mend` | Aurore | — | Incantation | 18 | 180 | 2 | 1 | non |
+| `earth_lift` | Roc | — | Canalisation | 16 | 120 | 1 | 1 | non |
+| `earth_brace` | Roc | — | Instant | 10 | 200 | 0 | 1 | non |
+| `nature_growth` | Roc | Sylvanie | Incantation | 14 | 200 | 0 | 1 | non |
+| `nature_harvest` | Roc | Sylvanie | Instant | 10 | 300 | 1 | 1 | non |
+| `arcane_sense` | Arcane | — | Instant | 18 | 600 | 0 | 1 | non |
+| `arcane_bolt` | Arcane | — | Projectile | 14 | 55 | 1 | 1 | **oui** |
+| `frost_preserve` | Givre | — | Instant | 12 | 240 | 0 | 1 | non |
+| `frost_shard` | Givre | — | Projectile | 15 | 65 | 1 | 1 | **oui** |
+| `frost_prison` | Givre | — | Incantation | 26 | 600 | 3 | 2 | **oui** |
+| `ember_torch` | Braises | — | Projectile | 10 | 90 | 0 | 1 | non |
+| `ember_flare` | Braises | — | Incantation | 22 | 140 | 2 | 2 | **oui** |
+| `storm_breeze` | Tempête | — | Instant | 10 | 160 | 0 | 1 | non |
+| `storm_gust` | Tempête | — | Instant | 14 | 100 | 1 | 1 | non |
+| `storm_spark` | Tempête | — | Projectile | 14 | 55 | 1 | 2 | **oui** |
+| `shadow_veil` | Ombre | — | Instant | 16 | 280 | 0 | 1 | non |
+| `shadow_step` | Ombre | — | Instant | 12 | 200 | 1 | 2 | non |
+| `shadow_hex` | Ombre | — | Projectile | 16 | 70 | 2 | 2 | **oui** |
+| `blood_rite` | Ombre | Sang | Instant | 6 | 180 | 0 | 1 | non |
+| `blood_surge` | Ombre | Sang | Instant | 8 | 200 | 2 | 2 | non |
+| `blood_lance` | Ombre | Sang | Projectile | 16 | 80 | 2 | 2 | **oui** |
+| `spirit_soothe` | Esprit | — | Instant | 12 | 160 | 0 | 1 | non |
+| `spirit_cleanse` | Esprit | — | Incantation | 18 | 220 | 1 | 1 | non |
+| `spirit_ward` | Esprit | — | Instant | 16 | 240 | 2 | 1 | non |
+| `void_ward` | Vide | — | Instant | 12 | 200 | 0 | 1 | non |
+| `void_rift` | Vide | — | Projectile | 16 | 80 | 1 | 2 | **oui** |
+| `void_mute` | Vide | — | Projectile | 18 | 90 | 2 | 2 | **oui** |
+| `time_haste` | Vide | Chronos | Instant | 12 | 160 | 0 | 1 | non |
+| `time_slow` | Vide | Chronos | Projectile | 14 | 75 | 1 | 2 | **oui** |
+| `time_warp` | Vide | Chronos | Incantation | 18 | 240 | 2 | 2 | non |
 
-Lecture : 11 sorts hostiles sur 31. Le catalogue reste majoritairement
-utilitaire, conformément au §1.
+Lecture : 10 sorts hostiles sur 31, soit moins d'un tiers. Le catalogue reste
+majoritairement utilitaire, conformément au §1.
 
 ---
 
@@ -402,6 +428,13 @@ n'est envoyée par le réseau.
 **Les modèles** sont des `.bbmodel` chargés et animés par le client. Leur
 fabrication est décrite dans
 [`magie/conception/bbmodel_attaque.md`](magie/conception/bbmodel_attaque.md).
+
+**Grain et modèles ne viennent pas de la même source.** Les particules d'un
+sort — sprites, gravité, densité de runes, hauteur du son — suivent sa
+**tradition** ; ses modèles et sa voix suivent son **école**. Pour la plupart
+des sorts les deux coïncident. Pour les huit sorts regroupés (§16), c'est ce
+qui leur laisse leur identité d'origine tout en les intégrant visuellement à
+leur nouvelle école.
 
 ---
 
@@ -490,64 +523,96 @@ dépenser d'Essence : c'est l'outil de travail des VFX.
 
 ---
 
-## 16. Proposition — réalignement du catalogue sur les VFX
+## 16. Regroupement des écoles
 
-**Constat.** Sur les douze écoles, **huit disposent aujourd'hui de VFX
-dédiés** : Braises, Givre, Tempête, Roc, Aurore, Ombre, Vide, Esprit. Les
-quatre autres — Sylvanie, Arcane, Sang, Chronos — retombent sur la présentation
-générique. Elles sont jouables, mais elles ne sont pas *reconnaissables* : rien
-à l'écran ne distingue une Lance de Sang d'un Éclair d'Arcane.
+**Appliqué.** Cette section décrit une décision déjà en vigueur dans le code et
+dans les données.
 
-C'est un vrai problème d'identité, et il ne se règle pas en produisant douze
-jeux de VFX : le lot d'assets disponible n'en couvre pas autant, et une école
-qui n'a rien à montrer n'a probablement pas assez à dire.
+### 16.1 Le problème
 
-### 16.1 Option retenue — regrouper sans rien supprimer
+Sur les douze écoles d'origine, **huit seulement disposaient de VFX dédiés** :
+Braises, Givre, Tempête, Roc, Aurore, Ombre, Vide, Esprit. Les quatre autres —
+Sylvanie, Arcane, Sang, Chronos — retombaient sur la présentation générique.
+Elles étaient jouables mais pas *reconnaissables* : rien à l'écran ne
+distinguait une Lance de Sang d'un Éclair d'Arcane.
 
-Ramener le système à **neuf écoles**, en réaffectant les sorts orphelins plutôt
-qu'en les supprimant :
+Ce n'est pas un problème qui se règle en produisant douze jeux de VFX. Le lot
+d'assets disponible n'en couvre pas autant, et une école qui n'a rien à montrer
+n'a probablement pas assez à dire.
 
-| École dissoute | Absorbée par | Sorts déplacés | Cohérence |
+### 16.2 Ce qui a été fait
+
+Trois écoles ont été regroupées avec celle dont elles partageaient le rôle :
+
+| École dissoute | Absorbée par | Sorts déplacés | Pourquoi |
 |---|---|---|---|
-| Sylvanie | **Roc** (« Roc & Sylve ») | `nature_growth`, `nature_harvest` | Les deux écoles agissent sur le terrain et la récolte ; les VFX de Roc (pointe, vague, anneau) portent aussi bien la pousse |
-| Sang | **Ombre** | `blood_rite`, `blood_surge`, `blood_lance` | Le sacrifice est une facette de l'Ombre ; l'impact critique teinté de rouge suffit à le distinguer |
-| Chronos | **Vide** (« Faille ») | `time_haste`, `time_slow`, `time_warp` | Distorsion du temps et de l'espace : même famille, mêmes VFX de faille |
+| Sylvanie | **Roc** | `nature_growth`, `nature_harvest` | Terrain et récolte relèvent du même rapport à la terre ; les VFX de Roc — pointe, vague, anneau — portent aussi bien la pousse |
+| Sang | **Ombre** | `blood_rite`, `blood_surge`, `blood_lance` | Payer de sa personne est une facette de l'Ombre ; l'impact critique teinté de rouge suffit à distinguer les deux |
+| Chronos | **Vide** | `time_haste`, `time_slow`, `time_warp` | Déformer le temps et déformer l'espace sont le même geste |
 
-Arcane est **conservée** : son identité visuelle est précisément le cercle
+Arcane a été **conservée** : son identité visuelle est précisément le cercle
 d'incantation nu — c'est d'ailleurs de ses modèles que viennent les sceaux du
-runtime. Elle devient l'école « pure magie », sans élément.
+runtime. Elle est l'école « pure magie », sans élément.
 
-**Résultat : 9 écoles, 31 sorts, aucun contenu perdu.** Chaque école a alors
-une présentation dédiée et un rôle distinct.
+**Résultat : 9 écoles, 31 sorts, aucun contenu perdu.** Aucun sort n'a été
+supprimé ; les huit sorts concernés ont changé d'école en gardant leur
+identifiant, leur nom, leurs effets, leur coût et leur présentation.
 
-### 16.2 Ce que cela coûte
+### 16.3 La tradition
 
-- **Migration de progression.** L'XP et les niveaux sont stockés par école. Il
-  faut décider du report : la piste raisonnable est de créditer l'école
-  d'accueil du **maximum** des deux niveaux, jamais de leur somme — sinon la
-  fusion offre gratuitement un niveau élevé.
-- **Sorts appris.** Aucun impact : ils sont identifiés par leur id, qui ne
-  change pas.
-- **Baguettes d'affinité.** Les affinités `NATURE`, `BLOOD`, `TIME` doivent
-  être repointées vers l'école d'accueil, sans changer les objets déjà en main
-  des joueurs.
-- **Équilibrage.** Les seuils « V2 » (cooldown 70, dégâts 5.0) suivent les
-  sorts déplacés, pas leur nouvelle école : `blood_lance` reste contraint comme
-  aujourd'hui.
+L'école d'origine d'un sort survit sous le nom de **tradition** (§5.2). C'est
+la pièce qui rend le regroupement indolore, et elle sert trois choses :
 
-### 16.3 Option écartée
+1. **Le grain visuel.** Les particules d'un sort suivent sa tradition, ses
+   modèles suivent son école. Une Lance de Sang se joue avec les modèles de
+   l'Ombre — impact critique, chaînes, voile — et garde ses braises rouges.
+   Sans cette séparation, huit sorts auraient perdu leur identité à l'écran.
+2. **L'équilibrage.** Les seuils « V2 » (cooldown ≥ 70, dégâts ≤ 5.0) suivent
+   la tradition. `blood_lance` appartient à l'Ombre et reste contraint comme un
+   sort de Sang : changer d'école ne relâche aucun plafond.
+3. **La lisibilité.** Le Grimoire affiche « Ombre (Sang) » sur les sorts
+   concernés, et le wiki en jeu garde une page par tradition. Un joueur qui
+   cherche « Sang » trouve où sont passés ses sorts au lieu de les croire
+   supprimés.
 
-Réduire à **huit écoles et vingt-quatre sorts** en supprimant purement et
-simplement les sorts orphelins donnerait un catalogue plus serré, mais
-retirerait à des joueurs des sorts déjà appris et payés en XP. Le gain de
-lisibilité ne justifie pas cette perte tant que le regroupement de la §16.1
-atteint le même objectif visuel.
+### 16.4 Migration des données existantes
 
-### 16.4 Décision attendue
+**Progression.** À la relecture de chaque profil, la progression d'une école
+dissoute est reportée sur son école d'accueil, avec deux règles volontairement
+différentes :
 
-Le regroupement touche à la progression de joueurs existants : **il n'est pas
-appliqué**. Le catalogue livré reste celui de la §11, douze écoles. La §16.1
-est une proposition à arbitrer.
+| Donnée | Règle | Raison |
+|---|---|---|
+| Niveau et XP totale | **maximum** des deux | Les additionner offrirait des niveaux gratuits à qui a joué les deux écoles |
+| XP de grimoire non dépensée | **somme** | C'est une monnaie déjà gagnée par le joueur ; ne pas la reporter la détruirait |
+
+L'opération est idempotente et ne laisse aucune entrée d'école dissoute
+derrière elle.
+
+**Sorts appris.** Aucun impact : ils sont identifiés par leur identifiant, qui
+n'a pas changé.
+
+**Baguettes.** Les affinités `NATURE`, `BLOOD` et `TIME` pointent désormais
+vers l'école d'accueil. Les objets déjà en main des joueurs ne changent pas :
+ils désignent une baguette par son identifiant, pas par son affinité. Deux
+baguettes peuvent maintenant partager une affinité — elles restent des
+variantes distinctes, avec leur nom et leur apparence.
+
+**Autels.** L'Autel Nature alimente l'école Roc au lieu de Sylvanie. Aucun
+autel posé n'est affecté ; seule la destination du bonus change.
+
+**Constantes d'école.** Les trois écoles dissoutes restent déclarées dans le
+code, et le resteront : les profils persistés, les configurations existantes et
+les objets en jeu les nomment encore. Elles ne sont simplement plus *actives* —
+toute lecture les redirige vers leur école d'accueil, sans erreur.
+
+### 16.5 Option écartée
+
+Réduire à huit écoles et vingt-quatre sorts, en supprimant purement et
+simplement les sorts orphelins, aurait donné un catalogue plus serré. Cela
+aurait aussi retiré à des joueurs des sorts déjà appris et payés en XP. Le gain
+de lisibilité ne justifiait pas cette perte, puisque le regroupement atteint le
+même objectif visuel sans rien coûter à personne.
 
 ---
 

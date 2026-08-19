@@ -1,15 +1,21 @@
 # Roc — école `EARTH`
 
-> Le Roc protège et bâtit. Ses effets sont lourds, lents, ancrés au sol. Les particules retombent et se posent au lieu de monter.
+> Le Roc protège, bâtit et nourrit. Ses effets sont lourds, lents, ancrés au sol : les particules retombent au lieu de monter. Il a absorbé la tradition Sylvaine — cultures et récoltes relèvent du même rapport à la terre.
+
+**Traditions absorbées** : Sylvanie.
+
+Ces écoles ont été regroupées dans celle-ci (CDC Magie §16). Leurs sorts
+sont intacts : ils ont changé d'école, pas d'effet, et gardent leur grain
+visuel propre — la tradition est indiquée sur chaque fiche concernée.
 
 ## Identité visuelle
 
 | | |
 |---|---|
 | Couleur | `#C4A574` |
-| Sprite dominant | `2` |
-| Sprite d'appoint | `15` |
-| Sprite d'accent | `10` |
+| Sprite dominant | `DUST` |
+| Sprite d'appoint | `DEBRIS` |
+| Sprite d'accent | `CRACK` |
 | Mélange | alpha (absorbe la lumière) |
 | Gravité des particules | -0.02 |
 | Runes du cercle | 6 |
@@ -20,6 +26,8 @@
 
 | Sort | Mode | Essence | Niveau | Fiche |
 |---|---|---|---|---|
+| Pousse Sylvaine | Incantation | 14 | 0 | [`nature_growth`](../sorts/nature_growth.md) |
+| Moisson Sylvaine | Instant | 10 | 1 | [`nature_harvest`](../sorts/nature_harvest.md) |
 | Soulèvement de Roc | Canal | 16 | 1 | [`earth_lift`](../sorts/earth_lift.md) |
 | Ancrage de Roc | Instant | 10 | 0 | [`earth_brace`](../sorts/earth_brace.md) |
 

@@ -7,9 +7,9 @@
 | | |
 |---|---|
 | Couleur | `#B8A0FF` |
-| Sprite dominant | `1` |
-| Sprite d'appoint | `12` |
-| Sprite d'accent | `5` |
+| Sprite dominant | `SPARK` |
+| Sprite d'appoint | `FLARE` |
+| Sprite d'accent | `STAR` |
 | Mélange | additif (émet de la lumière) |
 | Gravité des particules | 0 |
 | Runes du cercle | 8 |

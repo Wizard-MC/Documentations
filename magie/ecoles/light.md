@@ -7,9 +7,9 @@
 | | |
 |---|---|
 | Couleur | `#FFE66D` |
-| Sprite dominant | `0` |
-| Sprite d'appoint | `5` |
-| Sprite d'accent | `12` |
+| Sprite dominant | `GLOW` |
+| Sprite d'appoint | `STAR` |
+| Sprite d'accent | `FLARE` |
 | Mélange | additif (émet de la lumière) |
 | Gravité des particules | 0 |
 | Runes du cercle | 8 |

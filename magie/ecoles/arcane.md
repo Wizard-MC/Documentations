@@ -7,9 +7,9 @@
 | | |
 |---|---|
 | Couleur | `#D4A5FF` |
-| Sprite dominant | `8` |
-| Sprite d'appoint | `1` |
-| Sprite d'accent | `0` |
+| Sprite dominant | `ARCANE_DUST` |
+| Sprite d'appoint | `SPARK` |
+| Sprite d'accent | `GLOW` |
 | Mélange | additif (émet de la lumière) |
 | Gravité des particules | 0 |
 | Runes du cercle | 8 |
