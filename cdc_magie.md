@@ -168,8 +168,8 @@ donc d'en jouer les sorts, pas d'en acheter le niveau.
 
 ### 5.4 Apprentissage
 
-Douze sorts sont **appris d'office** (`autoLearn`) : `light_glimmer`,
-`nature_growth`, `arcane_sense`, `frost_preserve`, `ember_fireball`,
+Treize sorts sont **appris d'office** (`autoLearn`) : `light_glimmer`,
+`nature_growth`, `arcane_sense`, `frost_preserve`, `ember_torch`, `ember_fireball`,
 `earth_brace`, `storm_breeze`, `shadow_veil`, `spirit_soothe`, `blood_rite`,
 `time_haste`, `void_ward`. Un joueur qui reçoit sa baguette de départ a de quoi
 jouer immédiatement dans chacune des neuf écoles — trois d'entre elles en
@@ -488,6 +488,7 @@ paramétrée dans `spells.yml`.
 | Effet | Rôle |
 |---|---|
 | `damage_target` | Dégâts à la cible, plafonnés par `softCap` |
+| `light_aura` | Lanterne portée : une lueur suit le lanceur (§9.1) |
 | `cone_damage` | Dégâts dans un cône devant le lanceur |
 | `slow_target` / `potion_target` | Effet de potion sur la cible |
 | `silence_target` | Empêche la cible de lancer des sorts |
@@ -525,6 +526,62 @@ du combat :
 
 C'est le modèle à suivre pour les états futurs : **la lisibilité vient du
 client, la mécanique reste réversible côté serveur.**
+
+### 9.2 La lanterne portée
+
+`light_aura` — la Torche de Braise — suit le même principe. Une lanterne flotte
+à hauteur d'épaule du lanceur, le suit, et éclaire ce qui l'entoure.
+
+**Aucun bloc n'est posé.** Faire suivre une vraie source de lumière à un joueur
+en 1.7.10 demanderait de poser et retirer un bloc lumineux à chaque pas, avec le
+recalcul d'éclairage du chunk que cela entraîne — et un sort de confort se
+mettrait à modifier des blocs, y compris dans des claims. La lueur est **rendue
+par le client** autour du porteur, en composant un maximum avec la lumière du
+monde : elle ne peut qu'éclaircir, et n'a donc aucun effet en plein jour.
+
+**L'éclairage est visuel, et c'est à assumer.** Il ne change ni l'apparition des
+monstres, ni le niveau de lumière que d'autres mécaniques pourraient lire. Le
+joueur voit où il marche ; il n'est pas en sécurité pour autant. La version qui
+posait un bloc offrait cette sécurité — au prix de torches semées partout et
+d'un sort qui obligeait à s'arrêter.
+
+| Rang | Durée | Rayon |
+|---|---|---|
+| I | 2 min | 3,00 blocs |
+| II | 2 min 30 | 3,25 blocs |
+| III | 3 min | 3,50 blocs |
+| IV | 3 min 30 | 3,75 blocs |
+| V | 4 min | 4,00 blocs |
+
+C'est la seule amélioration de rang qui touche à l'effet lui-même plutôt qu'au
+coût et au cooldown (§6). L'exception se justifie par l'absence d'enjeu : il n'y
+a aucun dégât à faire déborder, et un sort de confort qui ne s'améliore que sur
+sa facture ne récompense pas l'investissement.
+
+Deux plafonds durs : **4 blocs** de rayon et **10 minutes** de durée. Une
+lanterne qui dure une demi-heure n'est plus un sort, c'est un réglage de
+luminosité — le joueur la lance une fois et ne la relance jamais.
+
+La durée vient du serveur, annoncée dans la phase `AURA` (§11). Le rayon ne
+transite pas par le réseau : il ne décide de rien dans le jeu, et le client le
+recalcule depuis le rang que la synchronisation du grimoire lui a déjà donné.
+Les deux formules sont donc écrites en double, chacune avec un test qui fige les
+mêmes valeurs.
+
+### 9.3 La phase `AURA`
+
+Une aura entretenue — lanterne, voile d'Ombre, anneau de Roc, feux-follets
+d'Esprit — ne peut pas être déduite de la libération du sort : celle-ci ne porte
+aucune durée, et le client refuse à juste titre de faire tourner indéfiniment un
+effet bouclé.
+
+La phase `AURA` porte cette durée. Elle a été ajoutée en fin d'énumération : un
+client antérieur ne reconnaît pas l'identifiant, ignore le bloc d'extension et
+retombe sur le FX historique `CAST` — il voit donc encore quelque chose.
+
+Les trois auras déclarées par les écoles sont restées invisibles tant que
+personne ne les annonçait. `potion_self` le fait maintenant pour la durée de son
+effet, ce qui les allume enfin.
 
 ---
 
@@ -575,6 +632,7 @@ Chaque sort a sa fiche détaillée dans [`magie/sorts/`](magie/sorts/).
 | `frost_preserve` | Givre | — | Instant | 12 | 240 | 0 | 1 | non |
 | `frost_shard` | Givre | — | Projectile | 15 | 65 | 1 | 1 | **oui** |
 | `frost_prison` | Givre | — | Incantation | 26 | 600 | 3 | 2 | **oui** |
+| `ember_torch` | Braises | — | Instantané | 10 | 120 | 0 | 1 | non |
 | `ember_fireball` | Braises | — | Projectile | 10 | 90 | 0 | 1 | **oui** |
 | `ember_flare` | Braises | — | Incantation | 22 | 140 | 2 | 2 | **oui** |
 | `storm_breeze` | Tempête | — | Instant | 10 | 160 | 0 | 1 | non |
