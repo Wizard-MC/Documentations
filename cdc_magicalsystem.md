@@ -121,6 +121,11 @@ Niveau d’école : **0–10**. Seuil de sorts typiques : 0 / 2 / 4 / 6 / 8 / 10
 | `chronoglass` | TIME | 3 | V2 |
 | `fracture_prime` | poly + soft all | 4 | Rare craft / Ère — **pas boutique puissance** |
 
+> Ce tableau est celui de la spécification d'origine, écrite avant le
+> regroupement à neuf écoles : il ne contient pas `echo_alder` (Esprit, tier 3,
+> id 684). La liste tenue à jour, avec les ids d'items et les matériaux, est
+> dans `cdc_magie.md` §6.1.
+
 - Affinité : −10 % coût Essence / −10 % CD sur l’école liée (config).  
 - Tier : débloque sorts `requiredWandTier`.  
 - Skin boutique : même stats, autre texture client.

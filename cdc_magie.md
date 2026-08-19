@@ -306,6 +306,55 @@ nom et leur apparence, pas des paliers de puissance.
 Perdre sa baguette pendant une incantation interrompt le sort
 (`InterruptReason.WAND_LOST`).
 
+### 6.1 Une baguette tient en trois dépôts
+
+Une baguette n'existe vraiment que si trois choses concordent : l'entrée de
+`wands.yml` (WizardCore), le matériau `WAND_*` du fork (WizardSpigot) et l'item
+du même id côté client (MCP), avec sa texture dans l'atlas.
+
+| Id | Baguette | Matériau |
+|---|---|---|
+| 669 | générique | `WAND` |
+| 670 | `fracture_oak` | `WAND_FRACTURE_OAK` |
+| 671 | `ember_ash` | `WAND_EMBER_ASH` |
+| 672 | `frost_pine` | `WAND_FROST_PINE` |
+| 673 | `grove_willow` | `WAND_GROVE_WILLOW` |
+| 674 | `stonebinder` | `WAND_STONEBINDER` |
+| 675 | `arcane_crystal` | `WAND_ARCANE_CRYSTAL` |
+| 676 | `aurora_birch` | `WAND_AURORA_BIRCH` |
+| 677 | `stormglass` | `WAND_STORMGLASS` |
+| 678 | `shadowthorn` | `WAND_SHADOWTHORN` |
+| 679 | `fracture_prime` | `WAND_FRACTURE_PRIME` |
+| 680 | `bloodiron` | `WAND_BLOODIRON` |
+| 681 | `chronoglass` | `WAND_CHRONOGLASS` |
+| 684 | `echo_alder` | `WAND_ECHO_ALDER` |
+
+L'Aulne d'Écho saute à 684 parce que 682 et 683 portent déjà le butin du
+Dragonnet de Braise (`ember_scale`, `ember_heart`).
+
+**Le mode de panne est silencieux, et c'est ce qui le rend coûteux.** Si le
+matériau manque au serveur, `WandItems` retombe sur la baguette générique : le
+joueur reçoit un objet sans affinité et aucune erreur n'apparaît. Si la texture
+manque au client, l'item s'affiche en damier violet. Fer-Sang et Verre-Chronos
+ont vécu ainsi plusieurs versions.
+
+Trois garde-fous ferment maintenant la chaîne :
+
+- au démarrage de WizardCore, un avertissement nomme les matériaux `WAND_*`
+  absents du serveur et rappelle qu'il faut reconstruire WizardSpigot ;
+- `/magicqa` reprend le même contrôle (Q-07b) pour un serveur déjà lancé ;
+- côté MCP, `WandAssetsTest` échoue si une baguette n'apparaît pas dans les cinq
+  endroits qu'elle doit occuper — registre d'items, `Items`, atlas, langue et
+  mapping id → texture.
+
+Les textures de Fer-Sang, Verre-Chronos et Aulne d'Écho viennent de l'art
+dessiné du dépôt ASSETS ; les dix autres restent l'art procédural d'origine.
+Le choix est fait sur la couleur de l'embout, pour que deux baguettes ne se
+ressemblent pas dans une barre d'inventaire — d'où le refus de `frost_wand`,
+`life_wand` et `ember_wand`, dont la teinte est déjà celle de Pin-Givre,
+Saule-Bosquet et Cendre-Braise. Le report est scripté
+(`tools/import_wand_textures.py`).
+
 ---
 
 ## 7. Modes de lancement
