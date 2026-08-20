@@ -37,7 +37,7 @@ serveur. Voir [la conception des attaques](../conception/vfx_attaques.md).
 
 | Étape | Phase serveur | Modèle | Animation | Durée | Ancre | Orientation | Taille |
 |---|---|---|---|---|---|---|---|
-| Cercle d'incantation | `CAST_START` / `CAST_STATE` | `incantation_circle.bbmodel` | `animation` | 1.5 s (bouclé) | WAND | FACE_CAST | 2 bloc(s) |
+| Cercle d'incantation | `CAST_START` / `CAST_STATE` | `incantation_circle.bbmodel` | `animation` | 1.5 s (étirée sur l'incantation) | WAND | FACE_CAST | 2 bloc(s) |
 | Impact | `IMPACT` | `earth_spike.bbmodel` | `emerge` | 1.5 s | TARGET | WORLD | 2.2 bloc(s) |
 | Aura | `CAST_START` | `earth_ring.bbmodel` | `loop` | 3.2 s (bouclé) | CASTER_FEET | ENTITY_YAW | 2.8 bloc(s) |
 

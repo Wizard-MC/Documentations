@@ -1,6 +1,6 @@
 # Torche de Braise — `ember_torch`
 
-> Projectile plaçant une lumière / petit feu contrôlé.
+> Une lanterne de braise flotte à vos côtés et éclaire vos pas.
 
 *Fiche générée par `MagicDocGenerator` depuis le catalogue et le profil VFX.*
 *Les paramètres d'effet — dégâts, durées, rayons — ne sont pas recopiés ici :*
@@ -12,9 +12,9 @@
 |---|---|
 | École | **Braises** (`FIRE`) |
 | Incantation | *Ignis fax* |
-| Mode | Projectile |
-| Couleur | `#FF6A3D` |
-| Animation de baguette | `wand_thrust` |
+| Mode | Instantané |
+| Couleur | `#FFB347` |
+| Animation de baguette | `wand_raise` |
 | Famille d'impact | `flame` |
 
 ## Gameplay
@@ -28,7 +28,7 @@
 
 ## Intention
 
-Projectile utilitaire qui pose une lumière. Le premier sort de Braises, pensé pour l'exploration avant le combat.
+Une lanterne de braise flotte à hauteur d'épaule et suit le mage. Elle éclaire trois à quatre blocs autour de lui — assez pour marcher, pas assez pour transformer la nuit en jour. Elle posait autrefois un bloc de lumière, ce qui obligeait à s'arrêter et laissait des torches partout ; portée, elle devient le sort qu'on garde allumé en explorant. Un rang la fait durer plus longtemps et porter un peu plus loin.
 
 ## Étapes VFX
 
@@ -37,10 +37,9 @@ serveur. Voir [la conception des attaques](../conception/vfx_attaques.md).
 
 | Étape | Phase serveur | Modèle | Animation | Durée | Ancre | Orientation | Taille |
 |---|---|---|---|---|---|---|---|
-| Cercle d'incantation | `CAST_START` / `CAST_STATE` | `incantation_circle.bbmodel` | `animation` | 1.5 s (bouclé) | WAND | FACE_CAST | 2 bloc(s) |
-| Projectile | `PROJECTILE` | `projectile_fireball.bbmodel` | `animation` | 0.25 s (bouclé) | ORIGIN | TOWARD_TARGET | 0.9 bloc(s) |
+| Cercle d'incantation | `CAST_START` / `CAST_STATE` | `incantation_circle.bbmodel` | `animation` | 1.5 s (étirée sur l'incantation) | WAND | FACE_CAST | 2 bloc(s) |
 | Impact | `IMPACT` | `impact_burst.bbmodel` | `animation` | 0.75 s | TARGET | WORLD | 3 bloc(s) |
-| Aura | `CAST_START` | `fire_ground_crack.bbmodel` | `spawn` | 3 s | TARGET | WORLD | 4 bloc(s) |
+| Aura | `CAST_START` | `carried_lantern.bbmodel` | `idle` | 4 s (bouclé) | CASTER_FEET | ENTITY_YAW | 0.7 bloc(s) |
 
 Les étapes absentes de ce tableau ne sont pas jouées pour ce sort.
 
@@ -52,10 +51,10 @@ transmise par le serveur : tous les clients voient la même chose.
 
 | | |
 |---|---|
-| Runes | 3 (RANDOM) |
-| Rayon du cercle | 0.55 bloc(s) |
+| Runes | 3 (SIMULTANEOUS) |
+| Rayon du cercle | 0.62 bloc(s) |
 | Orientation | WAND_FACING |
-| Distance de rendu | 96 blocs |
+| Distance de rendu | 72 blocs |
 
 ## Audio
 
@@ -63,7 +62,7 @@ transmise par le serveur : tous les clients voient la même chose.
 |---|---|---|
 | Début d'incantation | `wizardmc.magic.cast_start` | `random.orb` |
 | Voix d'incantation | `wizardmc.magic.voice.fire_1..3` | *(aucun)* |
-| Départ du projectile | `wizardmc.magic.projectile_launch` | `random.bow` |
+| Libération | `wizardmc.magic.release` | `random.bow` |
 | Impact | `wizardmc.magic.impact_flame` | `fire.ignite` |
 | Interruption | `wizardmc.magic.interrupt` | `random.break` |
 

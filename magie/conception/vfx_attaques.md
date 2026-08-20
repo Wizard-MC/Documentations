@@ -42,7 +42,7 @@ CastService                    MagicVFXRuntime
 | **Attaque** | `IMPACT` | Le corps de l'effet, **au point touché** | gerbe de pics de givre, vague de roche |
 | **Impact** | `IMPACT` | L'éclat bref, par-dessus l'attaque | explosion, flash |
 | **Effet sur la cible** | `IMPACT` + entité ciblée | Ce qui reste sur la victime | gangue de glace, chaînes |
-| **Aura** | `RELEASE` | Ce qui reste sur le lanceur | anneau de pierre, voile d'ombre |
+| **Aura** | `AURA` | Ce qui reste sur le lanceur | lanterne portée, anneau de pierre, voile d'ombre |
 
 Une étape absente n'est pas jouée : un sort n'a pas besoin des huit.
 
@@ -65,7 +65,28 @@ La règle est maintenant explicite, et vérifiée par
 Si un modèle montre ce que le sort *fait*, il va dans l'attaque. S'il montre ce
 que le lanceur *prépare*, il va dans la concentration.
 
-### Une étape déclarée doit être jouée
+### Bouclée, étirée, ou jouée une fois
+
+Trois façons de dérouler une animation, et une seule est juste pour chaque
+étape :
+
+| Mode | Ce que ça fait | Pour quoi |
+|---|---|---|
+| **une fois** (défaut) | l'animation joue sa longueur puis tient sa dernière pose | impacts, attaques |
+| `loop(true)` | l'animation repart au début tant que l'étape dure | sceaux au sol, auras, projectiles en vol |
+| `stretch(true)` | l'animation est ramenée à la durée annoncée par le serveur | cercle d'incantation |
+
+Le cercle d'incantation était bouclé. Sur une incantation de cinq secondes, son
+animation d'une seconde et demie se redessinait trois fois et demie : le joueur
+voyait un motif tourner, pas un sort se préparer, et rien n'indiquait le moment
+où il allait partir. Étiré, il se trace une seule fois, du premier trait au
+sceau achevé, quelle que soit la durée du cast.
+
+Les deux modes s'excluent : `stretch(true)` annule `loop(true)`. Sans durée
+annoncée par le serveur, l'étirement n'a pas de cible et le clip retombe sur sa
+longueur naturelle.
+
+### Une étape déclarée doit être jouée — et annoncée
 
 Un emplacement rempli dans le catalogue mais qu'aucune phase ne dépêche ne
 produit rien, et ne lève aucune erreur. L'aura a vécu ainsi plusieurs versions :
@@ -73,6 +94,30 @@ Voile d'Ombre, anneau de Roc et feux-follets d'Esprit étaient chargés au
 démarrage et n'apparaissaient jamais.
 `VfxModelCatalogTest.testEveryStageIsPlayedByTheRuntime` relit la source du
 runtime et échoue si un emplacement cesse d'y être dépêché.
+
+Être dépêché ne suffit pourtant pas. Une aura bouclée n'est jouée que si le
+serveur **annonce sa durée**, sans quoi le runtime la refuse — et il a raison,
+un effet bouclé sans fin connue tourne pour toujours. La libération d'un sort ne
+porte aucune durée ; c'est la phase `AURA` qui la porte. Une école peut donc
+déclarer une aura parfaite et ne rien voir tant que la mécanique ne l'annonce
+pas.
+
+### La lueur portée
+
+La lanterne de la Torche de Braise ajoute une chose qu'aucune autre étape ne
+fait : elle **éclaire**. La lumière n'est pas un modèle, elle est composée dans
+`getLightBrightnessForSkyBlocks`, le point par lequel passe toute la luminosité
+du monde — terrain comme entités.
+
+Deux détails valent d'être connus avant d'en ajouter une deuxième :
+
+- la lumière du **terrain** est cuite dans les listes d'affichage d'un chunk. Il
+  faut redemander le rendu de la zone quand le porteur change de bloc, sinon la
+  lueur n'apparaît qu'au prochain rafraîchissement, c'est-à-dire presque jamais.
+  Les entités, elles, lisent la luminosité à chaque image ;
+- seul le **joueur local** est éclairé. La lanterne d'un autre joueur reste
+  visible comme modèle, mais n'éclaire pas notre écran : la lumière est un
+  confort de jeu, pas une information partagée.
 
 ### Étape entretenue ou ponctuelle
 

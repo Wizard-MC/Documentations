@@ -1,34 +1,34 @@
-# Préserve de Givre — `frost_preserve`
+# Boule de Feu — `ember_fireball`
 
-> Zone de conservation (fonte / feu).
+> Projectile de braise qui explose au contact.
 
 *Fiche générée par `MagicDocGenerator` depuis le catalogue et le profil VFX.*
 *Les paramètres d'effet — dégâts, durées, rayons — ne sont pas recopiés ici :*
-*ils font foi dans `WizardCore/src/main/resources/spells.yml`, entrée `frost_preserve`.*
+*ils font foi dans `WizardCore/src/main/resources/spells.yml`, entrée `ember_fireball`.*
 
 ## Identité
 
 | | |
 |---|---|
-| École | **Givre** (`FROST`) |
-| Incantation | *Glacies serva* |
-| Mode | Instant |
-| Couleur | `#7EC8FF` |
+| École | **Braises** (`FIRE`) |
+| Incantation | *Ignis sphaera* |
+| Mode | Projectile |
+| Couleur | `#FF6A3D` |
 | Animation de baguette | `wand_thrust` |
-| Famille d'impact | `ice` |
+| Famille d'impact | `flame` |
 
 ## Gameplay
 
 | | |
 |---|---|
-| Coût en Essence | 12 |
+| Coût en Essence | 10 |
 | Niveau d'école requis | 0 |
 | Tier de baguette | 1 |
 | Appris d'office | oui |
 
 ## Intention
 
-Zone qui étouffe le feu et la fonte. Sort de logistique et de défense de base, jamais offensif.
+Le premier sort offensif d'un apprenti : une bille de braise qui part droit devant et éclate au contact. Il posait auparavant une torche, ce qui faisait de la première école de combat un outil d'éclairage. Ses dégâts restent modestes — c'est un sort de niveau 0 — mais il apprend à viser.
 
 ## Étapes VFX
 
@@ -38,8 +38,9 @@ serveur. Voir [la conception des attaques](../conception/vfx_attaques.md).
 | Étape | Phase serveur | Modèle | Animation | Durée | Ancre | Orientation | Taille |
 |---|---|---|---|---|---|---|---|
 | Cercle d'incantation | `CAST_START` / `CAST_STATE` | `incantation_circle.bbmodel` | `animation` | 1.5 s (étirée sur l'incantation) | WAND | FACE_CAST | 2 bloc(s) |
-| Impact | `IMPACT` | `impact_generic.bbmodel` | `animation` | 0.45 s | TARGET | TOWARD_TARGET | 1.8 bloc(s) |
-| Effet sur la cible | `IMPACT` + entité ciblée | `frost_prison_cage.bbmodel` | `crystal_the_enemy` | 0.15 s (bouclé) | TARGET_ENTITY | WORLD | 1.9 bloc(s) |
+| Projectile | `PROJECTILE` | `projectile_fireball.bbmodel` | `animation` | 0.25 s (bouclé) | ORIGIN | TOWARD_TARGET | 0.9 bloc(s) |
+| Impact | `IMPACT` | `impact_burst.bbmodel` | `animation` | 0.75 s | TARGET | WORLD | 3 bloc(s) |
+| Aura | `CAST_START` | `carried_lantern.bbmodel` | `idle` | 4 s (bouclé) | CASTER_FEET | ENTITY_YAW | 0.7 bloc(s) |
 
 Les étapes absentes de ce tableau ne sont pas jouées pour ce sort.
 
@@ -51,26 +52,26 @@ transmise par le serveur : tous les clients voient la même chose.
 
 | | |
 |---|---|
-| Runes | 3 (SIMULTANEOUS) |
-| Rayon du cercle | 0.62 bloc(s) |
+| Runes | 3 (RANDOM) |
+| Rayon du cercle | 0.55 bloc(s) |
 | Orientation | WAND_FACING |
-| Distance de rendu | 72 blocs |
+| Distance de rendu | 96 blocs |
 
 ## Audio
 
 | Moment | Son | Repli si l'asset manque |
 |---|---|---|
 | Début d'incantation | `wizardmc.magic.cast_start` | `random.orb` |
-| Voix d'incantation | `wizardmc.magic.voice.frost_1..3` | *(aucun)* |
-| Libération | `wizardmc.magic.release` | `random.bow` |
-| Impact | `wizardmc.magic.impact_ice` | `random.glass` |
+| Voix d'incantation | `wizardmc.magic.voice.fire_1..3` | *(aucun)* |
+| Départ du projectile | `wizardmc.magic.projectile_launch` | `random.bow` |
+| Impact | `wizardmc.magic.impact_flame` | `fire.ignite` |
 | Interruption | `wizardmc.magic.interrupt` | `random.break` |
 
 ## Essai en jeu
 
 ```text
-/magicvfx test frost_preserve cast_start
-/magicvfx test frost_preserve impact
+/magicvfx test ember_fireball cast_start
+/magicvfx test ember_fireball impact
 ```
 
 Ces commandes rejouent la présentation localement, sans lancer le sort ni

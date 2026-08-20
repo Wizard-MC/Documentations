@@ -25,4 +25,4 @@
 
 ## Modèles VFX
 
-Cette école n'a pas encore de modèle dédié : elle utilise le jeu générique (cercle arcanique, orbe d'énergie teinté, impact standard). Voir [la conception des attaques](../conception/vfx_attaques.md) pour en ajouter.
+Cette école dispose de modèles dédiés — voir les fiches de ses sorts.

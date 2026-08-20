@@ -28,7 +28,7 @@ filiation est conservée sous le nom de *tradition*.
 | **Roc** | 4 | Sylvanie | [`earth`](ecoles/earth.md) |
 | **Arcane** | 2 | — | [`arcane`](ecoles/arcane.md) |
 | **Givre** | 3 | — | [`frost`](ecoles/frost.md) |
-| **Braises** | 2 | — | [`fire`](ecoles/fire.md) |
+| **Braises** | 3 | — | [`fire`](ecoles/fire.md) |
 | **Tempête** | 3 | — | [`storm`](ecoles/storm.md) |
 | **Ombre** | 6 | Sang | [`shadow`](ecoles/shadow.md) |
 | **Esprit** | 3 | — | [`spirit`](ecoles/spirit.md) |
@@ -60,7 +60,8 @@ fiches disent où ils sont passés et ce qu'ils ont gardé.
 | Préserve de Givre | Givre | — | Instant | [`frost_preserve`](sorts/frost_preserve.md) |
 | Éclat de Givre | Givre | — | Projectile | [`frost_shard`](sorts/frost_shard.md) |
 | Geôle de Givre | Givre | — | Incantation | [`frost_prison`](sorts/frost_prison.md) |
-| Torche de Braise | Braises | — | Projectile | [`ember_torch`](sorts/ember_torch.md) |
+| Torche de Braise | Braises | — | Instantané | [`ember_torch`](sorts/ember_torch.md) |
+| Boule de Feu | Braises | — | Projectile | [`ember_fireball`](sorts/ember_fireball.md) |
 | Embrasement | Braises | — | Incantation | [`ember_flare`](sorts/ember_flare.md) |
 | Brise de Tempête | Tempête | — | Instant | [`storm_breeze`](sorts/storm_breeze.md) |
 | Rafale | Tempête | — | Instant | [`storm_gust`](sorts/storm_gust.md) |

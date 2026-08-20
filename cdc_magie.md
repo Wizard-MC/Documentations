@@ -168,8 +168,8 @@ donc d'en jouer les sorts, pas d'en acheter le niveau.
 
 ### 5.4 Apprentissage
 
-Douze sorts sont **appris d'office** (`autoLearn`) : `light_glimmer`,
-`nature_growth`, `arcane_sense`, `frost_preserve`, `ember_torch`,
+Treize sorts sont **appris d'office** (`autoLearn`) : `light_glimmer`,
+`nature_growth`, `arcane_sense`, `frost_preserve`, `ember_torch`, `ember_fireball`,
 `earth_brace`, `storm_breeze`, `shadow_veil`, `spirit_soothe`, `blood_rite`,
 `time_haste`, `void_ward`. Un joueur qui reçoit sa baguette de départ a de quoi
 jouer immédiatement dans chacune des neuf écoles — trois d'entre elles en
@@ -381,33 +381,58 @@ Saule-Bosquet et Cendre-Braise. Le report est scripté
 À tout moment entre 4 et 6, une interruption coupe la séquence : phase
 `INTERRUPT` ou `CANCEL`, cercle brisé côté client, 50 % de l'Essence rendue.
 
-### 7.2 L'amorce d'incantation
+### 7.2 L'incantation
 
-Un sort a **deux phases distinctes** : on l'incante, puis on le lâche. Pour
-`CAST_TIME` et `CHANNEL`, la première dure le temps déclaré par le sort. Pour
-`INSTANT` et `PROJECTILE`, elle ne durait rien : le serveur envoyait
-`CAST_START` puis `RELEASE` dans le même tick, si bien que le client ouvrait son
-cercle d'incantation et le refermait dans la même image. Le cercle ne manquait
-pas — il ne durait pas.
+**Tout sort s'incante.** C'est la fenêtre pendant laquelle le cercle se trace
+devant le lanceur, et pendant laquelle un adversaire peut réagir : se mettre à
+couvert, sortir de la ligne de visée, ou frapper pour interrompre. Sans elle, la
+magie redevient un clic droit et le combat magique n'a plus de contre-jeu.
 
-Ces deux modes passent donc par une **amorce** de `cast.windupTicks`
-(8 ticks, 0,4 s par défaut), pendant laquelle le cercle s'inscrit et le son de
-lancement se joue. Elle emprunte la machinerie des casts chronométrés, et hérite
-donc de tout ce qui va avec : interruption, remboursement partiel, barre de
-progression chez les témoins.
+Les sorts `INSTANT` et `PROJECTILE` partaient jusqu'ici dans le tick même du
+clic — le serveur envoyait `CAST_START` puis `RELEASE` dans la même image, et le
+client refermait son cercle avant de l'avoir dessiné. Le cercle ne manquait pas :
+il ne durait pas.
 
-Trois bornes l'encadrent :
+**Base : `cast.incantationTicks`, 100 ticks (5 s).** Un sort qui déclare un
+`castTicks` plus long garde le sien — c'est une intention d'équilibrage écrite
+sort par sort, pas un défaut à écraser. L'incantation emprunte la machinerie des
+casts chronométrés, et hérite donc de l'interruption, du remboursement partiel et
+de la barre de progression chez les témoins.
 
-- **plafond dur à 20 ticks.** Au-delà ce n'est plus une amorce mais un temps de
-  cast, et celui-là se déclare sort par sort dans `spells.yml` ;
-- **jamais plus longue que le GCD**, sinon la cadence de jeu changerait et pas
-  seulement l'habillage ;
-- **`0` rétablit le comportement d'origine**, pour un serveur qui préférerait la
-  réactivité brute.
+#### Ce qui la raccourcit
 
-Conséquence à assumer : un sort instantané devient interruptible pendant son
-amorce, s'il se déclare `interruptible`. C'est cohérent avec le reste du
-système — une incantation, même courte, est une prise de risque.
+L'incantation est le premier endroit où la maîtrise se voit. Deux leviers,
+cumulatifs, tous deux gagnés en jouant :
+
+| Levier | Pas | Au maximum |
+|---|---|---|
+| Niveau d'école | −4 % par niveau | −40 % au niveau 10 |
+| Rang du sort | −5 % par rang au-delà du premier | −20 % au rang V |
+
+Les deux se composent multiplicativement. Un débutant met **5 s** à préparer ce
+qu'un mage de niveau 10 lance en **3 s**, et qu'un mage de niveau 10 au rang V
+lance en **2,4 s**. L'écart se sent sans être écrasant, et il ne s'achète pas :
+le niveau vient de l'usage, le rang de l'XP d'école (MG-12 / MG-13).
+
+#### Le plancher
+
+Une incantation ne descend **jamais sous 20 ticks (1 s)**, quel que soit le
+niveau, le rang, ou le réglage du serveur. Le cercle doit rester assez long pour
+être lu : le rendre imperceptible par la progression reviendrait à supprimer la
+fenêtre de contre-jeu, exactement ce que le plafond de dégâts interdit ailleurs.
+
+Le réglage lui-même est borné à 200 ticks — au-delà, plus personne ne lance de
+sort.
+
+#### Conséquences à assumer
+
+- Un sort instantané devient **interruptible pendant son incantation**, s'il se
+  déclare `interruptible`. C'est cohérent avec le reste du système.
+- Son **cooldown n'est armé qu'à la libération**, comme pour les sorts à
+  incantation, et non plus au clic. Une incantation interrompue ne consomme donc
+  pas le cooldown ; l'Essence, elle, est remboursée à 50 %.
+- Deux sorts ne peuvent pas se chevaucher : le garde `ALREADY_CASTING` couvre
+  désormais aussi les modes instantanés.
 
 ### 7.3 Interruption
 
@@ -463,6 +488,7 @@ paramétrée dans `spells.yml`.
 | Effet | Rôle |
 |---|---|
 | `damage_target` | Dégâts à la cible, plafonnés par `softCap` |
+| `light_aura` | Lanterne portée : une lueur suit le lanceur (§9.1) |
 | `cone_damage` | Dégâts dans un cône devant le lanceur |
 | `slow_target` / `potion_target` | Effet de potion sur la cible |
 | `silence_target` | Empêche la cible de lancer des sorts |
@@ -500,6 +526,62 @@ du combat :
 
 C'est le modèle à suivre pour les états futurs : **la lisibilité vient du
 client, la mécanique reste réversible côté serveur.**
+
+### 9.2 La lanterne portée
+
+`light_aura` — la Torche de Braise — suit le même principe. Une lanterne flotte
+à hauteur d'épaule du lanceur, le suit, et éclaire ce qui l'entoure.
+
+**Aucun bloc n'est posé.** Faire suivre une vraie source de lumière à un joueur
+en 1.7.10 demanderait de poser et retirer un bloc lumineux à chaque pas, avec le
+recalcul d'éclairage du chunk que cela entraîne — et un sort de confort se
+mettrait à modifier des blocs, y compris dans des claims. La lueur est **rendue
+par le client** autour du porteur, en composant un maximum avec la lumière du
+monde : elle ne peut qu'éclaircir, et n'a donc aucun effet en plein jour.
+
+**L'éclairage est visuel, et c'est à assumer.** Il ne change ni l'apparition des
+monstres, ni le niveau de lumière que d'autres mécaniques pourraient lire. Le
+joueur voit où il marche ; il n'est pas en sécurité pour autant. La version qui
+posait un bloc offrait cette sécurité — au prix de torches semées partout et
+d'un sort qui obligeait à s'arrêter.
+
+| Rang | Durée | Rayon |
+|---|---|---|
+| I | 2 min | 3,00 blocs |
+| II | 2 min 30 | 3,25 blocs |
+| III | 3 min | 3,50 blocs |
+| IV | 3 min 30 | 3,75 blocs |
+| V | 4 min | 4,00 blocs |
+
+C'est la seule amélioration de rang qui touche à l'effet lui-même plutôt qu'au
+coût et au cooldown (§6). L'exception se justifie par l'absence d'enjeu : il n'y
+a aucun dégât à faire déborder, et un sort de confort qui ne s'améliore que sur
+sa facture ne récompense pas l'investissement.
+
+Deux plafonds durs : **4 blocs** de rayon et **10 minutes** de durée. Une
+lanterne qui dure une demi-heure n'est plus un sort, c'est un réglage de
+luminosité — le joueur la lance une fois et ne la relance jamais.
+
+La durée vient du serveur, annoncée dans la phase `AURA` (§11). Le rayon ne
+transite pas par le réseau : il ne décide de rien dans le jeu, et le client le
+recalcule depuis le rang que la synchronisation du grimoire lui a déjà donné.
+Les deux formules sont donc écrites en double, chacune avec un test qui fige les
+mêmes valeurs.
+
+### 9.3 La phase `AURA`
+
+Une aura entretenue — lanterne, voile d'Ombre, anneau de Roc, feux-follets
+d'Esprit — ne peut pas être déduite de la libération du sort : celle-ci ne porte
+aucune durée, et le client refuse à juste titre de faire tourner indéfiniment un
+effet bouclé.
+
+La phase `AURA` porte cette durée. Elle a été ajoutée en fin d'énumération : un
+client antérieur ne reconnaît pas l'identifiant, ignore le bloc d'extension et
+retombe sur le FX historique `CAST` — il voit donc encore quelque chose.
+
+Les trois auras déclarées par les écoles sont restées invisibles tant que
+personne ne les annonçait. `potion_self` le fait maintenant pour la durée de son
+effet, ce qui les allume enfin.
 
 ---
 
@@ -550,7 +632,8 @@ Chaque sort a sa fiche détaillée dans [`magie/sorts/`](magie/sorts/).
 | `frost_preserve` | Givre | — | Instant | 12 | 240 | 0 | 1 | non |
 | `frost_shard` | Givre | — | Projectile | 15 | 65 | 1 | 1 | **oui** |
 | `frost_prison` | Givre | — | Incantation | 26 | 600 | 3 | 2 | **oui** |
-| `ember_torch` | Braises | — | Projectile | 10 | 90 | 0 | 1 | non |
+| `ember_torch` | Braises | — | Instantané | 10 | 120 | 0 | 1 | non |
+| `ember_fireball` | Braises | — | Projectile | 10 | 90 | 0 | 1 | **oui** |
 | `ember_flare` | Braises | — | Incantation | 22 | 140 | 2 | 2 | **oui** |
 | `storm_breeze` | Tempête | — | Instant | 10 | 160 | 0 | 1 | non |
 | `storm_gust` | Tempête | — | Instant | 14 | 100 | 1 | 1 | non |
@@ -585,9 +668,15 @@ résumé :
 **Le cercle d'incantation** est dessiné **dans le monde, devant la baguette du
 lanceur** — jamais sur l'ATH. Tous les joueurs à portée le voient. Il se trace
 progressivement : le sceau apparaît, les runes s'inscrivent une à une, la lueur
-centrale monte. L'inscription est étirée pour se terminer aux trois quarts de
-l'incantation, quelle qu'en soit la durée : un sort de 2 s et un sort de 5 s
-ont tous deux un cercle « fini » juste avant la résolution.
+centrale monte. Le modèle du cercle **ne boucle pas, il s'étire** sur toute la
+durée du cast, et l'inscription des runes se termine juste avant le fondu de
+sortie. La lecture est donc toujours la même, qu'il s'agisse d'un sort de 2 s ou
+de 5 s : le cercle se complète, on le voit entier un court instant, puis il
+s'efface au moment même où le sort part.
+
+Joué en boucle — ce qu'il faisait auparavant — un cercle d'une seconde et demie
+se redessinait trois fois et demie sur une incantation de cinq secondes, et plus
+rien n'indiquait le moment où le sort allait partir.
 
 **Chaque sort a ses étapes** : cercle, concentration, projectile, libération,
 impact, effet sur la cible, aura. Une étape absente n'est pas jouée.
