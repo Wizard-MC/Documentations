@@ -40,7 +40,7 @@ serveur. Voir [la conception des attaques](../conception/vfx_attaques.md).
 |---|---|---|---|---|---|---|---|
 | Cercle d'incantation | `CAST_START` / `CAST_STATE` | `circle_ground.bbmodel` | `idle` | 3 s (bouclé) | CASTER_FEET | ENTITY_YAW | 3.2 bloc(s) |
 | Impact | `IMPACT` | `earth_spike.bbmodel` | `emerge` | 1.5 s | TARGET | WORLD | 2.2 bloc(s) |
-| Aura | `CAST_START` | `earth_ring.bbmodel` | `loop` | 3.2 s (bouclé) | CASTER_FEET | ENTITY_YAW | 2.8 bloc(s) |
+| Aura | `AURA` | `earth_ring.bbmodel` | `loop` | 3.2 s (bouclé) | CASTER_FEET | ENTITY_YAW | 2.8 bloc(s) |
 
 Les étapes absentes de ce tableau ne sont pas jouées pour ce sort.
 

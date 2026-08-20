@@ -42,6 +42,7 @@ serveur. Voir [la conception des attaques](../conception/vfx_attaques.md).
 | Projectile | `PROJECTILE` | `storm_orb.bbmodel` | `animation` | 0.5 s (bouclé) | ORIGIN | TOWARD_TARGET | 0.75 bloc(s) |
 | Impact | `IMPACT` | `impact_critical.bbmodel` | `animation` | 0.45 s | TARGET | TOWARD_TARGET | 2 bloc(s) |
 | Effet sur la cible | `IMPACT` + entité ciblée | `shadow_chains.bbmodel` | `slam` | 3.5 s | TARGET_ENTITY | WORLD | 3 bloc(s) |
+| Aura | `AURA` | `circle_ground_void.bbmodel` | `idle` | 3 s (bouclé) | CASTER_FEET | ENTITY_YAW | 2.6 bloc(s) |
 
 Les étapes absentes de ce tableau ne sont pas jouées pour ce sort.
 

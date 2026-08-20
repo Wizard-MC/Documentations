@@ -88,8 +88,8 @@ ce qui se passe. Aucun effet de jeu n'est déclenché par le client.
 | Paramètre | Valeur par défaut |
 |---|---|
 | Réserve de base | 100 |
-| Régénération hors combat | 4 / s |
-| Régénération en combat | 1 / s |
+| Régénération hors combat | 10 / 10 s |
+| Régénération en combat | 2 / 10 s |
 | Sortie de combat | 5 s après le dernier échange |
 | Bonus par niveau d'école (moyenne) | +2, plafonné à +40 |
 | Bonus Bibliothèque (Nexus / Coven) | +10 |
@@ -102,6 +102,60 @@ de 150 — assez pour enchaîner, jamais assez pour ne plus choisir.
 L'Essence est dépensée **au départ du cast**, pas à sa résolution : un sort
 interrompu coûte, avec remboursement partiel. C'est ce qui rend l'interruption
 intéressante à provoquer.
+
+### 4.1 Pourquoi la régénération est lente
+
+La réserve se reconstituait à quatre points par seconde : une barre pleine en
+vingt-cinq secondes. À ce rythme, l'Essence cessait d'être une ressource — on
+n'avait plus à choisir quoi lancer, il suffisait d'attendre quelques secondes.
+Une réserve de 100 demande maintenant environ **cent secondes** hors combat, et
+ne remonte pratiquement pas pendant un échange.
+
+Le rythme s'exprime **par dix secondes**, pas par seconde. Ce n'est pas une
+coquetterie : à un point par seconde on ne peut plus exprimer, avec des
+entiers, un rythme plus lent que ça — et deux points par dix secondes arrondis
+à chaque seconde donneraient zéro. Le reste est reporté d'un tick à l'autre sur
+le profil du joueur, ce qui rend n'importe quel rythme représentable.
+
+Les clés historiques `regenOutOfCombatPerSecond` et `regenInCombatPerSecond`
+restent lues et converties, avec un avertissement au démarrage.
+
+### 4.2 Fioles de régénération de Mana
+
+Puisqu'on ne récupère plus en combat, il faut pouvoir emporter sa réserve. Les
+quatre fioles se boivent — vraie animation de gorgée, trente-deux ticks — et
+posent un **vrai effet Minecraft** (`MANA_REGEN`, id 26) : entrée d'inventaire
+avec son décompte, particules, persistance à la reconnexion, annulation par le
+lait. L'amplificateur porté par le joueur est la seule source de vérité du
+palier ; rien n'est tenu en parallèle.
+
+| Palier | Gorgée | Continu | Durée | Total | Icône |
+|---|---|---|---|---|---|
+| Standard | +15 | +8 / 10 s | 45 s | +51 | Régé. Mana I |
+| Supérieure | +25 | +16 / 10 s | 60 s | +121 | Régé. Mana I |
+| Épique | +40 | +30 / 10 s | 75 s | +265 | Régé. Mana II |
+| Légendaire | +60 | +50 / 10 s | 90 s | +510 | Régé. Mana III |
+
+La part rendue **à la gorgée** existe pour que boire en plein échange serve à
+quelque chose : sans elle, le sort qui manque de dix points le manquerait encore
+pendant dix secondes. Elle reste petite devant le total continu — la fiole
+récompense l'anticipation, pas le réflexe.
+
+Chaque palier se craft **à partir du précédent**, si bien que le prix d'une
+Légendaire est récursif : elle contient une Épique, qui contient une Supérieure,
+qui contient une Standard. Les quatre grilles sont disjointes — aucune ne peut
+donner un palier pour un autre. Le réactif commun est l'**Essence Arcane**
+(item 689), qui ne se ramasse nulle part.
+
+| Palier | Grille | Ingrédients |
+|---|---|---|
+| Standard | croix | 4 Essence Arcane + 1 fiole en verre |
+| Supérieure | anneau | 4 poudres de glowstone + 4 Essence Arcane + 1 Standard |
+| Épique | colonnes | 4 Essence Arcane + 2 poudres de blaze + 2 diamants + 1 Supérieure |
+| Légendaire | sommet | 1 étoile du Nether + 2 larmes de Ghast + 3 Essence Arcane + 1 Épique |
+
+Une fiole qui n'apporterait rien — réserve pleine et effet en cours déjà
+meilleur — n'est pas consommée.
 
 ---
 
