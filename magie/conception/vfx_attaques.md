@@ -119,6 +119,54 @@ Deux détails valent d'être connus avant d'en ajouter une deuxième :
   visible comme modèle, mais n'éclaire pas notre écran : la lumière est un
   confort de jeu, pas une information partagée.
 
+### Compagne, pas décalage
+
+La lanterne était soudée au lanceur : décalage fixe, lacet du joueur. Elle
+pivotait autour du mage à chaque coup de souris et se téléportait avec lui à
+chaque pas, ce qui la faisait lire comme un élément d'interface collé à l'écran
+plutôt que comme une chose à côté de soi.
+
+Un clip marqué `companion(true)` délègue sa position à `CompanionMotion`, qui
+lui donne les trois traits d'un Allay — et aucun n'est décoratif :
+
+- **le retard** — elle va vers où vous êtes, pas où vous êtes. Elle traîne au
+  départ, vous rattrape et dépasse un peu à l'arrêt. C'est cette seule règle qui
+  donne le poids ;
+- **la dérive** — sa place autour de vous tourne lentement, elle n'occupe jamais
+  deux fois le même point ;
+- **le flottement** — elle monte et redescend, sans rapport avec ce que vous
+  faites.
+
+Sur un clip compagnon, `offset(avant, haut)` cesse de désigner un décalage
+figé : le premier terme devient le **rayon** autour du lanceur, le second sa
+**hauteur de repos**. Au-delà de douze blocs d'écart la lanterne est reposée
+plutôt que de traverser le décor pour rattraper une téléportation.
+
+La phase de dérive vient de la **graine du sort** : deux lanternes ne tournent
+pas en miroir, mais tous ceux qui regardent la même lanterne la voient au même
+endroit.
+
+### Éclore plutôt qu'apparaître
+
+`summon(ticks)` fait sortir un modèle d'un nuage de particules au lieu de le
+rendre visible d'un coup. Pendant la fenêtre déclarée, des braises convergent
+vers sa place et le modèle enfle depuis rien, avec un léger dépassement avant de
+se poser à sa taille. Ce ressort — pas une rampe — est ce qui fait lire une
+éclosion.
+
+### Un sort sur soi ne frappe rien
+
+Un sort qui se résout sur son lanceur n'a **ni attaque ni impact**. Leur donner
+l'un ou l'autre fait raconter à l'animation une détonation qui n'a pas lieu :
+c'est ce qui faisait exploser une boule de feu devant le mage quand il allumait
+sa Torche. Douze sorts sont concernés, reconnus par leur portée nulle ou d'un
+bloc.
+
+Retirer l'impact laisse cependant un trou. Sans aura, ces sorts n'auraient plus
+rien à montrer après le cercle, et le joueur ne saurait pas si le sort est parti.
+Une **aura de repli** couvre donc toute école qui n'en déclare pas ; celles qui
+en déclarent une gardent la leur.
+
 ### Étape entretenue ou ponctuelle
 
 Une étape « sur la cible » **entretenue** (`loop`) n'est jouée que si le
@@ -254,3 +302,13 @@ pas émis : deux sceaux superposés sur un même lancement seraient illisibles.
    combat massif la densité baisse ; aucun effet déjà commencé ne disparaît.
 6. **Rien d'illisible.** Un état de jeu — entrave, invulnérabilité, soin — doit
    se lire depuis l'extérieur, pas seulement chez celui qui le subit.
+7. **Un modèle se rend en mélange alpha.** Sans état de mélange, les zones
+   transparentes d'une texture se rendent opaques : le cercle d'incantation, qui
+   est un disque peint sur un plan carré, apparaissait comme un carré plein qui
+   tournait. Le mélange **additif** est réservé aux particules et aux traits
+   lumineux — un modèle porte des zones sombres qui doivent le rester.
+8. **Deux plans coplanaires scintillent.** L'import
+   (`tools/import_vfx_models.py`) les sépare d'un demi-centimètre. C'est fait à
+   l'import et non à la main pour qu'un ré-import ne réintroduise pas le défaut.
+9. **Un sort a toujours une étape finale.** Impact s'il frappe, aura s'il se
+   résout sur son lanceur. Jamais rien.

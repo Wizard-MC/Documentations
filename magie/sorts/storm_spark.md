@@ -40,6 +40,7 @@ serveur. Voir [la conception des attaques](../conception/vfx_attaques.md).
 | Cercle d'incantation | `CAST_START` / `CAST_STATE` | `incantation_circle.bbmodel` | `animation` | 1.5 s (étirée sur l'incantation) | WAND | FACE_CAST | 2 bloc(s) |
 | Projectile | `PROJECTILE` | `storm_orb.bbmodel` | `animation` | 0.5 s (bouclé) | ORIGIN | TOWARD_TARGET | 0.8 bloc(s) |
 | Impact | `IMPACT` | `storm_impact.bbmodel` | `animation` | 0.75 s | TARGET | WORLD | 3.4 bloc(s) |
+| Aura | `AURA` | `storm_orb.bbmodel` | `animation` | 0.5 s (bouclé) | CASTER_FEET | ENTITY_YAW | 1.5 bloc(s) |
 
 Les étapes absentes de ce tableau ne sont pas jouées pour ce sort.
 

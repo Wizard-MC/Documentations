@@ -38,8 +38,7 @@ serveur. Voir [la conception des attaques](../conception/vfx_attaques.md).
 | Étape | Phase serveur | Modèle | Animation | Durée | Ancre | Orientation | Taille |
 |---|---|---|---|---|---|---|---|
 | Cercle d'incantation | `CAST_START` / `CAST_STATE` | `incantation_circle.bbmodel` | `animation` | 1.5 s (étirée sur l'incantation) | WAND | FACE_CAST | 2 bloc(s) |
-| Impact | `IMPACT` | `impact_burst.bbmodel` | `animation` | 0.75 s | TARGET | WORLD | 3 bloc(s) |
-| Aura | `CAST_START` | `carried_lantern.bbmodel` | `idle` | 4 s (bouclé) | CASTER_FEET | ENTITY_YAW | 0.7 bloc(s) |
+| Aura | `AURA` | `carried_lantern.bbmodel` | `idle` | 4 s (bouclé) | CASTER_FEET | ENTITY_YAW | 0.7 bloc(s) |
 
 Les étapes absentes de ce tableau ne sont pas jouées pour ce sort.
 
