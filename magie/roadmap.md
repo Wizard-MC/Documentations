@@ -166,31 +166,53 @@ n'importe quel rythme lent sans arrondi.
 
 ---
 
-## Chantier 5 — Progression : on ne gagne jamais d'XP 🟠
+## Chantier 5 — Progression : rendre visible ce qui existe déjà 🔴
 
-**Branche : `feature/progression-xp`** · dépôts WizardCore + MCP
+**Branche : `fix/progression-visibility`** · dépôts WizardCore + MCP
 
-Le plus gros chantier de fond. Trois problèmes distincts, à ne pas confondre :
+**Il n'y a rien à concevoir.** Le CDC §5.3 à §5.5 définit déjà tout le système,
+et le code l'implémente. Vérifié :
 
-1. **on ne gagne pas d'XP** — à instrumenter avant de conclure : le barème existe
-   (`xpPerSuccessfulCast: 8`), reste à vérifier qu'il est réellement crédité ;
-2. **on ne sait pas comment en gagner** — aucune information nulle part, ni dans
-   le grimoire ni en jeu ;
-3. **on ne peut jamais améliorer** un sort ni une école — coût, condition et
-   geste d'amélioration ne sont pas exposés.
+| Règle du CDC | Où elle vit dans le code |
+|---|---|
+| 8 XP par lancement réussi | `SchoolProgressionService.grantSuccessfulCastXp` |
+| Crédit à chaque cast réussi | `CastService:135` (instantané) et `:380` (incanté) |
+| Seuils 50 · 150 · 300 … 2750 | `SchoolProgressionSettings`, repris dans `magic.yml` |
+| Bonus Bibliothèque +10 % | `applyLibraryXpBonus` |
+| Bonus Autel lié +5 %/palier | `AltarSchoolLink.applySchoolXpBonus` |
+| Coût d'apprentissage `20 + 15×niv + 8×appris` | `SpellLearnService` |
+| Coût d'amélioration `30 + 25×(rang−1) + 10×niv` | `SpellRankService` |
 
-### Décisions à prendre avant de coder
+Le premier niveau demande 50 XP, soit **sept lancements réussis**. Un joueur
+devrait donc le voir arriver dans sa première session. S'il ne le voit pas, ce
+n'est pas que l'XP ne monte pas — c'est que **rien ne la montre**.
 
-- que rapporte de l'XP, exactement ? lancer un sort, toucher, tuer, découvrir ?
-- l'XP d'école et l'XP de sort sont-elles la même monnaie ?
-- où se dépense-t-elle : grimoire seul, ou aussi un PNJ ?
+### Le vrai problème est donc l'affichage, pas le calcul
+
+Trois manques, dans l'ordre où le joueur les rencontre :
+
+1. **aucun retour au moment du gain.** Rien ne dit « +8 XP Braises » quand un
+   sort part. Le joueur n'a aucune raison de croire qu'il progresse ;
+2. **aucune information sur la règle.** Le grimoire ne dit nulle part que
+   lancer un sort rapporte de l'XP dans son école, ni qu'un sort interrompu ou
+   bloqué ne rapporte rien (§5.3) ;
+3. **le coût de la prochaine étape n'est pas exposé.** Apprendre et améliorer
+   ont des formules précises ; le joueur ne voit ni le prix, ni combien il lui
+   manque.
+
+### À vérifier avant de coder
+
+Une seule question ouverte, et elle est mesurable : l'XP arrive-t-elle jusqu'au
+client ? La synchronisation du grimoire transporte `schoolXps` — reste à
+confirmer qu'elle est lue et affichée. À instrumenter en jeu **après le chantier
+0**, sur un serveur à jour.
 
 ### Fini quand
 
-- un joueur voit son XP monter en jouant, et sait pourquoi ;
-- le grimoire montre le coût de la prochaine amélioration et le geste pour la
-  payer ;
-- une session de test permet de monter une école d'un niveau sans commande.
+- un gain d'XP se voit à l'instant où il est gagné ;
+- le grimoire dit comment on gagne de l'XP, et ce que coûte la prochaine
+  amélioration ;
+- sept lancements font monter une école d'un niveau, vérifié sans commande.
 
 ---
 
@@ -278,6 +300,34 @@ l'est pas.
 
 ---
 
+---
+
+## Audit de cohérence catalogue ↔ documents
+
+Fait le 21/08, mécaniquement, contre `cdc_magie.md` et `magie/sorts/`.
+
+| Contrôle | Résultat |
+|---|---|
+| Sorts dans `spells.yml` | 32 |
+| Fiches dans `magie/sorts/` | 32 — **aucun orphelin dans un sens ni dans l'autre** |
+| `autoLearn` CDC §5.4 ↔ catalogue | 13 des deux côtés, **identiques** |
+| Coût, cooldown, niveau, tier (table §11) | **concordent pour les 32 sorts** |
+| Coût, niveau, tier (fiches individuelles) | **concordent pour les 32 sorts** |
+
+Trois écarts trouvés, tous dans le CDC — le code avait raison, le document a été
+corrigé :
+
+- l'en-tête du §11 annonçait « 31 sorts » pour une table qui en listait 32 ;
+- `storm_gust` y était déclaré non hostile alors qu'il l'est devenu ;
+- la lecture finale disait « 10 sorts hostiles sur 31 » au lieu de 12 sur 32.
+
+> Ce contrôle est mécanique et mérite d'être rejoué à chaque ajout de sort. Les
+> fiches individuelles, elles, sont **générées** par `MagicDocGenerator` depuis
+> le catalogue et les profils VFX réels : elles ne peuvent pas dériver tant
+> qu'on les régénère.
+
+---
+
 ## Ordre d'exécution proposé
 
 ```
@@ -290,8 +340,8 @@ l'est pas.
 ├─ 2  Ligne de tir          ← après 0, pour savoir ce qui reste
 ├─ 3  Torche compagne       ← après 0
 │
+├─ 5  Progression visible   ← rien à concevoir : le CDC est complet
 ├─ 6  Fiche de sort         ← indépendant, gros mais balisé
-├─ 5  Progression XP        ← demande des décisions de game design
 │
 └─ 8  Facteur WOW           ← en dernier : repose sur 1 et 2
    └─ 9  Modèles enrichis

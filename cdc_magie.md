@@ -668,7 +668,7 @@ suit la tradition (§16.3).
 
 ---
 
-## 11. Catalogue actuel — 31 sorts
+## 11. Catalogue actuel — 32 sorts
 
 Chaque sort a sa fiche détaillée dans [`magie/sorts/`](magie/sorts/).
 `spells.yml` fait foi pour les valeurs.
@@ -690,7 +690,7 @@ Chaque sort a sa fiche détaillée dans [`magie/sorts/`](magie/sorts/).
 | `ember_fireball` | Braises | — | Projectile | 10 | 90 | 0 | 1 | **oui** |
 | `ember_flare` | Braises | — | Incantation | 22 | 140 | 2 | 2 | **oui** |
 | `storm_breeze` | Tempête | — | Instant | 10 | 160 | 0 | 1 | non |
-| `storm_gust` | Tempête | — | Instant | 14 | 100 | 1 | 1 | non |
+| `storm_gust` | Tempête | — | Instant | 14 | 100 | 1 | 1 | **oui** |
 | `storm_spark` | Tempête | — | Projectile | 14 | 55 | 1 | 2 | **oui** |
 | `shadow_veil` | Ombre | — | Instant | 16 | 280 | 0 | 1 | non |
 | `shadow_step` | Ombre | — | Instant | 12 | 200 | 1 | 2 | non |
@@ -708,8 +708,15 @@ Chaque sort a sa fiche détaillée dans [`magie/sorts/`](magie/sorts/).
 | `time_slow` | Vide | Chronos | Projectile | 14 | 75 | 1 | 2 | **oui** |
 | `time_warp` | Vide | Chronos | Incantation | 18 | 240 | 2 | 2 | non |
 
-Lecture : 10 sorts hostiles sur 31, soit moins d'un tiers. Le catalogue reste
-majoritairement utilitaire, conformément au §1.
+Lecture : 12 sorts hostiles sur 32, soit un peu plus d'un tiers. Le catalogue
+reste majoritairement utilitaire, conformément au §1.
+
+Rafale (`storm_gust`) a changé de camp : elle pousse ses cibles, et déplacer
+quelqu'un contre son gré est une agression même sans dégât — une falaise fait le
+reste. Elle se déclarait pourtant inoffensive, si bien que sa victime n'entrait
+pas en combat et que sa réserve d'Essence continuait de remonter au rythme hors
+combat pendant qu'on la bousculait. Le handler, lui, respectait déjà la barrière
+de claim : c'est la déclaration qui mentait.
 
 ---
 
