@@ -4,7 +4,7 @@
 > va pas, ce qui a été **vérifié dans le code** (par opposition à supposé), et à
 > quoi on reconnaîtra que c'est fini.
 
-Dernière révision : audit du 21/08.
+Dernière révision : 21/08 — chantiers 4 et 7 livrés.
 
 ---
 
@@ -17,6 +17,7 @@ Chaque chantier porte un **état**, et c'est la première chose à regarder :
 | 🔴 **Bug confirmé** | Reproduit et expliqué dans le code. Prêt à corriger. |
 | 🟠 **À concevoir** | Le besoin est clair, la solution demande des décisions. |
 | 🟣 **Déjà corrigé** | Le code sur `main` est bon. Ce qui se voit en jeu vient d'un binaire plus ancien. |
+| ✅ **Livré** | Corrigé sur sa branche, tests à l'appui. Reste à fusionner et redéployer. |
 
 Les chantiers sont **ordonnés par dépendance**, pas par importance : le 0 débloque
 la lecture de tous les autres.
@@ -136,7 +137,7 @@ rien ne protège — et qui peut ressurgir dans un fichier de données par accid
 
 ---
 
-## Chantier 4 — Régénération de mana, rythme RPG 🔴
+## Chantier 4 — Régénération de mana, rythme RPG ✅
 
 **Branche : `fix/mana-regen-rpg`** · dépôt WizardCore
 
@@ -163,6 +164,22 @@ n'importe quel rythme lent sans arrondi.
   combat ;
 - le barème des potions est relu à l'aune du nouveau rythme (elles vont paraître
   bien plus fortes).
+
+### Livré
+
+Le rythme passe de **10 à 4 points par 10 secondes** hors combat, et de 2 à 1 en
+combat. Une réserve de 100 se refait en **250 secondes** — un peu plus de quatre
+minutes — au lieu de cent.
+
+Deux options avaient été posées : renchérir les sorts, ou ralentir la
+régénération. C'est la seconde qui a été retenue, et pour une raison précise :
+les fioles rendent de l'Essence. Tant que la régénération naturelle reste rapide,
+elles restent dominées par le fait d'attendre — **quel que soit le prix des
+sorts**. Renchérir un sort rend le mage plus pauvre ; ça ne rend pas la fiole
+plus utile que la patience. Seul le rythme le fait.
+
+`EssenceRegenTest` gèle les deux bouts : les 250 secondes de remplissage, et le
+fait que boire l'une des quatre fioles vaut au moins deux fois attendre.
 
 ---
 
@@ -234,7 +251,7 @@ synchronisation du grimoire — à compléter plutôt qu'à inventer.
 
 ---
 
-## Chantier 7 — Roue de sélection 🔴
+## Chantier 7 — Roue de sélection ✅
 
 **Branche : `fix/radial-menu`** · dépôt MCP
 
@@ -253,6 +270,40 @@ Quatre défauts, dont un qui coûte des morts :
 - un sort lancé continue son animation, roue ouverte ou fermée ;
 - la molette fait défiler les presets, et le centre dit lequel est actif ;
 - un test gèle la correspondance nom affiché ↔ sort du catalogue.
+
+### Livré
+
+**Le gel de l'animation.** `MagicVFXRuntime.tick()` vivait dans le bloc de
+saisie de `Minecraft.runTick`, gardé par « aucun écran ouvert, ou écran qui
+laisse passer la saisie ». `GuiScreen.allowUserInput` vaut `false` par défaut :
+ouvrir la roue sautait donc tout le bloc, et le sort en vol se figeait jusqu'à
+la fermeture. L'appel est remonté hors de ce bloc. Un sort en vol est une
+simulation du monde au même titre qu'une entité ; son avancement n'a aucune
+raison de dépendre de ce que le joueur tape.
+
+**Les noms.** La roue affichait le dernier segment de l'identifiant technique :
+« Fireball », « Preserve », « Hex ». Ce n'est pas une abréviation mais un autre
+nom, en anglais, absent partout ailleurs dans le jeu — le grimoire et les fiches
+disent « Boule de Feu ». `RadialLabels` interroge le catalogue client, qui porte
+le nom exact des trente-deux sorts. Le découpage d'identifiant subsiste en
+**repli**, pour le cas où le serveur enverrait un sort qu'un client plus ancien
+ne connaît pas.
+
+**La molette.** `RadialPresetCycle` la fait défiler en boucle, dans les deux
+sens, parmi les presets **débloqués et non vides**. La seconde condition est
+celle qui protège : charger un preset vide viderait la barre de sorts, et la
+molette deviendrait un moyen de se désarmer en plein combat. Rien n'est envoyé
+quand il n'y a rien à changer, et un garde de 150 ms évite qu'un geste vif ne
+déclenche dix synchronisations complètes du profil.
+
+**Le centre.** Une ligne annonce le preset chargé — par son nom, ou par son
+numéro s'il n'en a pas — et se met à jour dès le coup de molette, sans attendre
+le retour serveur. Les lignes du centre sont désormais découpées à la largeur du
+cercle intérieur : « Garde Spirituelle » débordait sur les icônes voisines.
+
+`RadialMenuTest` gèle la correspondance identifiant → nom pour tout le catalogue
+et les cas limites du défilement — boucle, presets vides, presets verrouillés,
+rien à changer, pas de molette fine ignoré.
 
 ---
 
@@ -334,8 +385,8 @@ corrigé :
 0  Redéploiement            ← débloque la lecture de tout le reste
 │
 ├─ 1  Glyphes du cercle     ← isolé, rapide, visible
-├─ 4  Rythme du mana        ← isolé, rapide, débloque l'intérêt des potions
-├─ 7  Roue de sélection     ← contient un bug qui coûte des morts en combat
+├─ 4  Rythme du mana        ✅ livré — fix/mana-regen-rpg
+├─ 7  Roue de sélection     ✅ livré — fix/radial-menu
 │
 ├─ 2  Ligne de tir          ← après 0, pour savoir ce qui reste
 ├─ 3  Torche compagne       ← après 0
@@ -350,3 +401,7 @@ corrigé :
 Les trois premiers après le chantier 0 sont volontairement des chantiers courts
 et visibles : ils remettent du terrain sûr sous les pieds avant d'attaquer la
 progression et les VFX, qui sont longs.
+
+Deux d'entre eux sont faits. Restent le chantier 1 — court lui aussi — puis les
+chantiers 2 et 3, qui ne se jugeront qu'une fois le serveur redéployé sur le
+code de `main` (chantier 0).
