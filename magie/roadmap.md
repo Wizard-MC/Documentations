@@ -4,7 +4,8 @@
 > va pas, ce qui a été **vérifié dans le code** (par opposition à supposé), et à
 > quoi on reconnaîtra que c'est fini.
 
-Dernière révision : 21/08 — chantiers 1, 4, 5, 6, 7 livrés, 8 aux trois quarts.
+Dernière révision : 21/08 — chantiers 1, 4, 5, 6, 7, 9 livrés, 8 aux cinq
+sixièmes. Restent le 0 (redéploiement) et, après lui, les chantiers 2 et 3.
 
 ---
 
@@ -562,7 +563,7 @@ concrètes qui ne doivent pas revenir.
 
 ---
 
-## Chantier 9 — Modèles bbmodel enrichis 🟠
+## Chantier 9 — Modèles bbmodel enrichis ✅
 
 **Branche : `feature/vfx-models`** · dépôt MCP + dépôt ASSETS
 
@@ -578,7 +579,96 @@ Prison de Givre ne contient qu'**un** pic. Deux voies, à trancher :
 La première voie est à essayer d'abord : elle est réutilisable, la seconde ne
 l'est pas.
 
----
+### Livré
+
+#### L'arbitrage est tranché, et par des mesures
+
+La première voie était la bonne, et on peut maintenant le dire avec des chiffres
+plutôt qu'à l'intuition. `frost_volley.bbmodel` compte 77 cubes et 45 groupes,
+mais son arborescence ne contient qu'**un seul** `ef_ice_spike_1` — le reste est
+une couronne de seize billes de glace. Le nom du fichier était une intention,
+pas un contenu. La salve du chantier 8 est donc bien la réponse, et elle sert
+désormais trois écoles sans qu'un seul modèle ait été retouché.
+
+#### L'audit a trouvé mieux que des assets à refaire
+
+Le chantier cherchait de la matière à produire. Il a trouvé de la matière **déjà
+produite que rien n'allait chercher**.
+
+| Trouvaille | Ce qui était joué | Ce qui dormait |
+|---|---|---|
+| **Prison de Givre** | `frost_prison_cage` — 5 cubes, animation de **0,15 s**, un animateur | `frost_prison` — 76 cubes, animation de **5,7 s**, 31 animateurs, jamais référencé |
+| **Frappe de Foudre** | `animation` | `animation2`, jamais jouée |
+| **Anneau de Roc** | `loop` | `spawn` et `despawn`, jamais jouées |
+
+La Prison de Givre est la plus frappante : le sort jouait une pose figée pendant
+que le modèle fait pour lui restait inerte dans le jar. Il est désormais branché,
+**étiré** sur la durée annoncée par le serveur — la glace monte pendant tout le
+temps où elle tient sa victime, au lieu d'apparaître d'un bloc.
+
+Ce branchement a demandé un correctif au passage, qui vaut la peine d'être noté :
+le garde qui empêche un simple Éclat de Givre d'emprisonner sa victime testait la
+seule **boucle**. La gangue étant passée de la boucle à l'étirement, il la
+laissait passer. Boucle et étirement sont deux façons de tenir une durée
+annoncée ; le garde teste désormais les deux.
+
+#### Les salves ne sont plus des copies
+
+Cinq fois la même silhouette dans la même orientation se lit comme cinq clones,
+et une gerbe de clones paraît moins riche qu'un seul objet bien fait. Chaque
+exemplaire reçoit sa rotation propre, dérivée de la graine comme le reste : le
+même asset, vu sous cinq angles.
+
+Le mélange passe par le finaliseur de SplitMix64, et ce n'est pas un excès de
+zèle — un ou-exclusif suivi d'un modulo, essayé d'abord, faisait tomber des rangs
+voisins sur le même angle et ramenait donc exactement les clones qu'on voulait
+supprimer. Le test l'a attrapé.
+
+Un clip peut aussi déclarer une **animation alternée**, que la salve fait
+tourner d'un exemplaire à l'autre : c'est ce qui remet la seconde frappe de
+foudre en service.
+
+#### La marque au sol
+
+Dernière piste du chantier 8, renvoyée ici parce qu'elle relève de la matière du
+sort plus que de son éclat. Un impact durait moins d'une seconde et demie, puis
+le décor redevenait intact : on ne pouvait pas relire son propre tir, ni voir où
+un combat avait eu lieu.
+
+Elle réutilise la texture d'onde de choc, assombrie et posée à plat — aucun asset
+nouveau. Elle suit la même règle que la couche sonore grave : seules les familles
+qui ont une masse en laissent une. Un soin ne brûle pas le sol, et une trace
+après une lumière bénéfique ferait croire à un dégât.
+
+Elle est posée par l'impact et non par les étapes de la salve : cinq pics de
+givre laissent **une** zone gelée, pas cinq taches qui s'additionneraient jusqu'à
+l'opacité.
+
+#### Le test qui garde tout ça
+
+`VfxAssetAuditTest` compare l'inventaire des fichiers livrés à celui des clips
+déclarés, animation par animation. C'est le test qui aurait signalé la Prison de
+Givre : un modèle non référencé ne provoque **rien** — pas d'erreur, pas de log,
+pas de chargement. Il occupe simplement de la place et du travail d'artiste que
+personne ne voit.
+
+Les réserves légitimes sont nommées dans une liste, ce qui rend la décision
+délibérée au lieu d'un oubli silencieux. C'est la convention déjà employée par
+`unusedHandlersAreKnown` côté serveur.
+
+#### Ce qui reste
+
+Deux choses, inscrites dans la liste d'exceptions du test pour rester visibles :
+
+- **`earth_ring` : `spawn` et `despawn`.** Il manque au runtime un mécanisme
+  d'intro/outro autour d'une boucle — pas un asset. C'est le prochain morceau
+  naturel ;
+- **l'éclair de lumière à l'impact** (piste du chantier 8) demande une lumière
+  dynamique positionnelle, que la lueur portée ne sait pas faire : elle éclaire
+  son porteur, pas un point du monde.
+
+Aucun nouvel asset n'a finalement été nécessaire. La voie « côté asset » de
+l'arbitrage n'a pas eu à être ouverte.
 
 ---
 
@@ -624,26 +714,48 @@ corrigé :
 ├─ 6  Fiche de sort         ✅ livré — feature/grimoire-spell-info
 │
 └─ 8  Facteur WOW           ✅ 4 pistes sur 6 — feature/vfx-impact
-   └─ 9  Modèles enrichis
+   └─ 9  Modèles enrichis    ✅ livré — feature/vfx-models
 ```
 
 Les trois premiers après le chantier 0 sont volontairement des chantiers courts
 et visibles : ils remettent du terrain sûr sous les pieds avant d'attaquer la
 progression et les VFX, qui sont longs.
 
-Les trois sont faits, ainsi que les chantiers 5, 6 et l'essentiel du 8. Restent
-les chantiers 2 et 3, qui ne se jugeront qu'une fois le serveur redéployé sur le
-code de `main` — c'est-à-dire après le chantier 0 — puis le chantier 9 et les
-deux pistes de VFX laissées de côté.
+Les trois sont faits, ainsi que les chantiers 5, 6, 9 et l'essentiel du 8. **Il
+ne reste que le chantier 0** — le redéploiement — et, derrière lui, les chantiers
+2 et 3, qui ne se jugeront qu'une fois le serveur à jour.
 
 Le chantier 8 a été pris avant le 2 alors que la roadmap le disait dépendant de
-lui. C'était un pari raisonnable et il faut le noter : les quatre pistes traitées
-sont toutes des mécanismes du client, indépendants de la visée. La sixième — la
-traînée persistante — a en revanche été renvoyée au chantier 9, où elle a sa
-place.
+lui. C'était un pari raisonnable et il faut le noter : les pistes traitées sont
+toutes des mécanismes du client, indépendants de la visée. La traînée persistante
+a en revanche été renvoyée au chantier 9, où elle avait sa place — et elle y a
+été livrée.
+
+Il reste deux morceaux nommés, tous deux dans la liste d'exceptions d'un test
+pour rester visibles : le mécanisme d'intro/outro autour d'une boucle
+(`earth_ring`), et l'éclair de lumière à l'impact, qui demande une lumière
+dynamique positionnelle.
+
+## Ce que ces chantiers ont appris
 
 Deux fois en trois chantiers, le défaut de fond s'est révélé être **un nombre
 écrit des deux côtés qui avait fini par diverger** : les paliers d'XP au
 chantier 5, le plancher de cooldown au chantier 6. Les deux corrections vont
 dans le même sens — le serveur envoie la valeur, le client la met en page — et
 c'est la règle à appliquer au reste.
+
+Un second motif s'est dégagé, plus surprenant : **la plupart des « il manque
+quelque chose » étaient des choses déjà écrites que rien n'allait chercher.**
+
+| Chantier | Ce qu'on croyait manquant | Ce qui manquait vraiment |
+|---|---|---|
+| 5 | l'XP ne montait pas | elle montait ; rien ne la montrait, et la jauge mesurait la mauvaise valeur |
+| 6 | les fiches n'existaient pas | les valeurs existaient ; elles ne quittaient pas le serveur |
+| 8 | la secousse manquait | elle existait, branchée sur la mauvaise grandeur |
+| 9 | il fallait de nouveaux modèles | le bon modèle dormait dans le jar, non référencé |
+
+Aucun de ces quatre défauts ne provoquait d'erreur, de log ou de test rouge. Ils
+étaient tous silencieux — et c'est pour ça qu'ils avaient duré. Chacun a donc
+gagné un test qui compare deux inventaires plutôt qu'une valeur : les effets aux
+handlers, les fiches au catalogue livré, les assets aux clips déclarés. C'est le
+seul genre de test qui attrape une absence.
