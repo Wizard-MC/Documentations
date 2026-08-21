@@ -4,7 +4,7 @@
 > va pas, ce qui a été **vérifié dans le code** (par opposition à supposé), et à
 > quoi on reconnaîtra que c'est fini.
 
-Dernière révision : 21/08 — chantiers 4 et 7 livrés.
+Dernière révision : 21/08 — chantiers 1, 4 et 7 livrés.
 
 ---
 
@@ -55,7 +55,7 @@ et rejoint la liste ci-dessous.
 
 ---
 
-## Chantier 1 — Les glyphes ne sont pas dans le cercle 🔴
+## Chantier 1 — Les glyphes ne sont pas dans le cercle ✅
 
 **Branche : `fix/circle-glyph-placement`** · dépôt MCP
 
@@ -86,6 +86,18 @@ datent d'avant les modèles.
 - les glyphes tombent sur l'anneau du modèle, quel que soit le mode de cast ;
 - un test gèle l'accord des deux géométries, pour qu'un changement de taille du
   modèle ne les redésaccorde pas en silence.
+
+### Livré
+
+Le cercle procédural reprend la géométrie du modèle quand il y en a un : rayon
+égal à la moitié de `targetSizeBlocks`, mêmes décalages. Les valeurs par mode
+dataient d'avant les modèles et n'avaient plus de raison de prévaloir.
+
+La distinction de taille qui les justifiait — un cercle d'amorce plus petit pour
+un sort instantané qu'un sort incanté, parce que la taille du cercle dit le poids
+du sort — n'a pas été perdue : elle est passée dans le modèle, avec
+`CIRCLE_UPRIGHT_QUICK`. C'était le choix à faire plutôt que d'assouplir le test
+qui la gardait.
 
 ---
 
@@ -384,7 +396,7 @@ corrigé :
 ```
 0  Redéploiement            ← débloque la lecture de tout le reste
 │
-├─ 1  Glyphes du cercle     ← isolé, rapide, visible
+├─ 1  Glyphes du cercle     ✅ livré — fix/circle-glyph-placement
 ├─ 4  Rythme du mana        ✅ livré — fix/mana-regen-rpg
 ├─ 7  Roue de sélection     ✅ livré — fix/radial-menu
 │
@@ -402,6 +414,6 @@ Les trois premiers après le chantier 0 sont volontairement des chantiers courts
 et visibles : ils remettent du terrain sûr sous les pieds avant d'attaquer la
 progression et les VFX, qui sont longs.
 
-Deux d'entre eux sont faits. Restent le chantier 1 — court lui aussi — puis les
-chantiers 2 et 3, qui ne se jugeront qu'une fois le serveur redéployé sur le
-code de `main` (chantier 0).
+Les trois sont faits. Viennent ensuite les chantiers 2 et 3, qui ne se jugeront
+qu'une fois le serveur redéployé sur le code de `main` — c'est-à-dire après le
+chantier 0.
