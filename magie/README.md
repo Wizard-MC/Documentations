@@ -7,6 +7,11 @@ et conception des effets visuels.
 (dépôt MCP, `tests/fr/wizardmc/magic/vfx/test/`) à partir du catalogue et des
 profils VFX réellement exécutés. Les régénérer après toute modification.*
 
+## Roadmap
+
+Les chantiers en cours, un par branche, avec leur état et leur ordre
+d'exécution : [roadmap.md](roadmap.md).
+
 ## Documents de référence
 
 | Document | Rôle |
