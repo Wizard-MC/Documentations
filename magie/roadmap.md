@@ -4,7 +4,7 @@
 > va pas, ce qui a été **vérifié dans le code** (par opposition à supposé), et à
 > quoi on reconnaîtra que c'est fini.
 
-Dernière révision : 21/08 — chantiers 1, 4, 5 et 7 livrés.
+Dernière révision : 21/08 — chantiers 1, 4, 5, 6 et 7 livrés.
 
 ---
 
@@ -310,9 +310,9 @@ arithmétique des deux côtés, y compris les sept lancements du premier niveau.
 
 ---
 
-## Chantier 6 — Fiche de sort complète dans le grimoire 🟠
+## Chantier 6 — Fiche de sort complète dans le grimoire ✅
 
-**Branche : `feature/grimoire-spell-info`** · dépôt MCP
+**Branche : `feature/grimoire-spell-info`** · dépôts WizardCore + MCP
 
 L'écran « Sorts » ne montre pas ce qu'un joueur a besoin de savoir pour choisir :
 **dégâts, portée, coût en Essence, temps d'incantation, cooldown**, et ce que
@@ -325,6 +325,74 @@ synchronisation du grimoire — à compléter plutôt qu'à inventer.
 
 - chaque sort affiche portée, coût, incantation, cooldown et effet chiffré ;
 - les valeurs viennent du serveur, jamais d'une table recopiée côté client.
+
+### Livré
+
+Le second critère n'était pas une précaution de style : **la table recopiée
+avait déjà divergé**. `SpellUpgradePreview.cooldownAtRank`, côté client,
+appliquait le facteur de rang au cooldown sans le plancher que
+`SpellRankService` impose aux sorts hostiles. Sur un sort déjà proche de ce
+plancher — et le catalogue en contient — la fiche promettait une amélioration
+que le joueur n'obtiendrait jamais. C'est le second nombre écrit des deux côtés
+qui se révèle faux en deux chantiers, après les paliers d'XP du chantier 5.
+
+#### Le packet `CATALOG`
+
+Une nouvelle action, `CATALOG(10)`, porte les fiches de tous les sorts : portée,
+temps d'incantation et de canalisation, GCD, palier de baguette, et **les cinq
+rangs déroulés** — coût en Essence, cooldown plancher compris, prix en XP,
+niveau d'école exigé. Le client ne recalcule plus rien.
+
+Elle part **une fois** à la connexion, et à chaque rechargement de
+configuration. Ces valeurs ne dépendent pas du joueur et ne changent jamais en
+partie : les glisser dans le bloc `SYNC` — qui part à chaque dépense d'Essence —
+ferait réémettre plusieurs kilo-octets figés à chaque sort lancé. C'est la
+différence de nature qui justifie une action plutôt qu'un bloc d'extension de
+plus.
+
+Un client antérieur reçoit un identifiant d'action qu'il ne connaît pas :
+`fromId` lui rend `null` et il abandonne la trame sans rien casser.
+
+#### Les phrases d'effet
+
+`SpellEffectSummary` écrit côté serveur ce que fait chaque sort, une phrase par
+effet — « Inflige 6 dégâts à la cible », « Emprisonne la cible dans la glace
+pendant 4 s ». Ce travail lui revient parce que le sens des clés de
+`spells.yml`, et surtout **les valeurs par défaut de chaque paramètre quand
+elles sont absentes**, n'existent que dans le handler qui les lit. Un client qui
+voudrait composer « 6 dégâts » devrait connaître les deux, c'est-à-dire recopier
+une table de plus.
+
+Un effet non décrit sort sous son identifiant technique plutôt que d'être passé
+sous silence — une fiche muette dirait au joueur que le sort ne fait rien — et
+un test interdit ce repli sur le catalogue livré.
+
+#### Ce que la fiche affiche
+
+Portée, Essence, cooldown, incantation, canalisation *quand il y en a une*,
+niveau d'école et palier de baguette ; puis les effets en toutes lettres. La
+ligne du rang suivant annonce ce qu'il change réellement — le barème ne touche
+qu'au coût et au cooldown — et se tait quand il n'apporte plus rien, notamment
+quand le cooldown bute sur son plancher.
+
+L'infobulle de la liste reprend le triplet portée / coût / cooldown, celui sur
+lequel on tranche entre deux sorts sans ouvrir chaque fiche.
+
+Ce que le client ne sait pas, il l'écrit en **tiret**. La portée et le cooldown
+ne sont nulle part côté client : les afficher à zéro ferait passer un sort de
+vingt blocs pour un sort de contact. Un tiret dit « on ne sait pas encore », ce
+qui est exactement le cas d'un client à jour face à un serveur qui ne l'est pas.
+
+#### Ce qui n'a pas changé
+
+Le nom, la description et l'incantation restent dans le catalogue client : ce
+sont des textes, déjà vérifiés contre `spells.yml` par les tests VFX. Le
+chantier demandait que les *valeurs* viennent du serveur — c'est ce que la fiche
+livre, et rien de plus.
+
+`SpellSheetTest` existe des deux côtés : côté serveur pour l'arithmétique des
+rangs et la complétude du catalogue livré, côté client pour la mise en forme et
+le comportement en l'absence de fiche.
 
 ---
 
@@ -469,7 +537,7 @@ corrigé :
 ├─ 3  Torche compagne       ← après 0
 │
 ├─ 5  Progression visible   ✅ livré — fix/progression-visibility
-├─ 6  Fiche de sort         ← indépendant, gros mais balisé
+├─ 6  Fiche de sort         ✅ livré — feature/grimoire-spell-info
 │
 └─ 8  Facteur WOW           ← en dernier : repose sur 1 et 2
    └─ 9  Modèles enrichis
@@ -479,6 +547,12 @@ Les trois premiers après le chantier 0 sont volontairement des chantiers courts
 et visibles : ils remettent du terrain sûr sous les pieds avant d'attaquer la
 progression et les VFX, qui sont longs.
 
-Les trois sont faits, ainsi que le chantier 5. Restent les chantiers 2 et 3, qui
-ne se jugeront qu'une fois le serveur redéployé sur le code de `main` —
-c'est-à-dire après le chantier 0 — puis le 6, et enfin les deux chantiers de VFX.
+Les trois sont faits, ainsi que les chantiers 5 et 6. Restent les chantiers 2 et
+3, qui ne se jugeront qu'une fois le serveur redéployé sur le code de `main` —
+c'est-à-dire après le chantier 0 — puis les deux chantiers de VFX.
+
+Deux fois en trois chantiers, le défaut de fond s'est révélé être **un nombre
+écrit des deux côtés qui avait fini par diverger** : les paliers d'XP au
+chantier 5, le plancher de cooldown au chantier 6. Les deux corrections vont
+dans le même sens — le serveur envoie la valeur, le client la met en page — et
+c'est la règle à appliquer au reste.
