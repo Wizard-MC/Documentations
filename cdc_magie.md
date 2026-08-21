@@ -88,8 +88,8 @@ ce qui se passe. Aucun effet de jeu n'est déclenché par le client.
 | Paramètre | Valeur par défaut |
 |---|---|
 | Réserve de base | 100 |
-| Régénération hors combat | 10 / 10 s |
-| Régénération en combat | 2 / 10 s |
+| Régénération hors combat | 4 / 10 s |
+| Régénération en combat | 1 / 10 s |
 | Sortie de combat | 5 s après le dernier échange |
 | Bonus par niveau d'école (moyenne) | +2, plafonné à +40 |
 | Bonus Bibliothèque (Nexus / Coven) | +10 |
@@ -105,11 +105,27 @@ intéressante à provoquer.
 
 ### 4.1 Pourquoi la régénération est lente
 
-La réserve se reconstituait à quatre points par seconde : une barre pleine en
-vingt-cinq secondes. À ce rythme, l'Essence cessait d'être une ressource — on
-n'avait plus à choisir quoi lancer, il suffisait d'attendre quelques secondes.
-Une réserve de 100 demande maintenant environ **cent secondes** hors combat, et
-ne remonte pratiquement pas pendant un échange.
+La réserve s'est reconstituée à trois rythmes successifs, et les deux premiers
+étaient trop rapides. Quatre points par seconde d'abord : une barre pleine en
+vingt-cinq secondes, l'Essence cessait d'être une ressource. Un point par
+seconde ensuite — mieux, mais avec une conséquence qu'on n'avait pas vue.
+
+**À un point par seconde, les fioles de régénération ne servaient à rien.** Une
+réserve vide se refaisait en cent secondes sans rien faire ; personne n'allait
+dépenser une étoile du Nether pour gagner une minute d'attente. Le rythme est
+donc descendu à **quatre points par dix secondes**, soit un point toutes les
+deux secondes et demie : une réserve de 100 demande un peu plus de **quatre
+minutes** hors combat, et ne remonte pratiquement pas pendant un échange.
+
+L'autre voie envisagée — laisser la régénération et **augmenter le coût des
+sorts** — a été écartée pour une raison de fond : les fioles rendent de
+l'Essence. Tant que la régénération naturelle reste rapide, elles restent
+dominées par le fait d'attendre, quel que soit le prix des sorts. Renchérir les
+sorts aurait durci le jeu sans rendre les fioles utiles.
+
+La règle qui en découle est vérifiée automatiquement : **boire une fiole doit
+rendre au moins deux fois ce qu'on aurait gagné en attendant sa durée**, pour
+les quatre paliers. En dessous, la fiole redevient un gadget.
 
 Le rythme s'exprime **par dix secondes**, pas par seconde. Ce n'est pas une
 coquetterie : à un point par seconde on ne peut plus exprimer, avec des
@@ -135,6 +151,11 @@ palier ; rien n'est tenu en parallèle.
 | Supérieure | +25 | +16 / 10 s | 60 s | +121 | Régé. Mana I |
 | Épique | +40 | +30 / 10 s | 75 s | +265 | Régé. Mana II |
 | Légendaire | +60 | +50 / 10 s | 90 s | +510 | Régé. Mana III |
+
+Rapporté au rythme naturel de 4 points par 10 secondes, une Standard rend près
+de trois fois ce que donnerait l'attente sur sa durée, et une Légendaire une
+quinzaine de fois. C'est ce rapport qui fait exister les fioles, et c'est lui
+qu'un futur changement de rythme devra préserver.
 
 La part rendue **à la gorgée** existe pour que boire en plein échange serve à
 quelque chose : sans elle, le sort qui manque de dix points le manquerait encore
