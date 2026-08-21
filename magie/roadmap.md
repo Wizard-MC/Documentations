@@ -4,7 +4,7 @@
 > va pas, ce qui a été **vérifié dans le code** (par opposition à supposé), et à
 > quoi on reconnaîtra que c'est fini.
 
-Dernière révision : 21/08 — chantiers 1, 4 et 7 livrés.
+Dernière révision : 21/08 — chantiers 1, 4, 5 et 7 livrés.
 
 ---
 
@@ -195,7 +195,7 @@ fait que boire l'une des quatre fioles vaut au moins deux fois attendre.
 
 ---
 
-## Chantier 5 — Progression : rendre visible ce qui existe déjà 🔴
+## Chantier 5 — Progression : rendre visible ce qui existe déjà ✅
 
 **Branche : `fix/progression-visibility`** · dépôts WizardCore + MCP
 
@@ -242,6 +242,71 @@ confirmer qu'elle est lue et affichée. À instrumenter en jeu **après le chant
 - le grimoire dit comment on gagne de l'XP, et ce que coûte la prochaine
   amélioration ;
 - sept lancements font monter une école d'un niveau, vérifié sans commande.
+
+### Livré
+
+La question ouverte ci-dessus a trouvé sa réponse, et elle était pire que
+prévu : l'XP arrivait bien jusqu'au client, mais **ce n'était pas la bonne**.
+
+#### Un quatrième défaut, non listé, et le plus grave
+
+Un profil porte deux compteurs. L'**XP cumulée** monte à chaque sort réussi et
+ne redescend jamais : c'est elle qui décide du niveau. L'**XP dépensable** monte
+de la même façon mais *baisse* quand on apprend ou améliore un sort : c'est la
+bourse.
+
+La trame de synchronisation n'envoyait que la seconde, et le client s'en servait
+pour dessiner sa jauge de niveau. Deux erreurs s'y superposaient :
+
+- la jauge **reculait** après un achat, alors qu'un niveau acquis ne se reperd
+  pas ;
+- elle ne retranchait pas le palier déjà franchi. Au niveau 1 avec 50 d'XP, elle
+  affichait 50 / 100 : une barre à moitié pleine vers le niveau 2 sans en avoir
+  fait un pas.
+
+Autrement dit, le joueur qui allait chercher sa progression dans le grimoire y
+trouvait un chiffre faux. C'est pire que l'absence d'information des trois
+points listés plus haut, et ça explique une part du « on ne gagne jamais d'XP ».
+
+#### Ce qui a été fait
+
+Un bloc d'extension `PRG1` s'ajoute à la trame `SYNC`, après le bloc grimoire et
+selon le même principe — signature, version, longueur — donc sans casser les
+clients ni les serveurs d'une autre version. Il porte l'XP cumulée, les paliers
+de la courbe, le barème par sort réussi et le dernier gain.
+
+1. **La jauge dit la vérité.** Elle se calcule sur l'XP cumulée, palier courant
+   retranché. La bourse garde sa ligne, et la fiche d'école explique désormais
+   en une phrase ce qui distingue les deux nombres.
+2. **Les paliers viennent du serveur.** Ils étaient recopiés à la main côté
+   client et devenaient faux dès qu'une courbe était reconfigurée. La table
+   écrite dans le client n'est plus qu'un repli, et une courbe incohérente est
+   refusée plutôt qu'adoptée.
+3. **Le gain se voit.** Une annonce « +8 XP Braises » flotte au-dessus de la
+   jauge d'Essence, en face du « -12 » de la dépense : même endroit, même
+   idiome, signe opposé. Elle ne se lève que lorsque le numéro de séquence
+   change — la trame `SYNC` part aussi pour une dépense ou un changement de
+   preset, et transporterait alors le même gain. Trois sorts rapprochés dans une
+   même école s'additionnent en « +24 XP » plutôt que de se chasser l'un
+   l'autre.
+4. **La règle est écrite**, sous les neuf jauges et une seule fois : elle vaut
+   pour les neuf écoles, et la répéter sur chaque fiche prendrait la place de
+   l'arbre de sorts. Le barème vient du serveur. Les bonus de Bibliothèque et
+   d'Autel sont **nommés sans être chiffrés** — leurs pourcentages vivent dans
+   `magic.yml` et ne voyagent pas jusqu'au client ; les recopier réintroduirait
+   exactement le défaut corrigé au point 2.
+5. **Le prix d'un rang est traduit en lancements.** « 43 XP » ne dit rien ;
+   « environ six sorts réussis » répond à la seule question qu'on se pose devant
+   ce chiffre.
+
+Une note sur l'horloge de l'annonce : elle compte en millisecondes, pas en
+images. Le flash de dépense voisin décrémente un compteur dans la boucle de
+rendu, ce qui le fait durer deux fois moins longtemps à cent images par seconde
+qu'à cinquante — un comportement que personne n'a voulu, et qu'il ne fallait pas
+reproduire.
+
+`XpVisibilityTest` (WizardCore) et `ProgressionTest` (MCP) figent la même
+arithmétique des deux côtés, y compris les sept lancements du premier niveau.
 
 ---
 
@@ -403,7 +468,7 @@ corrigé :
 ├─ 2  Ligne de tir          ← après 0, pour savoir ce qui reste
 ├─ 3  Torche compagne       ← après 0
 │
-├─ 5  Progression visible   ← rien à concevoir : le CDC est complet
+├─ 5  Progression visible   ✅ livré — fix/progression-visibility
 ├─ 6  Fiche de sort         ← indépendant, gros mais balisé
 │
 └─ 8  Facteur WOW           ← en dernier : repose sur 1 et 2
@@ -414,6 +479,6 @@ Les trois premiers après le chantier 0 sont volontairement des chantiers courts
 et visibles : ils remettent du terrain sûr sous les pieds avant d'attaquer la
 progression et les VFX, qui sont longs.
 
-Les trois sont faits. Viennent ensuite les chantiers 2 et 3, qui ne se jugeront
-qu'une fois le serveur redéployé sur le code de `main` — c'est-à-dire après le
-chantier 0.
+Les trois sont faits, ainsi que le chantier 5. Restent les chantiers 2 et 3, qui
+ne se jugeront qu'une fois le serveur redéployé sur le code de `main` —
+c'est-à-dire après le chantier 0 — puis le 6, et enfin les deux chantiers de VFX.
