@@ -4,7 +4,7 @@
 > va pas, ce qui a été **vérifié dans le code** (par opposition à supposé), et à
 > quoi on reconnaîtra que c'est fini.
 
-Dernière révision : 21/08 — chantiers 1, 4, 5, 6 et 7 livrés.
+Dernière révision : 21/08 — chantiers 1, 4, 5, 6, 7 livrés, 8 aux trois quarts.
 
 ---
 
@@ -452,7 +452,7 @@ rien à changer, pas de molette fine ignoré.
 
 ---
 
-## Chantier 8 — Le facteur « WOW » 🟠
+## Chantier 8 — Le facteur « WOW » ✅ (4 pistes sur 6)
 
 **Branche : `feature/vfx-impact`** · dépôt MCP
 
@@ -475,6 +475,90 @@ sort mal placé ne sera pas plus impressionnant en étant plus gros).
 
 C'est le seul chantier sans critère mesurable — il se juge à l'œil. On le
 découpera en sous-branches une fois les pistes arbitrées.
+
+### Livré
+
+Quatre pistes sur six. Les mécanismes ont bien fini par avoir des critères
+mesurables — pas sur le rendu, qui se juge à l'œil, mais sur les nombres qui le
+pilotent, et c'est là que se cachait le seul vrai défaut du lot.
+
+#### Les salves
+
+Un clip peut déclarer `volley(nombre, dispersion, décalage)`. Le givre en tire
+**cinq** sur un mètre et demi à trois ticks d'intervalle, la roche **quatre**
+plus lentement — la pierre est lourde, un écart de cinq ticks s'entend autant
+qu'il se voit — et la foudre **trois** très vite et très près, assez près pour
+qu'on ne doute jamais de l'endroit frappé.
+
+Deux choix méritent d'être notés parce qu'ils ne sont pas évidents :
+
+- **la disposition suit une spirale d'angle d'or**, pas un tirage uniforme. Au
+  hasard, les exemplaires font des paquets et des trous : on obtient un tas, pas
+  une gerbe. La spirale garantit que deux exemplaires consécutifs — ceux qui
+  partent l'un après l'autre, donc ceux qu'on regarde ensemble — sont toujours
+  nettement séparés ;
+- **tout dérive de la graine de l'événement**, partagée par tous les clients.
+  Deux joueurs côte à côte voient la même gerbe, aux mêmes endroits, dans le même
+  ordre. Un tirage local donnerait à chacun sa version du même sort, ce qui se
+  remarque immédiatement et rend impossible de décrire ce qu'on a vu.
+
+L'exemplaire de tête reste sur l'ancre et sans retard : c'est lui qui marque le
+point d'impact réel, et c'est donc lui qu'on garde quand la qualité graphique ou
+le budget de VFX force à écrêter. La gerbe se voit alors plus petite, jamais
+trouée.
+
+Le geste se fait dans le code plutôt que dans le `.bbmodel` : le même modèle
+servira à toutes les densités, et chaque exemplaire reste une instance séparée,
+donc cullée, éclairée et budgétée pour elle-même.
+
+#### L'annonce de l'impact
+
+Pendant le vol, une couronne au sol se resserre vers le point visé et le touche
+exactement quand le sort arrive. Elle **rétrécit** au lieu de s'ouvrir : une onde
+qui s'ouvre raconte ce qui vient d'arriver — c'est déjà ce que fait l'impact —
+là où une couronne qui se referme raconte ce qui converge, et son rayon dit
+combien de temps il reste.
+
+Elle ne devine rien : le point visé et la durée du vol arrivent tous deux dans
+l'événement de trajet. Et comme le serveur cherche sa victime à l'arrivée et non
+au départ, l'avertissement sert vraiment à quelque chose — s'écarter marche.
+
+Les vols de moins de six ticks ne sont pas annoncés : l'anneau naîtrait et
+mourrait dans le même souffle, ce qui donnerait un clignotement au lieu d'un
+avertissement.
+
+#### La secousse de caméra était à l'envers
+
+C'est le défaut du lot, et il ne figurait pas dans les pistes. La secousse était
+dérivée de **l'intensité du flash**, ce qui confond deux choses sans rapport : la
+lumière d'un impact et sa masse. Le résultat était contraire au bon sens —
+
+| | flash | ce que ça donnait |
+|---|---|---|
+| `heal` (soin) | 0,80 | ébranlait l'écran… |
+| `dust` (éboulement) | 0,70 | …plus qu'un éboulement |
+
+Se faire soigner secouait la caméra. Une nuée de feuilles la faisait trembler
+autant qu'un éclat de givre. Le poids est désormais déclaré à part, famille par
+famille : un soin ne secoue rien, parce que rien ne frappe ; la poussière secoue
+le plus, parce que c'est de la roche qui tombe.
+
+#### La couche sonore grave
+
+Réservée aux familles qui ont une masse — feu, glace, roche. Un halo de lumière
+ou une nuée de feuilles n'ont aucune raison de faire vibrer le sol. Un test
+vérifie la cohérence des deux réglages : ce qui pèse assez pour secouer la caméra
+pèse assez pour porter un grave.
+
+#### Les deux pistes restantes
+
+L'**éclair de lumière à l'impact** et la **traînée persistante** attendent. La
+première demande une lumière dynamique positionnelle, que la lueur portée ne sait
+pas faire — elle éclaire son porteur, pas un point du monde. La seconde relève
+plutôt du chantier 9, qui touche aux modèles eux-mêmes.
+
+`ImpactWeightTest` gèle les trois mécanismes chiffrés, dont les deux inversions
+concrètes qui ne doivent pas revenir.
 
 ---
 
@@ -539,7 +623,7 @@ corrigé :
 ├─ 5  Progression visible   ✅ livré — fix/progression-visibility
 ├─ 6  Fiche de sort         ✅ livré — feature/grimoire-spell-info
 │
-└─ 8  Facteur WOW           ← en dernier : repose sur 1 et 2
+└─ 8  Facteur WOW           ✅ 4 pistes sur 6 — feature/vfx-impact
    └─ 9  Modèles enrichis
 ```
 
@@ -547,9 +631,16 @@ Les trois premiers après le chantier 0 sont volontairement des chantiers courts
 et visibles : ils remettent du terrain sûr sous les pieds avant d'attaquer la
 progression et les VFX, qui sont longs.
 
-Les trois sont faits, ainsi que les chantiers 5 et 6. Restent les chantiers 2 et
-3, qui ne se jugeront qu'une fois le serveur redéployé sur le code de `main` —
-c'est-à-dire après le chantier 0 — puis les deux chantiers de VFX.
+Les trois sont faits, ainsi que les chantiers 5, 6 et l'essentiel du 8. Restent
+les chantiers 2 et 3, qui ne se jugeront qu'une fois le serveur redéployé sur le
+code de `main` — c'est-à-dire après le chantier 0 — puis le chantier 9 et les
+deux pistes de VFX laissées de côté.
+
+Le chantier 8 a été pris avant le 2 alors que la roadmap le disait dépendant de
+lui. C'était un pari raisonnable et il faut le noter : les quatre pistes traitées
+sont toutes des mécanismes du client, indépendants de la visée. La sixième — la
+traînée persistante — a en revanche été renvoyée au chantier 9, où elle a sa
+place.
 
 Deux fois en trois chantiers, le défaut de fond s'est révélé être **un nombre
 écrit des deux côtés qui avait fini par diverger** : les paliers d'XP au
