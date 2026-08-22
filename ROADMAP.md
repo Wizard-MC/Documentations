@@ -28,6 +28,7 @@ Stack : MCP `wizardmc-clean` · `WizardSpigot` · `WizardCore` · cible `WizardC
 | WizardCovens | [cdc_covens.md](cdc_covens.md) | absent | **À faire** (T0 = FactionAdapter) |
 | Boutique | [cdc_boutique.md](cdc_boutique.md) | non | À faire |
 | Magie | [cdc_magie.md](cdc_magie.md) | livré ✅ | 12 écoles, 31 sorts, runtime VFX client |
+| Cinématique d'arrivée | [cdc_intro.md](cdc_intro.md) | WizardIntro 1.0.0 ✅ | packet 130 · 9 écoles · assets : icônes + map manquantes |
 | Compagnons / Spawn | stubs | non | Backlog design |
 
 **Transition sociale**
