@@ -41,13 +41,15 @@ Trois engagements la structurent :
 |---|---|---|
 | 1 | Connexion | Le serveur lit l'état du joueur. Intro déjà faite → rien |
 | 2 | Invocation | Téléportation au Sanctuaire des Origines, joueur immobilisé, autres occupants masqués |
-| 3 | Portail | Anneau de particules dorées et violettes autour du joueur |
-| 4 | Apparition | Aelindra se pose devant lui, animation `Apparition` |
-| 5–9 | Cinq répliques | Voix, sous-titres, animation par réplique, runes flottantes |
-| 10 | Choix | Grille des neuf écoles, avec nom, couleur et vocation |
-| 11 | Enregistrement | Le choix est validé, écrit, puis annoncé au reste du serveur |
-| 12 | Disparition | Animation `Disparition`, fondu |
-| 13 | Retour | Téléportation au spawn principal, joueur rendu à lui-même |
+| 3 | Faisceau | Colonne de lumière bleue, tremblement de caméra et son : le joueur *paraît*, il n'atterrit pas |
+| 4 | Portail | Anneau de particules dorées et violettes autour du joueur |
+| 5 | « Où suis-je ? » | La réplique du joueur, sans voix. C'est sa fin qui appelle la déesse |
+| 6 | Apparition | Aelindra se pose devant lui, animation `Apparition` — **une seule fois** |
+| 7–11 | Cinq répliques | Voix, sous-titres, animation par réplique, runes flottantes. Les deux personnages marchent le long de leur chemin pendant ce temps |
+| 12 | Choix | Grille des neuf écoles, avec nom, couleur et vocation |
+| 13 | Enregistrement | Le choix est validé, écrit, puis annoncé au reste du serveur |
+| 14 | Disparition | Animation `Disparition`, fondu |
+| 15 | Retour | Téléportation au spawn principal, joueur rendu à lui-même |
 
 Durée : environ 90 secondes, dont 81 de script parlé.
 
@@ -55,6 +57,7 @@ Durée : environ 90 secondes, dont 81 de script parlé.
 
 | Réplique | Durée | Texte |
 |---|---:|---|
+| `player_00_arrivee` | 3,5 s | « Où suis-je ? » — *dite par le joueur, sans voix* |
 | `intro_01_apparition` | 3,2 s | « Les Arcanes t'ont choisi, Sorcier. » |
 | `intro_02_presentation` | 11,2 s | « Je suis Aelindra, l'Éveilleuse des Âmes, gardienne du Sanctuaire des Origines. » |
 | `intro_03_invocation` | 17,6 s | « Tu as été invoqué dans les Terres Fracturées, là où la magie saigne encore des blessures du monde. » |
@@ -63,6 +66,27 @@ Durée : environ 90 secondes, dont 81 de script parlé.
 
 Le texte vit dans la configuration du serveur, pas dans le mod : corriger une phrase ne demande
 pas de redistribuer le client.
+
+Les répliques longues se **découpent en segments**, chacun affiché à son heure — trente secondes
+de voix ne tiennent pas en une phrase à l'écran. Le découpage est facultatif et vit lui aussi en
+configuration.
+
+### La mise en marche
+
+La cinématique ne se joue pas sur place. Des **points de passage** posés en jeu tracent le
+trajet du joueur et celui d'Aelindra ; ils s'élancent ensemble à la première réplique de la
+déesse et marchent pendant qu'elle parle.
+
+Le joueur est déplacé par le serveur, qui le téléporte dix fois par seconde : il est immobilisé
+pour la cinématique, et lui rendre la main pour le faire avancer reviendrait à lui rendre la main
+tout court. **Seule sa position est imposée — son regard reste le sien** : une tête qu'on tourne
+à sa place est la première cause de nausée en vue subjective.
+
+Aelindra n'existant que chez le client, il reçoit son chemin en une trame et tient sa position
+seul. Les deux côtés appliquent le même calcul, faute de quoi l'écart entre eux grandirait à
+chaque point.
+
+Sans point posé, la cinématique se joue sur place : c'est un décor, pas une obligation.
 
 ---
 
@@ -107,16 +131,19 @@ IntroManager                              IntroManager
 ├── CinematicManager   ── packet 130 ──▶  ├── écran + bandes + sous-titres
 │   └── CinematicSession                  ├── grille des écoles
 ├── DialogueManager                       ├── Aelindra (bbmodel animé)
-├── ChoiceManager  ────────────────────▶  ├── portail, runes
-├── TeleportManager                       └── voix (.ogg)
+├── ChoiceManager  ────────────────────▶  ├── faisceau, portail, runes
+├── TeleportManager                       ├── IntroPath (sa marche)
+├── PathManager (la marche du joueur)     └── voix (.ogg)
 ├── IntroDAO (SQLite | MySQL)
 └── IntroAPI + PlayerIntroCompletedEvent
 ```
 
-**Packet 130**, bidirectionnel, sept actions. Premier identifiant libre après le bloc 95–129 —
+**Packet 130**, bidirectionnel, neuf actions. Premier identifiant libre après le bloc 95–129 —
 `WizardPackets.FIRST_FREE_ID`. Le CDC d'origine prévoyait un plugin channel `wizardmc:intro` :
 la stack n'en utilise aucun, tous ses systèmes passent par des packets NMS custom. Les
-identifiants `0xE0`–`0xF0` du CDC sont conservés comme **actions** à l'intérieur du 130.
+identifiants `0xE0`–`0xF0` du CDC sont conservés comme **actions** à l'intérieur du 130. Deux
+s'y ajoutent : `0xE4` (`CINEMATIC_STAGE`, une étape de mise en scène que le serveur nomme et dont
+le client décide du rendu) et `0xE5` (`CINEMATIC_PATH`, le chemin de la déesse).
 
 **Une modification du fork** a été nécessaire : `WizardPackets` fermait son registre avant le
 chargement des plugins, ce qui le rendait inutilisable par un plugin. Le verrou tombe désormais
@@ -173,7 +200,9 @@ est documentée dans `ASSETS/sounds/Aelindra/README.md`.
 - École non proposée, chaîne arbitraire, session erronée → refusées
 - `/intro reset` puis reconnexion → elle se rejoue ; `/intro skip` → elle ne se joue plus
 - Monde de cinématique absent → le serveur le dit, les joueurs restent au spawn
+- Chaque réplique porte un découpage lisible : segments ordonnés, dans la durée, aucun vide
+- Points posés → le chemin de la déesse est annoncé, et le serveur déplace bien le joueur
 
-Ces points sont automatisés (`IntroLiveScenarios`, contre un serveur réel). Ce qui ne l'est pas,
-et demande une session de jeu : le rendu d'Aelindra, ses animations, les sous-titres, la grille
-et les particules.
+Ces points sont automatisés (`IntroLiveScenarios`, contre un serveur réel — 106 contrôles). Ce
+qui ne l'est pas, et demande une session de jeu : le rendu d'Aelindra, ses animations, la lecture
+des sous-titres à l'écran, la grille et les particules.
