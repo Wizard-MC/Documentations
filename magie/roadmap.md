@@ -170,7 +170,7 @@ n'importe quel rythme lent sans arrondi.
 
 **Branche : `fix/progression-visibility`** · dépôts WizardCore + MCP
 
-**Il n'y a rien à concevoir.** Le CDC §5.3 à §5.6 définit déjà tout le système,
+**Il n'y a rien à concevoir.** Le CDC §5.3 à §5.7 définit déjà tout le système,
 et le code l'implémente. Vérifié :
 
 | Règle du CDC | Où elle vit dans le code |

@@ -316,7 +316,90 @@ que le précédent, ce qui rend le touche-à-tout compétitif face au spécialis
 Un sort ne peut être lancé que si les trois conditions sont réunies : sort
 appris, niveau d'école suffisant, tier de baguette suffisant.
 
-### 5.6 Amélioration des sorts
+### 5.6 Les sceaux — ce qui ferme un sort
+
+Le grimoire ne demandait qu'une chose : de l'XP d'école, gagnée en lançant des
+sorts de cette école. **Un seul axe**, donc un seul geste à répéter — et un
+joueur décidé vidait les dix-neuf sorts à gagner en un week-end sans jamais
+quitter sa base. Rien, dans le monde, n'était requis.
+
+Un sort déclare désormais des **sceaux**. L'XP reste le prix ; les sceaux sont
+les conditions, et le grimoire ne propose le sort que lorsqu'ils sont tous
+franchis.
+
+| Sceau | Ce qu'il demande | Consommé | D'où ça vient |
+|---|---|---|---|
+| `NIVEAU` | étudier | non | lancer les sorts de l'école (§5.3) |
+| `TOME` | trouver | **oui** | butin, boss, récompense, commerce |
+| `REACTIF` | récolter | **oui** | matériaux, y compris le butin de boss |
+| `HAUT_FAIT` | accomplir | non | Autels, occurrences, lancements |
+
+**Chaque sorte demande un effort d'une nature différente.** C'est tout l'objet
+du système : un seul axe se grinde, deux forcent à sortir. Un contrôle
+automatique refuse un sort scellé qui ne demanderait qu'une seule sorte
+d'effort — un sort qui ne coûterait que des réactifs s'achèterait au marché sans
+que son propriétaire ait rien fait.
+
+**Les treize sorts de départ ne sont jamais scellés**, et un second contrôle
+l'impose : un joueur qui sortirait de la cinématique d'arrivée sans rien à
+lancer n'aurait pas de jeu.
+
+#### Les Tomes
+
+Un livre par sort, mais **un objet par école** : le Tome porte dans son lore le
+sort qu'il enseigne, sa couverture ne dit que l'école. Neuf textures suffisent
+là où trente-deux auraient demandé trente-deux entrées de registre pour une
+information que trois mots portent aussi bien.
+
+Il est **consommé à l'apprentissage**. C'est ce qui en fait un objet de
+convoitise, de butin et de commerce plutôt qu'une clé qu'on garde au fond d'un
+coffre : un second exemplaire a de la valeur pour quelqu'un d'autre.
+
+#### Les hauts faits
+
+Comptés par joueur, et **jamais décomptés** : un haut fait est un souvenir, pas
+une monnaie. Apprendre le sort qu'il ouvrait ne le dépense pas.
+
+| Clé | Compté quand |
+|---|---|
+| `casts:<ÉCOLE>` | un sort de cette école est lancé avec succès |
+| `altar:<TYPE>` | un Autel de ce type est capturé (§ [`cdc_autels_sacres.md`](cdc_autels_sacres.md)) |
+| `occurrence:<TYPE>` | une occurrence de ce type est remportée |
+| `occurrence:ANY` | n'importe quelle occurrence |
+
+Un haut fait de lancements ne porte **que sur l'école du sort** : demander des
+lancements d'une autre école obligerait à monter une école pour en débloquer une
+autre, ce qui n'est pas une progression mais un détour.
+
+#### Le débit est tout ou rien
+
+Un sort peut demander un Tome *et* des réactifs. Consommer le Tome puis échouer
+sur les réactifs détruirait une semaine de recherche pour rien. Les débits sont
+donc vérifiés avant d'être appliqués, et **rendus** si l'apprentissage échoue
+après coup — ce qui ne tient plus dans le sac tombe au sol plutôt que d'être
+perdu.
+
+#### Ce qui passe outre
+
+Le **parchemin** et la commande d'administration franchissent les sceaux sans
+les regarder. C'est tout ce qui les distingue du grimoire, et c'est précisément
+ce qu'on cherche quand une condition ne peut pas être remplie — un joueur revenu
+après une Ère, une école dont l'Autel n'existe plus sur la carte.
+
+#### Le barème livré
+
+Les dix-neuf sorts à gagner, par palier :
+
+| Palier | Sceaux | Esprit de la chose |
+|---|---|---|
+| Niveau 1 (10 sorts) | un réactif + 40 lancements de l'école | on apprend en pratiquant, et en ramassant |
+| Niveau 2 (8 sorts) | un Tome + un haut fait de terrain | il faut sortir, et trouver |
+| Niveau 3 (`frost_prison`) | Tome + réactif rare + deux Autels + 250 lancements | le sommet d'une école se paie |
+
+`ember_flare` demande un **Cœur de Braise**, le butin du Dragonnet : le seul
+sort du catalogue qui passe par un boss, et il est en Braises.
+
+### 5.7 Amélioration des sorts
 
 Un sort appris part au **rang I** et peut être poussé jusqu'au **rang V**.
 
@@ -342,7 +425,7 @@ et chaque rang exige deux niveaux d'école de plus que le précédent. Améliore
 sort de haut niveau reste donc un vrai investissement, et suit la progression
 de l'école au lieu de constituer une file d'attente parallèle.
 
-### 5.7 Presets de barre
+### 5.8 Presets de barre
 
 Huit emplacements permettent d'enregistrer une barre de sorts complète et de la
 rappeler d'un clic.
