@@ -502,18 +502,27 @@ eres/colosse/
 
 | Fichier | Destination |
 |---|---|
-| Colosse | `src/minecraft/assets/minecraft/textures/wizardmc/models/entity/colosse/<nom>.bbmodel` |
+| Colosse | `src/minecraft/assets/minecraft/textures/wizardmc/models/entity/<nom>.bbmodel` |
 | Effets | `src/minecraft/assets/minecraft/textures/wizardmc/models/magic/<nom>.bbmodel` |
-
-Le dossier `entity/<espèce>/<fichier>.bbmodel` est celui que le résolveur de
-chemins des compagnons parcourt déjà ; le Colosse n'a pas besoin d'un chemin à
-lui.
 
 ### Identifiants de modèle
 
-`/boss set <vie> <dégâts> <modèle>` stocke une chaîne, qui devient le `modelId`
-du NPC. Les trois valeurs attendues sont `colosse_tenebres`, `colosse_aurore`
-et `colosse_fractures`.
+Le `modelId` d'un NPC **est** son chemin sous `entity/`, sans extension. Une
+seule règle, pour qu'un administrateur puisse prédire le fichier attendu ; un
+identifiant qui contient une barre oblique désigne un sous-dossier.
+
+| `modelId` | Fichier lu |
+|---|---|
+| `colosse_tenebres` | `entity/colosse_tenebres.bbmodel` |
+| `colosse_aurore` | `entity/colosse_aurore.bbmodel` |
+| `colosse_fractures` | `entity/colosse_fractures.bbmodel` |
+
+L'occurrence choisit la variante d'après le thème de l'Ère, comme elle choisit
+déjà le nom du Colosse. `/boss set <vie> <dégâts> <modèle>` l'emporte quand on
+veut en essayer une autre sans nouvelle version du plugin.
+
+Un identifiant sans fichier correspondant n'est **pas** remplacé par un autre
+modèle : le NPC retombe sur le rendu vanilla, ce qui se voit.
 
 ---
 
@@ -542,30 +551,28 @@ cite en revue.
 
 ---
 
-## Ce qu'il reste à câbler côté code
+## Ce que le code sait déjà faire
 
-Le modèle ne suffit pas : trois choses manquent pour qu'il se voie tel qu'il est
-décrit ici. Elles sont notées pour ne pas les redécouvrir à la livraison.
+Ces quatre points manquaient quand ce document a été écrit. Ils sont livrés.
 
-**Le rendu NPC ne lit que de l'OBJ.** `RenderWizardNpc` (dépôt MCP) associe un
-`modelId` à un chemin `.obj` statique, et **retombe sur le modèle du Forgeron**
-pour tout identifiant inconnu. Un Colosse posé aujourd'hui apparaît donc comme
-un forgeron de taille humaine. Il faut y brancher le chargeur `.bbmodel`, celui
-qu'utilisent déjà l'Ignis et les compagnons.
+**Le rendu NPC lit les bbmodel.** `RenderWizardNpc` essaie d'abord le bbmodel
+désigné par le `modelId`, puis le registre OBJ, puis le rendu vanilla. Il ne
+substitue plus le modèle du Forgeron à tout identifiant inconnu : un modèle
+absent se voit.
 
-**Le NPC n'a pas de canal d'état d'action.** Le `DataWatcher` de
-`EntityWizardNpc` porte le modèle, le nom, l'IA et le genre — rien qui dise
-« il frappe ». Les compagnons ont ce canal (`CompanionState`, dix valeurs) ;
-sans l'équivalent ici, le client ne peut jouer que `Idle` et `marche`, déduites
-du mouvement observé. Les six autres animations resteraient inertes.
+**Le NPC porte un canal d'état d'action.** `WizardNpc.playAction(clip, ticks)`
+demande au client de jouer un clip, calé sur les ticks écoulés que le serveur
+compte — c'est ce calage qui fait correspondre le geste et le moment où les
+dégâts tombent. Le Colosse s'en sert pour `attaque_ecrasement` : il arme,
+marque un temps, et ce qu'il touche est ce qui se trouve devant lui au tick
+23, pas au lancement. L'esquive est donc réelle.
 
-**La boîte de collision fait 0,6 × 1,8 bloc.** C'est la taille d'un joueur,
-posée dans le constructeur d'`EntityWizardNpc`. Un modèle de cinq blocs de haut
-et trois et demi de large déborderait largement : on frapperait dans le vide
-partout sauf au centre, et le Colosse encaisserait des coups qu'on ne voit pas
-porter. Il faut une taille de boîte réglable par NPC avant de livrer un modèle
-de cette échelle.
+**La boîte de collision est réglable par NPC.** `NpcSpawnOptions.size(l, h)`,
+et le Colosse est posé à 3,5 × 5 blocs — les dimensions de ce document. La
+boîte voyage jusqu'au client, parce que c'est la sienne qui décide de ce que le
+joueur vise.
 
-**Le nom du modèle suit le thème.** L'occurrence stocke aujourd'hui **un**
-`modelId`, réglé à la main par `/boss set`. Avec trois variantes, c'est le thème
-de l'Ère qui doit choisir — comme il choisit déjà le nom du Colosse.
+**Le thème choisit la variante.** L'occurrence pose `colosse_tenebres`,
+`colosse_aurore` ou `colosse_fractures` selon le thème de l'Ère.
+
+Reste donc uniquement les fichiers.
