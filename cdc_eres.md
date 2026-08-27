@@ -70,6 +70,10 @@ vivrait en mémoire, disparaîtrait au redémarrage, et se disputerait au premie
 ferait d'un événement une décoration ; le faire mourir seul récompenserait
 l'attente.
 
+Son **modèle 3D** — silhouette, trois variantes de thème, animations et effets
+d'attaque — a son propre cahier des charges, prêt à transmettre au modeleur :
+[`eres/bbmodel_colosse.md`](eres/bbmodel_colosse.md).
+
 ---
 
 ## 3. Stockage
