@@ -22,7 +22,7 @@
 | **E-03** | Reset fin d’Ère : Nexus level 1 / shards 0 / pouvoirs flags 0 / CD pouvoirs 0 ; Autels owners NULL + CD clear ; archive `total_shards_earned`. |
 | **E-04** | **Conservé** : claims, builds, inventaires, membres Coven, grades boutique, banque Coven (config). |
 | **E-05** | Vainqueur = plus haut niveau Nexus (tie-break `total_shards_earned`) → titre `[Vainqueur E#]`, cosmétique, **Panthéon** spawn. |
-| **E-06** | Fin d’Ère : Autels ×3 Éclats ; boss mondial 2 h ; CD pouvoirs **/2**. |
+| **E-06** | Fin d’Ère : Autels ×3 Éclats ; **le Colosse** 2 h (§2.2) ; CD pouvoirs **/2**. |
 | **E-07** | Chaque Ère a un **thème** (`DARKNESS` / `LIGHT` / `CHAOS`) → soft-mods (voir §2.1). |
 | **E-08** | Vocabulaire joueur : « Ère » partout (HUD, messages) ; tables SQL peuvent garder `season_*` en alias. |
 
@@ -35,6 +35,40 @@
 | **Chaos** | Forgeron move 45 min ; war declare cost −10 % |
 
 Mods **légers** : jamais +loot P2W, jamais bypass protection hors guerre.
+
+---
+
+### 2.2 Le Colosse de l'Ère
+
+Le boss mondial que promet **E-06**. Il paraît en phase de Cataclysme, et
+seulement là : hors de cette phase, son lancement est refusé — un boss de fin
+d'Ère qui se présenterait au premier jour n'aurait plus rien à clore.
+
+C'est une **occurrence** ([`cdc_covens.md`](cdc_covens.md) et le module
+`occurrences`), pas un système à part. Ce choix lui donne sans rien réécrire la
+planification, les annonces d'approche, le waypoint sur la minimap et le tableau
+de score — et le branche sur l'événement de victoire, si bien que sa mort ouvre
+exactement les mêmes portes que n'importe quelle autre : hauts faits, butin de
+la section `BOSS`, et tirage de Tome ([`cdc_magie.md`](cdc_magie.md) §5.6).
+
+| Attribut | Valeur | Réglé par |
+|---|---|---|
+| Durée | 2 h | fixe, comme E-06 l'annonce |
+| Vie | 20 000 | `/boss set <vie> [dégâts] [modèle]` |
+| Vainqueur | le dernier coup | — |
+
+Son **nom suit le thème de l'Ère** : Colosse des Ténèbres, Colosse d'Aurore,
+Colosse des Fractures. C'est la seule chose qui rattache visiblement le combat à
+l'Ère qu'il clôt.
+
+Le vainqueur est celui qui porte le dernier coup. C'est le seul critère tenable
+sans compter les dégâts de chacun sur deux heures — un tableau de contributions
+vivrait en mémoire, disparaîtrait au redémarrage, et se disputerait au premier
+écart d'un point.
+
+**Deux heures passées, il se retire** sans vainqueur ni butin. Le laisser traîner
+ferait d'un événement une décoration ; le faire mourir seul récompenserait
+l'attente.
 
 ---
 
