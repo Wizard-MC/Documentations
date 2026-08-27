@@ -24,6 +24,7 @@ WizardMC – *Les Terres Fracturées* : les joueurs forment des **Covens**, dév
 | [cdc_magie.md](cdc_magie.md) | **Magie** — 9 écoles, 41 sorts, runtime VFX |
 | [magie/](magie/README.md) | Fiches détaillées : une par école, une par sort, conception des VFX |
 | [cdc_intro.md](cdc_intro.md) | **Cinématique d'arrivée** — L'Invocation d'Aelindra |
+| [cdc_mobs.md](cdc_mobs.md) | **Mobs custom hostiles** — 36 especes, IA, groupes, nuees, butin |
 | [cdc_compagnons.md](cdc_compagnons.md) | Stub Compagnons SMP |
 | [cdc_spawn_map.md](cdc_spawn_map.md) | Stub Spawn & map |
 | [cdc_wizardcloud.md](cdc_wizardcloud.md) | **WizardCloud** — distribution et mise à jour du client MCP |

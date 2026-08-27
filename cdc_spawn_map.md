@@ -23,6 +23,12 @@ Définir l’**espace de jeu** SMP : spawn sûr, biomes narratifs, placement Aut
 
 ---
 
+> Les mobs custom lisent ces zones : chaque région porte un décalage
+> d'hostilité qui relève ou abaisse le niveau des créatures qui y naissent —
+> voir [cdc_mobs.md](cdc_mobs.md) §4.7.
+
+---
+
 ## 3. Points d’intérêt
 
 - **7 Autels** (voir [cdc_autels_sacres.md](cdc_autels_sacres.md)) — coords dans `altars.yml`  
