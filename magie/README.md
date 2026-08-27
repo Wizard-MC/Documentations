@@ -29,15 +29,15 @@ filiation est conservée sous le nom de *tradition*.
 
 | École | Sorts | Traditions absorbées | Fiche |
 |---|---|---|---|
-| **Aurore** | 2 | — | [`light`](ecoles/light.md) |
-| **Roc** | 4 | Sylvanie | [`earth`](ecoles/earth.md) |
-| **Arcane** | 2 | — | [`arcane`](ecoles/arcane.md) |
-| **Givre** | 3 | — | [`frost`](ecoles/frost.md) |
+| **Aurore** | 3 | — | [`light`](ecoles/light.md) |
+| **Roc** | 5 | Sylvanie | [`earth`](ecoles/earth.md) |
+| **Arcane** | 3 | — | [`arcane`](ecoles/arcane.md) |
+| **Givre** | 4 | — | [`frost`](ecoles/frost.md) |
 | **Braises** | 3 | — | [`fire`](ecoles/fire.md) |
-| **Tempête** | 3 | — | [`storm`](ecoles/storm.md) |
-| **Ombre** | 6 | Sang | [`shadow`](ecoles/shadow.md) |
-| **Esprit** | 3 | — | [`spirit`](ecoles/spirit.md) |
-| **Vide** | 6 | Chronos | [`void`](ecoles/void.md) |
+| **Tempête** | 4 | — | [`storm`](ecoles/storm.md) |
+| **Ombre** | 7 | Sang | [`shadow`](ecoles/shadow.md) |
+| **Esprit** | 4 | — | [`spirit`](ecoles/spirit.md) |
+| **Vide** | 7 | Chronos | [`void`](ecoles/void.md) |
 
 ## Traditions
 

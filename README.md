@@ -21,7 +21,7 @@ WizardMC – *Les Terres Fracturées* : les joueurs forment des **Covens**, dév
 | [eres/](eres/bbmodel_colosse.md) | Cahier des charges du modèle 3D du Colosse de l'Ère |
 | [cdc_exp_client.md](cdc_exp_client.md) | Client MCP / HUD / FX |
 | [cdc_boutique.md](cdc_boutique.md) | Monétisation zéro P2W |
-| [cdc_magie.md](cdc_magie.md) | **Magie** — 12 écoles, 31 sorts, runtime VFX |
+| [cdc_magie.md](cdc_magie.md) | **Magie** — 9 écoles, 40 sorts, runtime VFX |
 | [magie/](magie/README.md) | Fiches détaillées : une par école, une par sort, conception des VFX |
 | [cdc_intro.md](cdc_intro.md) | **Cinématique d'arrivée** — L'Invocation d'Aelindra |
 | [cdc_compagnons.md](cdc_compagnons.md) | Stub Compagnons SMP |
