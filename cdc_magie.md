@@ -282,7 +282,7 @@ Réglages : bloc `affinity` de `magic.yml` — `powerBonus` (0.25),
 une avance). `enabled: false` coupe le bonus sans effacer les voies déjà
 choisies.
 
-`/magic school [joueur] [école]` lit une voie, et la remplace si une école est
+`/magic voie [joueur] [école]` lit une voie, et la remplace si une école est
 donnée. C'est la seule façon d'en changer : la cinématique, elle, ne remplace
 jamais une voie déjà tracée.
 
@@ -385,6 +385,30 @@ Le **parchemin** et la commande d'administration franchissent les sceaux sans
 les regarder. C'est tout ce qui les distingue du grimoire, et c'est précisément
 ce qu'on cherche quand une condition ne peut pas être remplie — un joueur revenu
 après une Ère, une école dont l'Autel n'existe plus sur la carte.
+
+#### Où les Tomes tombent
+
+Deux sources, et les deux sortent le joueur de sa base :
+
+| Source | Chance | Pourquoi celle-là |
+|---|---:|---|
+| Victoire à une occurrence | 35 % | se dispute à plusieurs, se voit sur la carte |
+| Coffre tombé **légendaire** | 20 % | les communs n'en rendent jamais |
+
+Le Tome **s'ajoute** au butin ordinaire du coffre plutôt que de le remplacer :
+ouvrir un légendaire ne doit jamais rendre moins qu'un commun.
+
+**Un Tome qui n'ouvre rien est un Tome perdu.** Le tirage écarte donc les sorts
+libres, ceux que le joueur connaît déjà, et ceux dont il porte déjà le Tome — le
+second exemplaire vaut pour quelqu'un d'autre, mais le recevoir soi-même à la
+place d'un livre neuf est une récompense qui n'en est pas une.
+
+La voie pèse **trois fois plus** dans le tirage, pas davantage : elle sort le
+plus souvent sans que les huit autres écoles ne cessent d'apparaître. Même
+principe que le bonus de puissance — la voie donne, elle n'enferme pas.
+
+Réglages : bloc `tomes` de `magic.yml`. `/magic tome <sort> [joueur] [nombre]`
+en délivre un à la main — récompense de quête, lot d'événement, dépôt en caisse.
 
 #### Le barème livré
 
