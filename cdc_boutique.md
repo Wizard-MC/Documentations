@@ -44,7 +44,7 @@ Essence, ni réduction de cooldown. Il fait gagner du **temps de clic** — la
 définition même de la catégorie Confort, au même titre que `/home`.
 
 Deux garanties techniques, décrites dans
-[`cdc_magie.md`](cdc_magie.md) §5.6, rendent la promesse vérifiable :
+[`cdc_magie.md`](cdc_magie.md) §5.7, rendent la promesse vérifiable :
 
 1. le chargement d'un preset **revalide chaque sort** contre ce que le joueur a
    réellement appris et son niveau d'école — un preset ne peut donc jamais

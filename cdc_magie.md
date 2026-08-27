@@ -241,7 +241,57 @@ dans le vide.
 L'XP est gagnée dans l'école du sort lancé. Progresser dans une école demande
 donc d'en jouer les sorts, pas d'en acheter le niveau.
 
-### 5.4 Apprentissage
+### 5.4 La voie — l'école choisie à l'arrivée
+
+La cinématique d'arrivée se termine par un choix d'école
+([`cdc_intro.md`](cdc_intro.md)). Ce choix est **la voie** du joueur, et il
+compte dans le jeu : il ne se contente plus de dormir dans la table de
+WizardIntro.
+
+| Ce que la voie donne | Effet |
+|---|---|
+| Sorts de base de l'école | Acquis au moment du choix — ceux qui ne demandent aucun niveau |
+| Puissance | **+25 %** sur les sorts de sa voie, dégâts *et* soins |
+
+**Elle ne restreint rien.** Hors de sa voie, le facteur vaut exactement un —
+jamais moins. Un mage apprend et lance les sorts des neuf écoles, avec le même
+grimoire, les mêmes parchemins et les mêmes niveaux d'école. Il en joue
+simplement une mieux. C'est ce qui distingue la voie d'une classe de MMO : elle
+donne une identité, pas des murs.
+
+Le bonus porte sur les **soins comme sur les dégâts**. Le réserver aux dégâts
+laisserait Aurore et Esprit sans rien : ce sont des écoles de soin, et leurs
+sorts offensifs se comptent sur les doigts d'une main.
+
+Il s'applique **avant** le plafond PvP (§10), qui reste infranchissable — une
+voie ne doit pas permettre de le dépasser. Les magnitudes livrées gardent assez
+de marge pour que le bonus se voie entièrement : un sort porte typiquement 2,5
+pour un plafond de 6. Un contrôle automatique refuse un catalogue où un sort
+amplifié buterait sur son propre plafond, ce qui rendrait le bonus invisible
+pour ce sort-là.
+
+**Voie et affinité de baguette sont deux choses.** La voie est le joueur et ne
+change pas ; l'affinité est l'objet qu'il tient et change avec lui. La première
+donne de la puissance, la seconde du confort — moins de coût et de cooldown
+(§6). Les deux se cumulent, et rien n'oblige à les faire coïncider : un mage de
+l'Ombre avec une baguette de Braises frappe fort en Ombre et lance le Feu à bon
+marché.
+
+Réglages : bloc `affinity` de `magic.yml` — `powerBonus` (0.25),
+`grantBaseSpells`, `startingXp` (0 par défaut : le choix donne une identité, pas
+une avance). `enabled: false` coupe le bonus sans effacer les voies déjà
+choisies.
+
+`/magic school [joueur] [école]` lit une voie, et la remplace si une école est
+donnée. C'est la seule façon d'en changer : la cinématique, elle, ne remplace
+jamais une voie déjà tracée.
+
+**Rattrapage.** Un joueur qui avait déjà choisi son école avant que la voie
+n'existe la reçoit à sa prochaine connexion, depuis ce que WizardIntro avait
+enregistré. Même chose pour celui qui s'était déconnecté pendant l'écriture de
+son choix. Le rattrapage ne défait jamais une voie déjà posée.
+
+### 5.5 Apprentissage
 
 Treize sorts sont **appris d'office** (`autoLearn`) : `light_glimmer`,
 `nature_growth`, `arcane_sense`, `frost_preserve`, `ember_torch`, `ember_fireball`,
@@ -266,7 +316,7 @@ que le précédent, ce qui rend le touche-à-tout compétitif face au spécialis
 Un sort ne peut être lancé que si les trois conditions sont réunies : sort
 appris, niveau d'école suffisant, tier de baguette suffisant.
 
-### 5.5 Amélioration des sorts
+### 5.6 Amélioration des sorts
 
 Un sort appris part au **rang I** et peut être poussé jusqu'au **rang V**.
 
@@ -292,7 +342,7 @@ et chaque rang exige deux niveaux d'école de plus que le précédent. Améliore
 sort de haut niveau reste donc un vrai investissement, et suit la progression
 de l'école au lieu de constituer une file d'attente parallèle.
 
-### 5.6 Presets de barre
+### 5.7 Presets de barre
 
 Huit emplacements permettent d'enregistrer une barre de sorts complète et de la
 rappeler d'un clic.

@@ -117,8 +117,24 @@ elles n'ont ni niveau ni sort à apprendre, et les proposer offrirait une voie s
 derrière. La liste vit en configuration — si l'une d'elles revenait, une entrée suffirait, la
 grille du client s'y adapte sans qu'on touche au mod.
 
-Le choix est transmis au reste du serveur par un événement, après écriture. `WizardCore` y
-branche l'ouverture de l'école dans le système de magie.
+Le choix est transmis au reste du serveur par un événement, après écriture.
+
+### Ce que le choix change vraiment
+
+L'école choisie devient **la voie** du joueur dans WizardCore
+([`cdc_magie.md`](cdc_magie.md) §5.4) : les sorts de base de cette école lui sont accordés, et
+ses sorts frappent et soignent **+25 %** plus fort.
+
+Elle **ne l'enferme pas**. Les huit autres écoles restent apprenables et jouables au tarif
+plein — aucun malus hors de sa voie. Le choix d'Aelindra donne une identité et une force, pas
+des murs : c'est exactement ce que la déesse annonce en le proposant.
+
+WizardIntro ne connaît pas WizardCore et n'a pas à le connaître : il émet son événement, et
+c'est le système de magie qui décide de ce qu'une école veut dire. Un serveur qui n'aurait pas
+WizardCore verrait la cinématique se dérouler entière, le choix s'enregistrer, et rien de plus.
+
+Le joueur qui a choisi son école avant que la voie n'existe la reçoit à sa prochaine connexion,
+depuis ce que ce plugin avait enregistré.
 
 ---
 

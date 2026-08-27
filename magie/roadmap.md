@@ -170,7 +170,7 @@ n'importe quel rythme lent sans arrondi.
 
 **Branche : `fix/progression-visibility`** · dépôts WizardCore + MCP
 
-**Il n'y a rien à concevoir.** Le CDC §5.3 à §5.5 définit déjà tout le système,
+**Il n'y a rien à concevoir.** Le CDC §5.3 à §5.6 définit déjà tout le système,
 et le code l'implémente. Vérifié :
 
 | Règle du CDC | Où elle vit dans le code |
@@ -310,7 +310,7 @@ Fait le 21/08, mécaniquement, contre `cdc_magie.md` et `magie/sorts/`.
 |---|---|
 | Sorts dans `spells.yml` | 32 |
 | Fiches dans `magie/sorts/` | 32 — **aucun orphelin dans un sens ni dans l'autre** |
-| `autoLearn` CDC §5.4 ↔ catalogue | 13 des deux côtés, **identiques** |
+| `autoLearn` CDC §5.5 ↔ catalogue | 13 des deux côtés, **identiques** |
 | Coût, cooldown, niveau, tier (table §11) | **concordent pour les 32 sorts** |
 | Coût, niveau, tier (fiches individuelles) | **concordent pour les 32 sorts** |
 
