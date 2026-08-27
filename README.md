@@ -18,6 +18,7 @@ WizardMC – *Les Terres Fracturées* : les joueurs forment des **Covens**, dév
 | [cdc_mana_brut.md](cdc_mana_brut.md) | Mana Brut = ressource stratégique / convois |
 | [cdc_pouvoirs.md](cdc_pouvoirs.md) | Pouvoirs actifs du Coven |
 | [cdc_eres.md](cdc_eres.md) | Ères (ex-saisons) 45 jours |
+| [eres/](eres/bbmodel_colosse.md) | Cahier des charges du modèle 3D du Colosse de l'Ère |
 | [cdc_exp_client.md](cdc_exp_client.md) | Client MCP / HUD / FX |
 | [cdc_boutique.md](cdc_boutique.md) | Monétisation zéro P2W |
 | [cdc_magie.md](cdc_magie.md) | **Magie** — 12 écoles, 31 sorts, runtime VFX |
