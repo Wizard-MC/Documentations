@@ -31,7 +31,7 @@ filiation est conservée sous le nom de *tradition*.
 |---|---|---|---|
 | **Aurore** | 3 | — | [`light`](ecoles/light.md) |
 | **Roc** | 5 | Sylvanie | [`earth`](ecoles/earth.md) |
-| **Arcane** | 3 | — | [`arcane`](ecoles/arcane.md) |
+| **Arcane** | 4 | — | [`arcane`](ecoles/arcane.md) |
 | **Givre** | 4 | — | [`frost`](ecoles/frost.md) |
 | **Braises** | 3 | — | [`fire`](ecoles/fire.md) |
 | **Tempête** | 4 | — | [`storm`](ecoles/storm.md) |
