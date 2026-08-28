@@ -725,6 +725,7 @@ paramétrée dans `spells.yml`.
 | `slow_target` / `potion_target` | Effet de potion sur la cible |
 | `silence_target` | Empêche la cible de lancer des sorts |
 | `frost_prison` | Immobilisation totale + cage de glace visible |
+| `frost_needle` | Givre | — | Projectile | 10 | 90 | 0 | 1 | **oui** |
 | `heal_target` / `heal_self` | Soin |
 | `cleanse_debuffs` | Retire les effets négatifs |
 | `potion_self` / `potion_area` | Effet de potion sur soi / sur les alliés proches |
@@ -846,7 +847,113 @@ suit la tradition (§16.3).
 
 ---
 
-## 11. Catalogue actuel — 32 sorts
+### 10.1 Ce qu'un sort laisse dans le décor
+
+Un sort de feu qui traverse une forêt sans rien allumer n'est pas un sort de
+feu, c'est une animation. Le décor est ce qui rend la magie crédible : on croit
+à la puissance d'un sort quand on en voit la trace, pas quand on lit un nombre
+de dégâts.
+
+**Les quatre langages.** Chaque école parle au décor à sa manière, et chacune
+est le contraire d'une autre — le feu consume ce que le givre fige, la roche
+brise ce que la nature fait pousser.
+
+| Mode | Ce qu'il fait | Écoles |
+|---|---|---|
+| `BURN` | consume la végétation, fait fondre neige et glace, **allume jusqu'à trois foyers** | Braises, Tempête, Aurore |
+| `FREEZE` | gèle l'eau, saupoudre la neige, éteint le feu | Givre |
+| `SHATTER` | brise la végétation et **creuse le sol meuble** | Arcane, Roc, Ombre, Vide |
+| `GROW` | fait pousser l'herbe sur la terre nue | Esprit |
+
+**Tout sort hostile en déclare un.** C'était vrai de six sorts sur vingt ; les
+quatorze autres frappaient sans laisser la moindre marque. L'Arcane reçoit au
+passage l'Égide qui lui manquait : c'était la seule école sans aucun sort de
+protection — trois sorts, deux attaques et une détection —, ce qui faisait de
+sa voie un choix piégé pour qui la prenait sans la connaître. Un test le vérifie
+désormais sur l'ensemble du catalogue.
+
+#### Trois garde-fous, dont aucun n'est facultatif
+
+- **La porte de claim.** Détruire du décor est une action sur le monde ; elle
+  passe par le même contrôle que poser ou casser un bloc. Sans cela, un sort de
+  roche serait un outil de grief à distance qui contourne toutes les
+  protections.
+- **Une liste blanche de blocs, jamais une liste noire.** On énumère ce qu'un
+  sort a le droit de transformer — herbe, feuillage, neige, eau peu profonde,
+  sol meuble — et tout le reste est intouchable par construction, y compris les
+  blocs qui n'existent pas encore. **La pierre, le bois et tout ce qui se
+  construit ne sont jamais touchés** : un sort n'est ni une pioche ni une charge
+  de démolition.
+- **Un rayon court**, borné à 3 blocs, et sphérique — un parcours cubique
+  laisserait des coins transformés plus loin que le rayon annoncé.
+
+Rien de ce qui est détruit ne tombe au sol : les blocs sont *remplacés*, pas
+cassés. Un sort ne récolte donc rien, et creuser à distance ne rapporte aucune
+ressource.
+
+#### Le feu
+
+`BURN` promettait d'allumer et ne le faisait pas : une boule de feu traversait
+une forêt en la défeuillant proprement, sans une flamme.
+
+Elle allume désormais — **au plus trois foyers**, et seulement sur du vide posé
+sur du solide, jamais sous la pluie ni au contact de l'eau où ils s'éteindraient
+dans la seconde. Trois, parce que le feu se propage tout seul : ce qu'on pose
+est un départ, pas un incendie. En allumer chaque position libre ferait de la
+moindre Boule de Feu un brasier instantané, et le joueur ne verrait plus son
+sort — seulement les flammes.
+
+**Conséquence à connaître :** hors claim, un sort de feu peut faire partir un
+incendie qui dépasse son rayon. C'est voulu, et c'est ce que la propagation
+vanilla fait de n'importe quel feu ; les zones revendiquées, elles, sont
+protégées par la porte de claim.
+
+---
+
+### 10.2 Les huit attaques de départ
+
+Une par école qui n'en avait aucune.
+
+Sur les treize sorts libres du catalogue, **un seul était offensif** : la Boule
+de Feu. Et trois écoles — Aurore, Esprit et Roc — n'avaient aucun sort hostile
+**à aucun niveau**. Un joueur qui suivait l'une d'elles n'avait littéralement
+pas de quoi frapper avant d'avoir gagné un niveau et brisé un sceau ; les
+autres n'avaient de quoi le faire que si l'ordre du catalogue laissait la Boule
+de Feu dans leurs six emplacements de barre — c'est-à-dire par hasard, et avec
+un sort de Braises.
+
+| École | Sort | Mode | Portée | Essence | CD |
+|---|---|---|---|---:|---:|
+| Aurore | `light_ray` — Rayon d'Aurore | Instant | 24 | 11 | 95 |
+| Roc | `earth_shard` — Éclat de Roc | Instant | 14 | 9 | 95 |
+| Arcane | `arcane_spark` — Étincelle d'Arcane | Projectile | 20 | 11 | 85 |
+| Givre | `frost_needle` — Aiguille de Givre | Projectile | 20 | 10 | 90 |
+| Tempête | `storm_jolt` — Secousse de Tempête | Instant | 12 | 12 | 80 |
+| Ombre | `shadow_barb` — Dard d'Ombre | Projectile | 20 | 10 | 90 |
+| Esprit | `spirit_lash` — Morsure d'Esprit | Instant | 10 | 11 | 85 |
+| Vide | `void_shard` — Éclat du Vide | Projectile | 18 | 12 | 95 |
+
+**Elles ne se distinguent pas par leur puissance.** Toutes infligent 2,5 avec
+le même plafond que la Boule de Feu, et demandent le même palier de baguette.
+Ce qui les sépare est l'école — donc le bonus de voie (§5.4) — et le triangle
+portée / attente / coût. Deux écoles frappent au corps à corps, les autres à
+distance. L'Éclat du Vide plafonne à 5 et non à 6 : le Vide relève du
+durcissement V2, comme le Sang et Chronos dont il a hérité.
+
+**Aucune ne touche au terrain**, contrairement à la Boule de Feu. Ce sont les
+tout premiers sorts d'un joueur, donnés d'office : leur laisser un pouvoir de
+modification du monde ferait de chaque nouveau venu, dès sa première minute, un
+vecteur de dégradation qu'il n'a pas choisi.
+
+**Ce que la barre de départ en fait.** Les sorts de la voie ouvrent la ligne,
+et la main part sur l'attaque de la voie — un joueur qui sort de la cinématique
+avec un soin en main doit fouiller sa barre avant de pouvoir se défendre. La
+garantie « de quoi frapper » ne s'applique donc plus que si la voie n'en donne
+pas, ce qui n'arrive plus depuis ces huit sorts.
+
+---
+
+## 11. Catalogue actuel — 41 sorts
 
 Chaque sort a sa fiche détaillée dans [`magie/sorts/`](magie/sorts/).
 `spells.yml` fait foi pour les valeurs.
@@ -855,33 +962,42 @@ Chaque sort a sa fiche détaillée dans [`magie/sorts/`](magie/sorts/).
 |---|---|---|---|---|---|---|---|---|
 | `light_glimmer` | Aurore | — | Instant | 8 | 100 | 0 | 1 | non |
 | `light_mend` | Aurore | — | Incantation | 18 | 180 | 2 | 1 | non |
+| `light_ray` | Aurore | — | Instant | 11 | 95 | 0 | 1 | **oui** |
 | `earth_lift` | Roc | — | Canalisation | 16 | 120 | 1 | 1 | non |
 | `earth_brace` | Roc | — | Instant | 10 | 200 | 0 | 1 | non |
 | `nature_growth` | Roc | Sylvanie | Incantation | 14 | 200 | 0 | 1 | non |
 | `nature_harvest` | Roc | Sylvanie | Instant | 10 | 300 | 1 | 1 | non |
+| `earth_shard` | Roc | — | Instant | 9 | 95 | 0 | 1 | **oui** |
 | `arcane_sense` | Arcane | — | Instant | 18 | 600 | 0 | 1 | non |
 | `arcane_bolt` | Arcane | — | Projectile | 14 | 55 | 1 | 1 | **oui** |
+| `arcane_spark` | Arcane | — | Projectile | 11 | 85 | 0 | 1 | **oui** |
+| `arcane_ward` | Arcane | — | Instant | 16 | 240 | 1 | 1 | non |
 | `frost_preserve` | Givre | — | Instant | 12 | 240 | 0 | 1 | non |
 | `frost_shard` | Givre | — | Projectile | 15 | 65 | 1 | 1 | **oui** |
 | `frost_prison` | Givre | — | Incantation | 26 | 600 | 3 | 2 | **oui** |
+| `frost_needle` | Givre | — | Projectile | 10 | 90 | 0 | 1 | **oui** |
 | `ember_torch` | Braises | — | Instantané | 10 | 120 | 0 | 1 | non |
 | `ember_fireball` | Braises | — | Projectile | 10 | 90 | 0 | 1 | **oui** |
 | `ember_flare` | Braises | — | Incantation | 22 | 140 | 2 | 2 | **oui** |
 | `storm_breeze` | Tempête | — | Instant | 10 | 160 | 0 | 1 | non |
 | `storm_gust` | Tempête | — | Instant | 14 | 100 | 1 | 1 | **oui** |
 | `storm_spark` | Tempête | — | Projectile | 14 | 55 | 1 | 2 | **oui** |
+| `storm_jolt` | Tempête | — | Instant | 12 | 80 | 0 | 1 | **oui** |
 | `shadow_veil` | Ombre | — | Instant | 16 | 280 | 0 | 1 | non |
 | `shadow_step` | Ombre | — | Instant | 12 | 200 | 1 | 2 | non |
 | `shadow_hex` | Ombre | — | Projectile | 16 | 70 | 2 | 2 | **oui** |
 | `blood_rite` | Ombre | Sang | Instant | 6 | 180 | 0 | 1 | non |
 | `blood_surge` | Ombre | Sang | Instant | 8 | 200 | 2 | 2 | non |
 | `blood_lance` | Ombre | Sang | Projectile | 16 | 80 | 2 | 2 | **oui** |
+| `shadow_barb` | Ombre | — | Projectile | 10 | 90 | 0 | 1 | **oui** |
 | `spirit_soothe` | Esprit | — | Instant | 12 | 160 | 0 | 1 | non |
 | `spirit_cleanse` | Esprit | — | Incantation | 18 | 220 | 1 | 1 | non |
+| `spirit_lash` | Esprit | — | Instant | 11 | 85 | 0 | 1 | **oui** |
 | `spirit_ward` | Esprit | — | Instant | 16 | 240 | 2 | 1 | non |
 | `void_ward` | Vide | — | Instant | 12 | 200 | 0 | 1 | non |
 | `void_rift` | Vide | — | Projectile | 16 | 80 | 1 | 2 | **oui** |
 | `void_mute` | Vide | — | Projectile | 18 | 90 | 2 | 2 | **oui** |
+| `void_shard` | Vide | — | Projectile | 12 | 95 | 0 | 1 | **oui** |
 | `time_haste` | Vide | Chronos | Instant | 12 | 160 | 0 | 1 | non |
 | `time_slow` | Vide | Chronos | Projectile | 14 | 75 | 1 | 2 | **oui** |
 | `time_warp` | Vide | Chronos | Incantation | 18 | 240 | 2 | 2 | non |
@@ -1071,7 +1187,7 @@ Arcane a été **conservée** : son identité visuelle est précisément le cerc
 d'incantation nu — c'est d'ailleurs de ses modèles que viennent les sceaux du
 runtime. Elle est l'école « pure magie », sans élément.
 
-**Résultat : 9 écoles, 31 sorts, aucun contenu perdu.** Aucun sort n'a été
+**Résultat : 9 écoles, 41 sorts, aucun contenu perdu.** Aucun sort n'a été
 supprimé ; les huit sorts concernés ont changé d'école en gardant leur
 identifiant, leur nom, leurs effets, leur coût et leur présentation.
 
