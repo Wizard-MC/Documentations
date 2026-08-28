@@ -245,6 +245,61 @@ trois piles doit pouvoir acheter à dix.
 
 ---
 
+### 4.7 Ce qu'une attaque envoie, et ce qu'elle appelle
+
+Une attaque à distance qui pose ses dégâts sans que rien ne traverse l'espace
+n'en est pas une : le joueur encaisse à vingt blocs un coup dont il n'a vu
+que l'amorce, et il n'a aucun moyen de s'en écarter. Chaque attaque `RANGED`
+porte donc un bloc `projectile`, et le chargement **refuse** une attaque qui
+n'en a pas — c'est précisément le genre de manque qui ne lève rien.
+
+| Type | Ce qui part | Pour qui |
+| :--- | :--- | :--- |
+| `ARROW` | une flèche du jeu, avec son comportement d'origine | `goblin_ranger` |
+| `BOLT` | un trait porté par l'entité 215, habillé par son `style` | les six autres tirs |
+
+Le serveur n'envoie qu'une clé de style, jamais un chemin de modèle : le
+client reste seul maître de ce qu'il sait dessiner, et une clé inconnue
+retombe sur un visuel de secours plutôt que sur rien — un projectile
+invisible reste un projectile qui blesse.
+
+La compensation de chute dépend de la **vitesse** autant que de la distance :
+un trait lent passe plus de temps en vol et tombe davantage. La physique du
+vol tient dans `MobBallistics`, relue par le serveur, par le client qui
+rejoue la trajectoire entre deux corrections, et par les contrôles de portée.
+Trois copies auraient divergé à la première retouche.
+
+Le tir allié est refusé **à l'arrivée** et non au départ : le trait custom
+traverse ses alliés de lui-même, la flèche du jeu ne sait pas le faire. Sans
+ce garde-fou, une ligne d'archers gobelins se décimait dès que l'un passe
+devant un autre.
+
+Les attaques `SUMMON` suivent la même règle : pas de bloc `summon`, pas de
+chargement. Trois élites appellent du renfort, chacune parmi les espèces de
+son lot :
+
+| Élite | Appelle | Par sort | Plafond | Durée de vie |
+| :--- | :--- | :--- | :--- | :--- |
+| `the_soulrot` | `lurking_lily` `malevolent_moss` | 3 | 6 | 60 s |
+| `the_hemlock` | `vile_vine` `broodring_blossom` | 3 | 6 | 70 s |
+| `the_nyx` | `oblivion_orb_*` `sorrowful_sylph` | 2 | 4 | 45 s |
+
+Une invocation sans bornes n'est pas une attaque, c'est une fuite. Les trois
+bornes ne se recouvrent pas : le nombre par sort limite un lancer, le plafond
+limite ce qu'un chef entretient à un instant donné, et la durée de vie
+garantit que le renfort s'efface même si personne ne le tue. Le plafond se
+compte en regardant les créatures présentes plutôt qu'une liste tenue à jour
+— une liste ne survivrait ni au déchargement du chunk ni au redémarrage, et
+le chef repartirait de zéro à chaque fois, ce qui revient à n'avoir aucune
+borne.
+
+**Un renfort ne rapporte ni butin ni expérience.** Sans cela, un chef dont le
+sort revient toutes les trente secondes devient une source infinie : le tenir
+en vie et moissonner ce qu'il appelle rapporterait davantage que de
+l'abattre.
+
+---
+
 ## 5. Apparition naturelle
 
 Le principe est celui du jeu : à chaque seconde, on tire des emplacements dans
@@ -383,6 +438,37 @@ bondissent, qui sont enracinées. Elles jouent alors leur clip de repos pendant
 le déplacement : sans ce repli elles se figeaient dans leur pose de montage,
 bras écartés, en glissant sur le sol.
 
+### 8.2 Les effets d'attaque
+
+Les effets n'ont **pas de canal réseau à eux**. Le mob annonce déjà « je joue
+tel clip depuis tant de ticks » sur ses métadonnées, ce qui est exactement ce
+dont un effet a besoin : c'est ce qui le cale sur le geste au tick près. Un
+second canal aurait dérivé du premier, et l'explosion serait tombée à côté du
+coup.
+
+La table vit côté client, indexée sur le **clip** et non sur l'identifiant de
+l'attaque — c'est le clip que le mob publie. L'indexer sur l'identifiant
+paraît équivalent et ne l'est pas : les effets concernés n'auraient jamais été
+joués, sans erreur.
+
+L'effet est dessiné après le mob, en mélange additif et sans écriture de
+profondeur, pour qu'il rayonne par-dessus la créature au lieu de la découper.
+La profondeur reste testée, pour qu'un effet derrière un mur reste caché. Un
+effet qui accompagne son auteur est recalculé à chaque image ; un cratère ou
+une toile retiennent l'endroit où ils sont apparus, en coordonnées du monde —
+les faire glisser avec la créature trahirait aussitôt qu'ils n'y sont pas.
+
+### 8.3 Le trait en vol
+
+Le trait est orienté sur sa trajectoire et non sur la caméra : un projectile
+en billboard paraît immobile de face, et c'est de face que le joueur a besoin
+de le voir arriver.
+
+Son impact ne fait **rien** côté client, comme une boule de neige du jeu. Le
+client ne teste que les blocs, sa trajectoire simulée n'est pas exactement
+celle du serveur, et détruire l'entité là escamoterait un trait encore en vol
+sans que rien ne le fasse réapparaître.
+
 ---
 
 ## 9. Ce que les contrôles vérifient
@@ -394,16 +480,24 @@ bras écartés, en glissant sur le sol.
 | `MobPackTest` (18) | une succession instable, une nuée payée deux fois |
 | `MobAttackSetTest` (16) | un souffle de zone sur un joueur isolé, un renfort appelé au milieu de sa bande |
 | `MobLevelsTest` (16) | une zone infranchissable, une carte sans relief |
+| **`MobBallisticsTest` (7)** | **un trait qui pique sous sa cible : l'attaque manque toujours** |
 | `MobPacksTest` (14) | deux index de groupe qui divergent |
 | `MobDataWatcherPackingTest` (9) | une boîte de collision fausse, un rôle illisible |
 | `ShippedMobsYmlTest` (23) | une portée inversée, une attaque sans dégâts, un élite sans porte d'entrée |
 | **`MobModelClipsTest` (5)** | **un clip mal orthographié : le mob frappe sans geste** |
 | `MobSpawnRulesTest` (20) | une région vide, une espèce partout |
 | `MobLootAndSpawnMathTest` (24) | un butin qui ne tombe jamais, des mobs nés sous le nez du joueur |
+| `MobEntityTypesTest` (8) | deux espèces qui se disputent un identifiant d'entité |
+| `LootReagentsTest` (7) | un réactif sans texture, un identifiant d'objet en double |
+| `MobVfxCoverageTest` (5) | un effet accroché à une attaque qui n'existe plus |
+| **`MobProjectilesTest` (10)** | **une attaque à distance dont rien ne part, un style que le client ignore** |
+| **`MobSummonsTest` (11)** | **une invocation qui n'appelle personne, une chaîne d'invocations, un renfort permanent** |
 | `MobTradersTest` (11) | un échange qui avale le paiement |
 
-`MobModelClipsTest` est le seul qui relie les deux moitiés du système : il
-passe chaque nom de clip du catalogue au bbmodel qui le porte. Un nom mal
+Quatre contrôles relient les deux moitiés du système en lisant les fichiers du
+client depuis le dépôt voisin : `MobModelClipsTest`, `MobVfxCoverageTest`,
+`MobProjectilesTest` et, pour les modèles qu'elle nomme, la table de styles.
+Le premier passe chaque nom de clip du catalogue au bbmodel qui le porte. Un nom mal
 orthographié ne lève rien — le serveur demande l'animation, le client ne la
 trouve pas, le mob frappe sans geste. Les dégâts tombent quand même, mais le
 joueur ne voit plus le coup venir : le combat devient injuste sans qu'aucune
@@ -435,18 +529,11 @@ d'un dixième. Autant dire jamais, quand on cherche à vérifier ses animations.
 
 - **Aucun modèle de créature paisible** dans le dépôt d'assets : le
   marchandage fonctionne, mais seul le Forgeron le propose.
-- **Les VFX d'attaque ne sont pas encore joués.** Les modèles sont importés
-  (`vfx_darkmagic_explode`, `vfx_oblivion_*`, `vfx_puff/smash/stomp`,
-  `bl_toxin_spider_projectile`, `bl_toxin_spider_web`) mais rien ne les
-  déclenche : il faut un canal du serveur vers le client disant « joue tel
-  effet à tel endroit », comme celui des sorts.
 - **`oblivion_orb_yellow` n'a pas de clip de mort** dans le modèle livré :
   elle disparaît sans geste. Le contrôle la nomme pour qu'un modèle corrigé le
   fasse tomber.
 - **Cinq espèces se déplacent sur leur clip de repos**, faute d'animation de
   marche : `brook_bug`, `lurking_lily`, `malevolent_moss`, `sorrowful_sylph`,
   `the_soulrot`.
-- **Les attaques `SUMMON` ne convoquent rien** encore : le clip est joué, le
-  renfort n'arrive pas.
 - Rien n'a été **essayé sur un serveur** : le banc de test n'existe plus dans
   cet environnement.
