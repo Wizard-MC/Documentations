@@ -492,7 +492,7 @@ sans que rien ne le fasse réapparaître.
 | `MobVfxCoverageTest` (5) | un effet accroché à une attaque qui n'existe plus |
 | **`MobProjectilesTest` (10)** | **une attaque à distance dont rien ne part, un style que le client ignore** |
 | **`MobSummonsTest` (11)** | **une invocation qui n'appelle personne, une chaîne d'invocations, un renfort permanent** |
-| **`MobFlightTest` (9)** | **des ailes sans les gestes, un modèle volant que rien ne fait décoller, un battement sol/air à chaque tick** |
+| **`MobFlightTest` (12)** | **des ailes sans les gestes, un modèle volant que rien ne fait décoller, un battement sol/air à chaque tick, un geste joué dans la mauvaise posture** |
 | **`BeastCatalogTest` (12)** | **une apparence qui ne porte pas le clip que son espèce nomme, une voix absente de `sounds.json`** |
 | `MobTradersTest` (11) | un échange qui avale le paiement |
 
@@ -617,6 +617,37 @@ quatre blocs au minimum, tenus par le descripteur et non par le fichier. Sans
 elle, une cible qui va et vient autour de la distance de décollage ferait
 battre la créature entre le sol et l'air à chaque tick, et personne ne
 relierait cela au fichier.
+
+### 12.2 Les attaques aériennes
+
+Les animations d'un dragon ne sont pas interchangeables : un souffle est joué
+ailes déployées, une morsure ailes repliées. Chaque attaque porte donc une
+**posture**, qui filtre avant tout le reste.
+
+| Posture | D'où l'attaque part |
+| :--- | :--- |
+| `GROUND` | du sol seulement — c'est le défaut, et le cas de presque tout |
+| `AIR` | en vol seulement : le geste suppose les ailes déployées |
+| `LAUNCH` | du sol, et elle met la créature en l'air |
+| `ANY` | de l'un comme de l'autre — à réserver aux gestes qui ne trahissent pas la posture |
+
+Les trois attaques signatures sont aériennes : le `screech` de la Vouivre et
+du Seigneur-Tonnerre, le `flamethrower` de l'Aile-de-braise. Le bond soufflé
+du Seigneur-Tonnerre est la seule `LAUNCH` du bestiaire : au sol il serait
+retombé à sa place, en l'air il aurait été injouable puisqu'il faut déjà voler
+pour lancer une attaque aérienne.
+
+Le but de vol lance lui-même les attaques : il prend la main sur le cerveau
+tant que la créature est en l'air, et sans ce chemin un dragon en vol ne
+pourrait que tourner en rond en attendant de se poser. L'atterrissage attend
+la fin du geste — se poser au milieu d'un souffle le couperait net.
+
+**La posture d'un clip se lit dans le modèle, pas dans son nom.**
+`MobFlightTest` compare la rotation de l'aile gauche au premier instant du
+clip avec celle du repos au sol et celle du vol stationnaire. C'est le seul
+contrôle capable de voir l'erreur : les trois attaques signatures avaient été
+déclarées au sol, et le dragon se posait avant de déployer ses ailes et de
+flotter sur place.
 
 L'état de vol voyage sur un **bit libre de l'octet du badge**, déjà envoyé à
 chaque changement de rôle ou d'humeur : ouvrir un canal à part aurait coûté
