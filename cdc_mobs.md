@@ -482,6 +482,7 @@ sans que rien ne le fasse réapparaître.
 | `MobLevelsTest` (16) | une zone infranchissable, une carte sans relief |
 | **`MobBallisticsTest` (7)** | **un trait qui pique sous sa cible : l'attaque manque toujours** |
 | `MobPacksTest` (14) | deux index de groupe qui divergent |
+| **`MobAerialDropsTest` (3)** | **une reprise amont qui efface le correctif du butin : il retomberait du ciel** |
 | `MobDataWatcherPackingTest` (9) | une boîte de collision fausse, un rôle illisible |
 | `ShippedMobsYmlTest` (23) | une portée inversée, une attaque sans dégâts, un élite sans porte d'entrée |
 | **`MobModelClipsTest` (5)** | **un clip mal orthographié : le mob frappe sans geste** |
@@ -688,10 +689,25 @@ efface l'entité ; le retenir juste en dessous est ce qui laisse le corps
 tomber, puis le choc se voir. L'expérience apparaît à son terme, donc au
 point d'impact plutôt qu'en plein ciel.
 
-Le **butin**, lui, tombe au moment du coup fatal : il est lâché dès que la
-vie atteint zéro, et le différer demanderait de réécrire tout ce que ce
-chemin fait par ailleurs. Les objets tombent d'eux-mêmes, ils rejoignent donc
-le sol sous le point où la créature a été abattue.
+Le **butin** suit le corps. Le jeu le lâche là où la vie atteint zéro, ce qui
+le faisait tomber du ciel : les objets atterrissaient sous le point de mort, à
+côté du corps qui continuait sa course. La créature garde donc ce qu'elle
+laisse le temps de la chute, et le lâche en s'écrasant.
+
+Le tri se fait dans la boucle de largage, pas en vidant la liste de
+l'événement : vider aurait menti à tout greffon écoutant après celui du
+butin — il aurait vu une créature qui ne laisse rien.
+
+Cette boucle vit dans `CraftEventFactory`, un fichier repris de CraftBukkit.
+Une reprise en amont le remplacerait sans bruit, la branche disparaîtrait, et
+le butin se remettrait à tomber du ciel sans qu'aucun test de comportement ne
+s'en aperçoive — il n'y a pas de monde dans les contrôles pour faire tomber
+quoi que ce soit. `MobAerialDropsTest` lit donc la source elle-même.
+
+Un filet de sécurité lâche ce qui est retenu si la dépouille est retirée avant
+d'avoir touché terre — un `/kill`, un greffon qui la supprime. Un chunk
+déchargé, lui, retire l'entité sans passer par là : le butin y est perdu,
+comme celui de n'importe quelle créature dans le même cas.
 
 | Phase | Geste | Fin |
 | :--- | :--- | :--- |
