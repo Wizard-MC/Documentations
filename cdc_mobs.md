@@ -492,7 +492,7 @@ sans que rien ne le fasse réapparaître.
 | `MobVfxCoverageTest` (5) | un effet accroché à une attaque qui n'existe plus |
 | **`MobProjectilesTest` (10)** | **une attaque à distance dont rien ne part, un style que le client ignore** |
 | **`MobSummonsTest` (11)** | **une invocation qui n'appelle personne, une chaîne d'invocations, un renfort permanent** |
-| **`MobFlightTest` (17)** | **des ailes sans les gestes, un modèle volant que rien ne fait décoller, un battement sol/air à chaque tick, un geste joué dans la mauvaise posture, une dépouille figée sur sa dernière image** |
+| **`MobFlightTest` (23)** | **des ailes sans les gestes, un modèle volant que rien ne fait décoller, un battement sol/air à chaque tick, un geste joué dans la mauvaise posture, une dépouille figée sur sa dernière image, un dragon qui ne fait que tourner** |
 | **`BeastCatalogTest` (12)** | **une apparence qui ne porte pas le clip que son espèce nomme, une voix absente de `sounds.json`** |
 | `MobTradersTest` (11) | un échange qui avale le paiement |
 
@@ -649,7 +649,36 @@ contrôle capable de voir l'erreur : les trois attaques signatures avaient été
 déclarées au sol, et le dragon se posait avant de déployer ses ailes et de
 flotter sur place.
 
-### 12.3 La mort en vol
+### 12.3 La passe en vol rasant
+
+Tourner en rond est le seul rythme qu'un vol simple sait produire, et il
+s'épuise vite : la créature reste hors d'atteinte, le joueur attend. La passe
+casse ce tour — elle fond, traverse, et remonte de l'autre côté.
+
+Elle vise un point **au-delà** de la cible, pris dans son dos sur la ligne qui
+va d'elle à la créature. Viser la cible elle-même ferait piler le dragon
+au-dessus d'elle : ce n'est plus une passe, c'est un vol stationnaire de plus.
+L'altitude est relevée au-dessus du relief, faute de quoi une passe calée sur
+la seule hauteur du joueur entre dans la colline derrière lui.
+
+| Dragon | Hauteur | Dépassement | Toutes les | Durée |
+| :--- | :--- | :--- | :--- | :--- |
+| Vouivre Chuchevent | 3 | 12 | 7 s | 3 s |
+| Aile-de-braise | 3,5 | 14 | 8,5 s | 3,5 s |
+| Seigneur-Tonnerre | 4 | 16 | 9,5 s | 4 s |
+
+Une passe en cours **interdit de se poser** : elle fait justement passer sous
+la distance d'atterrissage, et sans ce garde-fou la créature touchait terre au
+milieu de sa fonte, geste ailes déployées.
+
+Seul le Seigneur-Tonnerre porte `fly_low`. Les deux autres fondent sur leur
+plané : le repli est voulu, et il vaut mieux qu'un tour indéfini.
+
+L'état voyage sur le **second bit libre du badge**. Comme le vol, le client ne
+peut pas le deviner — il ne connaît que la position, et une passe rasante
+ressemble à un vol ordinaire tant qu'on ignore l'intention.
+
+### 12.4 La mort en vol
 
 Abattu en l'air, un dragon tombe. Ses modèles portent trois gestes pour
 cela : le coup reçu, la vrille, le choc.
