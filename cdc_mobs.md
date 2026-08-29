@@ -492,7 +492,7 @@ sans que rien ne le fasse réapparaître.
 | `MobVfxCoverageTest` (5) | un effet accroché à une attaque qui n'existe plus |
 | **`MobProjectilesTest` (10)** | **une attaque à distance dont rien ne part, un style que le client ignore** |
 | **`MobSummonsTest` (11)** | **une invocation qui n'appelle personne, une chaîne d'invocations, un renfort permanent** |
-| **`MobFlightTest` (12)** | **des ailes sans les gestes, un modèle volant que rien ne fait décoller, un battement sol/air à chaque tick, un geste joué dans la mauvaise posture** |
+| **`MobFlightTest` (17)** | **des ailes sans les gestes, un modèle volant que rien ne fait décoller, un battement sol/air à chaque tick, un geste joué dans la mauvaise posture, une dépouille figée sur sa dernière image** |
 | **`BeastCatalogTest` (12)** | **une apparence qui ne porte pas le clip que son espèce nomme, une voix absente de `sounds.json`** |
 | `MobTradersTest` (11) | un échange qui avale le paiement |
 
@@ -648,6 +648,42 @@ clip avec celle du repos au sol et celle du vol stationnaire. C'est le seul
 contrôle capable de voir l'erreur : les trois attaques signatures avaient été
 déclarées au sol, et le dragon se posait avant de déployer ses ailes et de
 flotter sur place.
+
+### 12.3 La mort en vol
+
+Abattu en l'air, un dragon tombe. Ses modèles portent trois gestes pour
+cela : le coup reçu, la vrille, le choc.
+
+Tout tient à **un compteur**. C'est `deathTicks`, en atteignant vingt, qui
+efface l'entité ; le retenir juste en dessous est ce qui laisse le corps
+tomber, puis le choc se voir. L'expérience apparaît à son terme, donc au
+point d'impact plutôt qu'en plein ciel.
+
+Le **butin**, lui, tombe au moment du coup fatal : il est lâché dès que la
+vie atteint zéro, et le différer demanderait de réécrire tout ce que ce
+chemin fait par ailleurs. Les objets tombent d'eux-mêmes, ils rejoignent donc
+le sol sous le point où la créature a été abattue.
+
+| Phase | Geste | Fin |
+| :--- | :--- | :--- |
+| Coup reçu | `death_air`, tenu 2 s | la vrille prend, ou la chute s'accélère |
+| Chute | `death_falling`, en boucle | le sol, ou 200 ticks de chute |
+| Choc | `death_hitground` | sa durée réelle, puis l'effacement ordinaire |
+
+Trois phases explicites et non un drapeau : **l'impact doit lui aussi retenir
+le compteur**, sinon le geste du choc est coupé au bout des vingt ticks
+ordinaires alors qu'il en dure six fois plus chez le Seigneur-Tonnerre.
+
+La Vouivre n'a pas de geste pour le coup reçu — son modèle n'en porte pas —
+et passe directement à la vrille.
+
+Les durées viennent de la longueur **réelle** des clips, arrondie à
+l'inférieur. Tenir un geste plus longtemps que son clip fige la dépouille sur
+sa dernière image, et rien ne le signale : le corps reste simplement immobile
+quelques secondes de trop. `MobFlightTest` lit ces longueurs dans les modèles.
+
+La chute a un plafond : au-dessus du vide, une dépouille sans limite ne
+cesserait jamais de tomber et resterait suivie par le serveur.
 
 L'état de vol voyage sur un **bit libre de l'octet du badge**, déjà envoyé à
 chaque changement de rôle ou d'humeur : ouvrir un canal à part aurait coûté
