@@ -525,15 +525,91 @@ d'un dixième. Autant dire jamais, quand on cherche à vérifier ses animations.
 
 ---
 
-## 11. Reste à faire
+## 11. Les créatures paisibles
 
-- **Aucun modèle de créature paisible** dans le dépôt d'assets : le
-  marchandage fonctionne, mais seul le Forgeron le propose.
+Vingt-quatre espèces, de l'écureuil au griffon. Elles dérivent
+d'`EntityCreature` et non d'`EntityMonster`, et la différence décide de
+tout : un monstre disparaît en difficulté paisible — précisément le mode où
+une bête devrait être la seule chose vivante — ne naît que dans le noir, et
+porte des buts de ciblage.
+
+Elles publient en revanche les **mêmes** emplacements de DataWatcher qu'un
+mob hostile. C'est ce qui leur vaut le pilote d'animation et le corps de
+rendu déjà écrits, plutôt qu'une seconde copie où les corrections ne
+seraient jamais reportées.
+
+Une espèce porte une **liste** d'apparences et non une seule : un écureuil
+brun et un écureuil roux sont le même animal. Leur donner deux types
+d'entité aurait doublé les identifiants, les œufs et les noms traduits pour
+une différence de teinte. Soixante-quatre apparences tiennent ainsi dans
+vingt-quatre places.
+
+| Disposition | Ce qu'elle fait d'un joueur |
+| :--- | :--- |
+| `SKITTISH` | elle détale à la vue |
+| `CALM` | elle vaque, et ne s'affole qu'une fois blessée |
+| `DEFENSIVE` | elle rend les coups, jamais le premier |
+
+Une bête ne prend **jamais** l'initiative : le but de riposte pose une cible
+dès qu'elle est frappée, et celle qui ne riposte pas la lâche aussitôt.
+Le chargeur refuse une riposte sans clip d'attaque — c'est ce refus qui a
+révélé que l'ours, le drakelet et le griffon n'ont aucun geste d'attaque
+dans leurs modèles. Ils sont donc calmes.
+
+Quarante voix, sous les clés `wizardmc.beast.<famille>.<événement>` :
+pas, course, mort, caresse. La cadence des pas suit la vitesse réelle — une
+bête qui fuit au rythme de la promenade se lit comme un décor qui glisse.
+Le griffon emprunte sa mort et sa caresse à la voix de dragon de l'autre
+lot : le sien ne lui donne que des pas, et le faire mourir sur un bruit de
+pas aurait été pire que le silence.
+
+Un clic droit la caresse : le clip du modèle et la voix de l'espèce. C'est
+le seul retour qu'un joueur obtient d'une créature qui n'attaque pas.
+
+---
+
+## 12. Les donjons
+
+Quatre dragons, réservés au greffon de donjon : poids nul, donc aucune
+apparition naturelle. Un boss croisé au détour d'une plaine n'en serait plus
+un.
+
+| Boss | Maîtrise attendue | Vie |
+| :--- | :--- | :--- |
+| Drake Terravore | 40 | 300 |
+| Vouivre Chuchevent | 45 | 280 |
+| Dragon Aile-de-braise | 50 | 360 |
+| Seigneur-Tonnerre céleste | 55 | 480 |
+
+**Aucun ne vole.** Trois portent des animations de vol dans leur modèle, et
+le cerveau navigue au sol : ils se battent avec leurs gestes terrestres, qui
+sont complets. Le vol demande une navigation qui n'existe pas encore, et le
+promettre à demi aurait donné un dragon qui glisse en l'air sans savoir où
+aller.
+
+Leur décalage de niveau reste à vingt, comme celui de tous les élites : le
+donjon posera le niveau qu'il veut à l'apparition, l'API le prend déjà.
+
+---
+
+## 13. Reste à faire
+
 - **`oblivion_orb_yellow` n'a pas de clip de mort** dans le modèle livré :
   elle disparaît sans geste. Le contrôle la nomme pour qu'un modèle corrigé le
   fasse tomber.
 - **Cinq espèces se déplacent sur leur clip de repos**, faute d'animation de
   marche : `brook_bug`, `lurking_lily`, `malevolent_moss`, `sorrowful_sylph`,
   `the_soulrot`.
+- **Aucune monture n'est montable.** Les dix espèces du lot `ecmounts`
+  portent une selle et un son de course, mais rien ne les chevauche : elles
+  vivent comme des animaux. Le harnachement viendra avec le système de
+  monture.
+- **Les trois dragons ailés ne volent pas** (voir §12).
+- **Le Roi des gelées ne se scinde pas** à la mort, faute d'un mécanisme
+  déclenché par la mort plutôt que par une attaque.
+- **Le pack de ressources pèse dix-huit méga-octets de modèles paisibles.**
+  Les variantes de teinte dupliquent toute la géométrie : seize gardes pour
+  quatre gabarits, dix perruches pour un seul. Un chargeur capable
+  d'échanger la seule texture les ramènerait à un quart.
 - Rien n'a été **essayé sur un serveur** : le banc de test n'existe plus dans
   cet environnement.
