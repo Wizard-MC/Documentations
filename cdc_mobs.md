@@ -492,6 +492,8 @@ sans que rien ne le fasse réapparaître.
 | `MobVfxCoverageTest` (5) | un effet accroché à une attaque qui n'existe plus |
 | **`MobProjectilesTest` (10)** | **une attaque à distance dont rien ne part, un style que le client ignore** |
 | **`MobSummonsTest` (11)** | **une invocation qui n'appelle personne, une chaîne d'invocations, un renfort permanent** |
+| **`MobFlightTest` (9)** | **des ailes sans les gestes, un modèle volant que rien ne fait décoller, un battement sol/air à chaque tick** |
+| **`BeastCatalogTest` (12)** | **une apparence qui ne porte pas le clip que son espèce nomme, une voix absente de `sounds.json`** |
 | `MobTradersTest` (11) | un échange qui avale le paiement |
 
 Quatre contrôles relient les deux moitiés du système en lisant les fichiers du
@@ -581,11 +583,47 @@ un.
 | Dragon Aile-de-braise | 50 | 360 |
 | Seigneur-Tonnerre céleste | 55 | 480 |
 
-**Aucun ne vole.** Trois portent des animations de vol dans leur modèle, et
-le cerveau navigue au sol : ils se battent avec leurs gestes terrestres, qui
-sont complets. Le vol demande une navigation qui n'existe pas encore, et le
-promettre à demi aurait donné un dragon qui glisse en l'air sans savoir où
-aller.
+### 12.1 Le vol
+
+Trois des quatre volent ; le Drake Terravore reste au sol, son modèle n'ayant
+aucun clip de vol. Le faire décoller l'aurait fait glisser dans les airs en
+marchant.
+
+La physique reprend celle d'un ghast — même frottement, même conservation de
+l'élan — et **pas de gravité**. Elle est écrite dans le déplacement lui-même
+plutôt qu'ajoutée puis reprise ailleurs : rendre la gravité après coup
+laisserait la créature tomber d'un tick à chaque image, et l'altitude
+dériverait vers le bas sans que rien ne le dise. La chute ne compte pas non
+plus en vol, sinon un dragon qui se pose après avoir plané trente blocs plus
+haut se tuerait à l'atterrissage.
+
+Le but de vol passe **avant** le cerveau et lui prend la main tant que la
+créature est en l'air. Les deux ne peuvent pas cohabiter : le cerveau
+raisonne en chemins au sol, et le vol n'en a pas.
+
+Le rythme est celui d'un boss, pas d'un oiseau :
+
+| Moment | Ce qui le déclenche |
+| :--- | :--- |
+| Décollage | la cible passe la distance de décollage, ou se tient plus de quatre blocs plus haut |
+| Vol | un point tiré au hasard **au-dessus et à côté** de la cible — foncer droit dessus la ferait traverser et repartir, encore et encore |
+| Atterrissage | la cible repasse sous la distance d'atterrissage, et le sol est dégagé |
+| Renoncement | dix secondes sans progrès : elle se pose et laisse le cerveau reprendre |
+
+Elle se pose plus loin que sa plus courte attaque, et le cerveau la fait
+marcher les derniers blocs : un boss qui se matérialise au contact se lit
+bien plus mal. Ce qui compte est la **marge** entre se poser et redécoller —
+quatre blocs au minimum, tenus par le descripteur et non par le fichier. Sans
+elle, une cible qui va et vient autour de la distance de décollage ferait
+battre la créature entre le sol et l'air à chaque tick, et personne ne
+relierait cela au fichier.
+
+L'état de vol voyage sur un **bit libre de l'octet du badge**, déjà envoyé à
+chaque changement de rôle ou d'humeur : ouvrir un canal à part aurait coûté
+un paquet par décollage pour un seul bit. Le client s'en sert pour choisir
+entre les clips terrestres et ceux du vol. Le déduire de la position aurait
+été plus fragile — le client n'exécute pas la physique des entités qu'il
+suit, et un dragon posé sur une tour se lirait comme un dragon en vol.
 
 Leur décalage de niveau reste à vingt, comme celui de tous les élites : le
 donjon posera le niveau qu'il veut à l'apparition, l'API le prend déjà.
@@ -604,7 +642,6 @@ donjon posera le niveau qu'il veut à l'apparition, l'API le prend déjà.
   portent une selle et un son de course, mais rien ne les chevauche : elles
   vivent comme des animaux. Le harnachement viendra avec le système de
   monture.
-- **Les trois dragons ailés ne volent pas** (voir §12).
 - **Le Roi des gelées ne se scinde pas** à la mort, faute d'un mécanisme
   déclenché par la mort plutôt que par une attaque.
 - **Le pack de ressources pèse dix-huit méga-octets de modèles paisibles.**
