@@ -41,7 +41,7 @@ moteur de lancement**, ce qui veut dire qu'un nouvel effet profite ensuite à to
 | `name` | Le nom affiché, avec son code de couleur | oui |
 | `description` | Ce que le joueur lit | oui |
 | `incantation` | La formule affichée pendant l'incantation | oui |
-| `mode` | `INSTANT`, `CAST_TIME` ou `CHANNEL` | oui |
+| `mode` | `INSTANT`, `PROJECTILE`, `CAST_TIME` ou `CHANNEL` | oui |
 | `manaCost` | Le coût en Essence | oui |
 | `castTicks` | L'incantation propre au sort, si elle diffère du défaut | non |
 | `cooldownTicks` | La recharge | oui |
@@ -105,13 +105,18 @@ un message.
 
 ## 4. Calibrer un sort
 
-### Les trois modes
+### Les quatre modes
 
-| Mode | Quand l'utiliser |
-|---|---|
-| `INSTANT` | L'effet part à la fin de l'incantation de base |
-| `CAST_TIME` | Le sort déclare sa propre durée d'incantation, plus longue |
-| `CHANNEL` | L'effet se répète pendant qu'on canalise |
+| Mode | Quand l'utiliser | Usages livrés |
+|---|---|---:|
+| `INSTANT` | L'effet part à la fin de l'incantation de base | 21 |
+| `PROJECTILE` | Le sort lance un projectile qui voyage | 13 |
+| `CAST_TIME` | Le sort déclare sa propre durée d'incantation, plus longue | 6 |
+| `CHANNEL` | L'effet se répète pendant qu'on canalise | 1 |
+
+`PROJECTILE` est le mode des sorts offensifs directs : l'effet ne s'applique pas à la
+cible visée mais à ce que le projectile touche. C'est ce qui les rend esquivables **après**
+le lancement, et pas seulement pendant l'incantation.
 
 **Tout sort s'incante**, y compris `INSTANT` : l'incantation de base est de cinq
 secondes, réduite par le niveau d'école et le rang. C'est ce qui rend un sort esquivable,

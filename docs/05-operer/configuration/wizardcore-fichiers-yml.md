@@ -269,7 +269,7 @@ Quarante et un sorts. Le champ par champ et les quarante et une valeurs sont dan
 | `school` | L'école, parmi les neuf |
 | `name`, `description` | Ce que le joueur lit |
 | `incantation` | La formule affichée |
-| `mode` | `INSTANT`, `CAST_TIME` ou `CHANNEL` |
+| `mode` | `INSTANT`, `PROJECTILE`, `CAST_TIME` ou `CHANNEL` |
 | `manaCost` | Le coût en Essence |
 | `castTicks` | L'incantation propre au sort, si elle diffère du défaut |
 | `cooldownTicks` | La recharge |

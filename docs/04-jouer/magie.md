@@ -282,28 +282,32 @@ Si la liste des régions interdites est vide, la magie est autorisée partout.
 
 ## 10. Les commandes
 
-### Pour jouer
+### Ce qu'un joueur peut taper
+
+**Trois commandes seulement.** Tout le reste de la magie passe par les interfaces du
+client — le grimoire, la roue des sorts, la barre.
 
 | Commande | Ce qu'elle fait |
 |---|---|
 | `/magic` — ou `/magic help` | L'aide |
-| `/magic info` | Essence, école, niveaux |
 | `/magic learn <sort>` | Apprendre un sort |
 | `/magic bind` | Placer un sort sur la barre |
-| `/magic voie` — ou `/magic way` | Sa voie et sa progression |
-| `/magic teach` | Enseigner un sort à un autre joueur |
-| `/magic essence` | Son Essence en détail |
-| `/magic tome` — ou `/magic livre` | Utiliser un Tome |
-| `/magic scroll` | Les parchemins |
-| `/magic potion` | Les fioles |
-| `/magic faconnier` | Le façonnier de baguettes |
-| `/magic presetslot` | Ses emplacements de presets |
-| `/magic starter` — ou `/magic debut` | Le nécessaire de départ |
 
-### Pour l'administration
+### Ce qui est réservé à l'administration
 
-`/magic give`, `/magic unlock`, `/magic reload`, `/magic qa` exigent la permission
-`wizardmc.magic.admin`.
+Les quatorze autres — `/magic info`, `/magic essence`, `/magic voie`, `/magic teach`,
+`/magic tome`, `/magic scroll`, `/magic potion`, `/magic faconnier`,
+`/magic presetslot`, `/magic starter`, `/magic give`, `/magic unlock`,
+`/magic reload`, `/magic qa` — exigent toutes la permission `wizardmc.magic.admin`.
+
+> **Deux d'entre elles surprennent, et méritent d'être signalées** :
+> `/magic info` et `/magic presetslot` sont des commandes de consultation qu'un joueur
+> aurait naturellement vocation à taper — l'une donne son Essence et ses niveaux, l'autre
+> ses emplacements de presets, qui s'achètent en boutique.
+>
+> C'est peut-être délibéré — l'information est déjà au HUD et au grimoire — mais si un
+> joueur demande à voir ses niveaux d'école en ligne de commande, c'est ici qu'il faut
+> regarder.
 
 ---
 

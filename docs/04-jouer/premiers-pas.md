@@ -117,9 +117,11 @@ Terres Fracturées » laisse chercher au hasard : le texte décrit, le point con
 | Commande | Ce qu'elle fait |
 |---|---|
 | `/magic` | L'aide de la magie |
-| `/magic info` | L'état : Essence, école, niveaux |
 | `/magic learn <sort>` | Apprendre un sort accessible |
 | `/magic bind` | Placer un sort sur sa barre |
+
+L'état — Essence, école, niveaux — se lit au **HUD** et dans le **grimoire**, pas en
+ligne de commande : `/magic info` est réservée à l'administration.
 
 Quelques sorts s'apprennent d'office dès le départ. Le premier geste utile est d'en
 placer un sur la barre et de le lancer sur rien, pour voir.
@@ -227,7 +229,6 @@ Aucune n'est meilleure. Un Coven a besoin des quatre.
 |---|---|
 | `/wiki` — ou `/help`, `/aide` | Le wiki en jeu |
 | `/magic` | L'aide de la magie |
-| `/magic info` | Son Essence, son école, ses niveaux |
 | `/quest` — ou `/journal` | Le journal de quêtes |
 | `/contrat` | Les contrats du jour |
 | `/era` | L'Ère en cours, sa phase, le temps restant |
