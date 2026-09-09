@@ -93,6 +93,20 @@
 
 ---
 
+## 4 bis. Les documents qui détaillent ce GDD
+
+Ce document donne l'intention. Quatre autres en déduisent les conséquences, et
+c'est là qu'il faut aller pour régler quoi que ce soit.
+
+| Document | Ce qu'il règle |
+| :--- | :--- |
+| [Boucles de jeu](boucles-de-jeu.md) | Ce qu'on fait en une heure, une semaine, une Ère — et par profil de joueur |
+| [Progression et jalons](progression-et-jalons.md) | Les trois courbes de puissance, ce qui retombe et ce qui reste |
+| [Économie](economie.md) | Les six monnaies, leurs sources, leurs puits, leurs plafonds |
+| [Équilibrage](equilibrage.md) | Les garde-fous en place, les déséquilibres connus, comment arbitrer |
+
+---
+
 ## 5. Piliers mécaniques (liens CDC)
 
 | Pilier | CDC |
