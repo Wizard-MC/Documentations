@@ -36,8 +36,8 @@ pour laquelle la file d'attente y vit plutôt que sur un backend — voir
 |---|---|---|
 | **WizardCovens** | Le greffon social, qui doit remplacer l'adaptateur MassiveCraft | [cdc_covens](../90-specifications/cdc_covens.md) |
 | **WizardCloud** | La distribution et la mise à jour du client | [cdc_wizardcloud](../90-specifications/cdc_wizardcloud.md) |
-| **WizardHub** | Le Seuil : le serveur lobby, greffon **WizardSpigot** | [cdc_wizardhub](../90-specifications/cdc_wizardhub.md) |
-| **WizardQueue** | L'Appel : la file d'attente, greffon **WizardBungee** | [cdc_wizardqueue](../90-specifications/cdc_wizardqueue.md) |
+| **WizardHub** | Le serveur lobby et le repli du proxy, greffon **WizardSpigot** | [cdc_wizardhub](../90-specifications/cdc_wizardhub.md) |
+| **WizardQueue** | La file d'attente de connexion, greffon **WizardBungee** | [cdc_wizardqueue](../90-specifications/cdc_wizardqueue.md) |
 
 ---
 
@@ -161,22 +161,21 @@ journal et fait manquer le vrai incident.
 
 ## 5 bis. Redis, et ce qu'il porte
 
-Le Seuil et la file partagent une instance **Redis ou Dragonfly** — le même protocole,
+Le lobby et la file partagent une instance **Redis ou Dragonfly** — le même protocole,
 et le greffon n'a pas à savoir lequel répond.
 
 | Donnée | Qui écrit | Qui lit |
 |---|---|---|
 | Les files d'attente | la file, sur le proxy | la file |
 | La capacité du SMP | le SMP, par battement de cœur | la file |
-| Les instantanés de carte du sorcier | le SMP | le Seuil |
-| Les admissions | la file | le Seuil, par publication |
+| Les admissions | la file | le lobby, par publication |
 
 **Dragonfly est recommandé pour une infrastructure neuve**, Redis si elle existe déjà. Le
 refus de RabbitMQ pour la file est argumenté dans
 [cdc_wizardqueue](../90-specifications/cdc_wizardqueue.md) §2.2 : une file de messages ne
 sait pas donner la position d'un joueur ni retirer un élément du milieu.
 
-> **Redis n'est jamais une dépendance dure.** Injoignable, le Seuil reste jouable et la
+> **Redis n'est jamais une dépendance dure.** Injoignable, le lobby reste jouable et la
 > file laisse passer les connexions. C'est la même règle que partout ailleurs : une
 > dépendance manquante coûte une capacité, pas le démarrage.
 
