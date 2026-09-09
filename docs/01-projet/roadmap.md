@@ -1,8 +1,8 @@
 # ROADMAP — WizardMC Coven SMP (V4)
 
-> **Source de vérité d’exécution** alignée sur [`gdd.md`](gdd.md) + CDCs de ce dossier.  
-> Archive plan Faction V3 : [`../archive/ROADMAP_V3_FACTION.md`](../archive/ROADMAP_V3_FACTION.md)  
-> Redirect racine : [`../ROADMAP.md`](../ROADMAP.md)
+> **Source de vérité d’exécution** alignée sur [`gdd.md`](../03-gdd/gdd.md) + CDCs de ce dossier.  
+> Archive plan Faction V3 : `archive/ROADMAP_V3_FACTION.md` — **non versionné dans ce dépôt**, conservé hors ligne.  
+> Redirect racine : [`../ROADMAP.md`](roadmap.md)
 
 ---
 
@@ -18,17 +18,17 @@ Stack : MCP `wizardmc-clean` · `WizardSpigot` · `WizardCore` · cible `WizardC
 
 | Module | Doc | Code | Verdict |
 | :--- | :--- | :--- | :--- |
-| Nexus (niveaux, Éclats, pose) | [cdc_nexus.md](cdc_nexus.md) | WizardCore ✅ | OK — destroy + town_flags + Autels typés ✅ |
-| Autels (45s, CD, shards) | [cdc_autels_sacres.md](cdc_autels_sacres.md) | ✅ | OK — types + bonus soft ✅ |
-| Mana + Forgeron | [cdc_mana_brut.md](cdc_mana_brut.md) | ✅ | OK — framing convoi déjà là |
-| Pouvoirs 4 | [cdc_pouvoirs.md](cdc_pouvoirs.md) | ✅ | OK — Cataclysme **guerre native** (`canRaid`) |
+| Nexus (niveaux, Éclats, pose) | [cdc_nexus.md](../90-specifications/cdc_nexus.md) | WizardCore ✅ | OK — destroy + town_flags + Autels typés ✅ |
+| Autels (45s, CD, shards) | [cdc_autels_sacres.md](../90-specifications/cdc_autels_sacres.md) | ✅ | OK — types + bonus soft ✅ |
+| Mana + Forgeron | [cdc_mana_brut.md](../90-specifications/cdc_mana_brut.md) | ✅ | OK — framing convoi déjà là |
+| Pouvoirs 4 | [cdc_pouvoirs.md](../90-specifications/cdc_pouvoirs.md) | ✅ | OK — Cataclysme **guerre native** (`canRaid`) |
 | Contrats → Éclats | GDD | stub ✅ | OK |
-| Client FX pouvoirs / Autels / Mana / Nexus | [cdc_exp_client.md](cdc_exp_client.md) | partiel ✅ | Polish HUD Coven manquant |
-| Ères 45j | [cdc_eres.md](cdc_eres.md) | `EraAPI` + `SeasonAPI` compat ✅ | **Phase S4 complète** |
-| WizardCovens | [cdc_covens.md](cdc_covens.md) | absent | **À faire** (T0 = FactionAdapter) |
-| Boutique | [cdc_boutique.md](cdc_boutique.md) | non | À faire |
-| Magie | [cdc_magie.md](cdc_magie.md) | livré ✅ | 12 écoles, 31 sorts, runtime VFX client |
-| Cinématique d'arrivée | [cdc_intro.md](cdc_intro.md) | WizardIntro 1.0.0 ✅ | packet 130 · 9 écoles · assets : icônes + map manquantes |
+| Client FX pouvoirs / Autels / Mana / Nexus | [cdc_exp_client.md](../90-specifications/cdc_exp_client.md) | partiel ✅ | Polish HUD Coven manquant |
+| Ères 45j | [cdc_eres.md](../90-specifications/cdc_eres.md) | `EraAPI` + `SeasonAPI` compat ✅ | **Phase S4 complète** |
+| WizardCovens | [cdc_covens.md](../90-specifications/cdc_covens.md) | absent | **À faire** (T0 = FactionAdapter) |
+| Boutique | [cdc_boutique.md](../90-specifications/cdc_boutique.md) | non | À faire |
+| Magie | [cdc_magie.md](../90-specifications/cdc_magie.md) | livré ✅ | 12 écoles, 31 sorts, runtime VFX client |
+| Cinématique d'arrivée | [cdc_intro.md](../90-specifications/cdc_intro.md) | WizardIntro 1.0.0 ✅ | packet 130 · 9 écoles · assets : icônes + map manquantes |
 | Compagnons / Spawn | stubs | non | Backlog design |
 
 **Transition sociale**
@@ -144,7 +144,7 @@ Branche : `feature/eras`
 | **S5-T4** | Handshake launcher (si pas déjà durci) |
 
 Branche : `feature/client-smp`  
-CDC : [cdc_exp_client.md](cdc_exp_client.md)
+CDC : [cdc_exp_client.md](../90-specifications/cdc_exp_client.md)
 
 ---
 
@@ -157,7 +157,7 @@ CDC : [cdc_exp_client.md](cdc_exp_client.md)
 | **S6-T3** | Tebex sync ; checklist anti-P2W (pas shards/mana/land/war) |
 
 Branche : `feature/shop`  
-CDC : [cdc_boutique.md](cdc_boutique.md)
+CDC : [cdc_boutique.md](../90-specifications/cdc_boutique.md)
 
 ---
 
@@ -167,8 +167,8 @@ Prioriser après S1–S6 selon capacité :
 
 | Module | Doc | Notes |
 | :--- | :--- | :--- |
-| Compagnons | [cdc_compagnons.md](cdc_compagnons.md) | rôles build/commerce/guerre |
-| Spawn & map | [cdc_spawn_map.md](cdc_spawn_map.md) | zones + POI Autels |
+| Compagnons | [cdc_compagnons.md](../90-specifications/cdc_compagnons.md) | rôles build/commerce/guerre |
+| Spawn & map | [cdc_spawn_map.md](../90-specifications/cdc_spawn_map.md) | zones + POI Autels |
 
 ---
 
