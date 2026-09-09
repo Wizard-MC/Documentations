@@ -62,7 +62,7 @@
 
 - **Contexte** : monde fracturé par la guerre des Arcanes. Les sorciers se regroupent en **Covens**.
 - **Map** : zones nommées (Plaine des Murmures, Désert de Cristal, Forêt d’Ébène, Montagnes du Crépuscule…) — influence butins, contrats, types d’Autels.
-- Détail spawn / POI : [cdc_spawn_map.md](cdc_spawn_map.md)
+- Détail spawn / POI : [cdc_spawn_map.md](../90-specifications/cdc_spawn_map.md)
 
 ---
 
@@ -97,16 +97,16 @@
 
 | Pilier | CDC |
 | :--- | :--- |
-| Covens (social, claims, diplo, banque) | [cdc_covens.md](cdc_covens.md) |
-| Nexus / ville | [cdc_nexus.md](cdc_nexus.md) |
-| Autels | [cdc_autels_sacres.md](cdc_autels_sacres.md) |
-| Mana Brut | [cdc_mana_brut.md](cdc_mana_brut.md) |
-| Pouvoirs | [cdc_pouvoirs.md](cdc_pouvoirs.md) |
-| Ères | [cdc_eres.md](cdc_eres.md) |
-| Client | [cdc_exp_client.md](cdc_exp_client.md) |
-| Boutique | [cdc_boutique.md](cdc_boutique.md) |
-| Magie | [cdc_magie.md](cdc_magie.md) |
-| Compagnons | [cdc_compagnons.md](cdc_compagnons.md) |
+| Covens (social, claims, diplo, banque) | [cdc_covens.md](../90-specifications/cdc_covens.md) |
+| Nexus / ville | [cdc_nexus.md](../90-specifications/cdc_nexus.md) |
+| Autels | [cdc_autels_sacres.md](../90-specifications/cdc_autels_sacres.md) |
+| Mana Brut | [cdc_mana_brut.md](../90-specifications/cdc_mana_brut.md) |
+| Pouvoirs | [cdc_pouvoirs.md](../90-specifications/cdc_pouvoirs.md) |
+| Ères | [cdc_eres.md](../90-specifications/cdc_eres.md) |
+| Client | [cdc_exp_client.md](../90-specifications/cdc_exp_client.md) |
+| Boutique | [cdc_boutique.md](../90-specifications/cdc_boutique.md) |
+| Magie | [cdc_magie.md](../90-specifications/cdc_magie.md) |
+| Compagnons | [cdc_compagnons.md](../90-specifications/cdc_compagnons.md) |
 
 ---
 
@@ -126,7 +126,7 @@ Les pouvoirs (Bouclier, Cataclysme…) restent des **swing states** de guerre / 
 ## 7. Monétisation (rappel)
 
 Rien n’achète : Éclats, Mana, niveaux Nexus, sorts combat, win conditions.  
-Boutique = cosmétiques, confort, Pass (défis cosmétiques). Voir [cdc_boutique.md](cdc_boutique.md).
+Boutique = cosmétiques, confort, Pass (défis cosmétiques). Voir [cdc_boutique.md](../90-specifications/cdc_boutique.md).
 
 ---
 
