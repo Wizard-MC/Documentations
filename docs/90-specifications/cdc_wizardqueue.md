@@ -7,7 +7,7 @@
 
 Documents liés :
 
-- [`cdc_wizardhub.md`](cdc_wizardhub.md) — le Seuil, qui affiche cette file au joueur
+- [`cdc_wizardhub.md`](cdc_wizardhub.md) — le lobby, qui affiche cette file au joueur
 - [`cdc_boutique.md`](cdc_boutique.md) — pourquoi la priorité payante a besoin d'un garde-fou
 - [`cdc_exp_client.md`](cdc_exp_client.md) — client MCP
 
@@ -21,7 +21,7 @@ prioritaires affament les autres.
 
 Trois engagements structurent le système :
 
-1. **On n'attend jamais dans le vide.** Un joueur en file est connecté au Seuil, il voit
+1. **On n'attend jamais dans le vide.** Un joueur en file est connecté au lobby, il voit
    sa position, et il peut partir. Une file qui retient un joueur devant un écran de
    chargement est une file cassée.
 2. **La position est exacte, pas estimée.** Un joueur à qui on annonce « 12<sup>e</sup> »
@@ -36,7 +36,8 @@ capacité.** Ce cahier des charges ne prévoit aucun divertissement de salle d'a
 si la file devient longue, la réponse est un slot de plus sur le SMP, pas un parkour.
 
 Ce que le système garantit en revanche : qu'on puisse **attendre sans regarder**. Le
-joueur peut passer sur une autre fenêtre, et l'Appel est assez bruyant pour le ramener.
+joueur peut passer sur une autre fenêtre, et la notification d'admission est assez
+bruyante pour le ramener.
 
 ---
 
@@ -59,9 +60,9 @@ Cinq raisons, dans l'ordre :
    rapporte le succès de la connexion. Sans ce retour, on ne peut pas distinguer une
    admission réussie d'un slot perdu.
 4. **Le proxy peut rattraper une expulsion.** `ServerKickEvent` porte un serveur de
-   repli : un joueur expulsé par un SMP plein ou en redémarrage revient au Seuil au lieu
+   repli : un joueur expulsé par un SMP plein ou en redémarrage revient au lobby au lieu
    d'être déconnecté.
-5. **Une file sur un backend serait liée à une instance.** Dès qu'il y a deux Seuils, la
+5. **Une file sur un backend serait liée à une instance.** Dès qu'il y a deux lobbies, la
    file se scinde en deux — et il n'existe pas de bonne façon de les recoller.
 
 ### 2.2. Redis, pas RabbitMQ
@@ -139,9 +140,9 @@ cette réécriture.
 | **Q-11** | Le backend publie un **battement de cœur** : en ligne, joueurs, maximum, slots réservés. La file lit cette valeur, elle ne la devine pas. |
 | **Q-12** | **Battement de cœur périmé → la file retient tout le monde** et annonce que la destination est injoignable. Elle ne se vide jamais par défaut de surveillance. |
 | **Q-13** | `wizardmc.queue.bypass` contourne la file **et consomme un slot réservé** du backend. Les deux, sinon le backend refuse après que la file a été sautée. |
-| **Q-14** | Toute tentative de connexion directe à une destination en file est **redirigée vers le Seuil** puis mise en file. On n'attend jamais dans le vide (Q-01 de l'intention). |
-| **Q-15** | Une expulsion du backend pour cause de saturation ou de redémarrage renvoie au Seuil avec **remise en tête de file**, jamais une déconnexion. |
-| **Q-16** | Un joueur inactif est retiré de la file après un délai (défaut 10 min), **après un avertissement** à 1 minute. Détecté par le Seuil, appliqué par la file. |
+| **Q-14** | Toute tentative de connexion directe à une destination en file est **redirigée vers le lobby** puis mise en file. On n'attend jamais dans le vide (Q-01 de l'intention). |
+| **Q-15** | Une expulsion du backend pour cause de saturation ou de redémarrage renvoie au lobby avec **remise en tête de file**, jamais une déconnexion. |
+| **Q-16** | Un joueur inactif est retiré de la file après un délai (défaut 10 min), **après un avertissement** à 1 minute. Détecté par le lobby, appliqué par la file. |
 | **Q-17** | Un joueur n'est dans **qu'une seule** file à la fois. Une nouvelle mise en file remplace la précédente. |
 | **Q-18** | Les opérations composées — admettre, réordonner, promouvoir, reprendre une grâce — sont des **scripts Lua**. Pas de verrou distribué. |
 | **Q-19** | La part réservée aux non-prioritaires est **configurable et publiée aux joueurs**. Une file qui paraît injuste est pire qu'une file longue. |
@@ -254,7 +255,7 @@ wq:events                     PUBSUB   admissions, retraits, changements de capa
 | `wq:grace:*` | La grâce de reconnexion | Une expiration native fait le ménage sans balayage |
 | `wq:srv:*` | La capacité réelle | **Avec expiration** : une clef périmée est la façon dont la file apprend que le backend est muet |
 | `wq:cursor:*` | Le motif d'admission | Partagé, pour que deux proxies ne servent pas le même niveau |
-| `wq:events` | La notification | Permet au Seuil de réagir à l'instant, sans interrogation régulière |
+| `wq:events` | La notification | Permet au lobby de réagir à l'instant, sans interrogation régulière |
 
 ### L'expiration de `wq:srv:*` est une décision
 
@@ -283,14 +284,14 @@ verrou à libérer quand un proxy meurt au mauvais moment.
 
 ## 6. Protocole et intégration
 
-### 6.1. Avec le Seuil
+### 6.1. Avec le lobby
 
 Deux canaux, et le partage n'est pas arbitraire.
 
 | Canal | Pour quoi | Pourquoi celui-là |
 |---|---|---|
 | **Messages de greffon** | Les actions du joueur : rejoindre, quitter, signaler une inactivité | Ils passent par **sa propre connexion** : il ne peut pas mettre un autre en file. L'authentification est gratuite. |
-| **Redis** | L'état que le Seuil affiche : positions, capacité, admissions | Le Seuil en a besoin pour **tous** ses joueurs à la fois, et la publication donne la notification immédiate |
+| **Redis** | L'état que le lobby affiche : positions, capacité, admissions | Le lobby en a besoin pour **tous** ses joueurs à la fois, et la publication donne la notification immédiate |
 
 Une action du joueur par message de greffon, un état par Redis. Faire passer les actions
 par Redis obligerait à réinventer une authentification que la connexion fournit déjà.
@@ -305,7 +306,7 @@ par Redis obligerait à réinventer une authentification que la connexion fourni
 
 ### 6.3. Avec le client
 
-**Aucun échange direct.** La file ne parle jamais au client : le Seuil s'en charge sur
+**Aucun échange direct.** La file ne parle jamais au client : le lobby s'en charge sur
 son propre paquet.
 
 C'est la règle de propriété du projet — le paquet appartient au greffon qui l'émet — et
@@ -419,11 +420,11 @@ Ces chiffres sont confortables : la file n'est pas le composant qui limitera le 
 | **Redis injoignable au démarrage** | Le greffon démarre, annonce le défaut **une seule fois**, et laisse passer les connexions sans file. Une file cassée ne doit pas fermer le serveur. |
 | **Redis tombe en service** | Les files en mémoire du proxy continuent d'être servies en lecture ; aucune nouvelle admission. Reprise à la reconnexion. |
 | **Backend muet** | La file retient tout le monde et l'annonce (**Q-12**). Aucune admission. |
-| **Backend qui redémarre** | Les joueurs expulsés reviennent au Seuil, en tête de file (**Q-15**) |
+| **Backend qui redémarre** | Les joueurs expulsés reviennent au lobby, en tête de file (**Q-15**) |
 | **Un proxy meurt** | Ses joueurs sont déconnectés, donc en grâce : ils retrouvent leur place en revenant (**Q-10**). Aucun verrou à libérer, les scripts Lua n'en prennent pas. |
 | **Deux proxies** | Le curseur de motif et le compteur de séquence sont partagés : aucun double service, aucune égalité |
 | **Horloges décalées** | Sans effet : l'ordre vient du compteur, pas de l'heure (**Q-03**) |
-| **Le Seuil tombe** | Les joueurs sont déconnectés et entrent en grâce. La file reste intacte. |
+| **Le lobby tombe** | Les joueurs sont déconnectés et entrent en grâce. La file reste intacte. |
 
 ### Le mode de panne le plus dangereux
 
@@ -501,8 +502,8 @@ remonte pas, elle stagne.
 - [ ] Une coupure de 2 min fait perdre la place, après expiration de la grâce
 - [ ] Une admission non suivie de connexion rend le slot au bout de 20 s
 - [ ] Et remet le joueur **en tête** de son niveau
-- [ ] Une connexion directe au SMP est redirigée vers le Seuil puis mise en file
-- [ ] Une expulsion du SMP renvoie au Seuil, en tête de file
+- [ ] Une connexion directe au SMP est redirigée vers le lobby puis mise en file
+- [ ] Une expulsion du SMP renvoie au lobby, en tête de file
 
 ### Les pannes
 
@@ -534,7 +535,7 @@ remonte pas, elle stagne.
 
 ## À lire ensuite
 
-- [`cdc_wizardhub.md`](cdc_wizardhub.md) — le Seuil, qui affiche cette file
+- [`cdc_wizardhub.md`](cdc_wizardhub.md) — le lobby, qui affiche cette file
 - [`cdc_boutique.md`](cdc_boutique.md) — la ligne que la priorité ne doit pas franchir
 - [Plages d'identifiants](../07-reference/plages-d-identifiants.md) — la file n'en consomme aucun
 - [Runbooks](../05-operer/runbooks.md) — les pannes en exploitation

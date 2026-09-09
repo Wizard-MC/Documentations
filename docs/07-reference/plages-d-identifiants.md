@@ -65,18 +65,18 @@ protocole du jeu de base. Chaque paquet est enregistré **dans les deux sens**.
 | 130 | `IntroPacket` | Cinématique d'arrivée |
 | 131 | `QuestPacket` | Journal de quêtes |
 | 132 | `MountPacket` | Montures |
-| **133** | `HubPacket` | **Le Seuil** — *spécifié, non livré* |
+| **133** | `HubPacket` | **WizardHub** — interface de navigation du lobby, *spécifié, non livré* |
 
 ### Le prochain disponible
 
 **134.**
 
-L'identifiant 133 est **réservé** au Seuil par
+L'identifiant 133 est **réservé** à WizardHub par
 [`cdc_wizardhub.md`](../90-specifications/cdc_wizardhub.md) §9.1. Il n'est pas encore
 enregistré dans le client : la réservation vaut pour qu'un autre système ne le prenne pas.
 
 **La file d'attente ne consomme aucun identifiant de paquet** : elle vit sur le proxy et
-ne parle jamais au client. C'est le Seuil qui affiche son état, sur 133.
+ne parle jamais au client. C'est le lobby qui affiche son état, sur 133.
 
 ### La règle de propriété
 

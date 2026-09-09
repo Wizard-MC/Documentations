@@ -132,8 +132,8 @@ renvoie. C'est la référence du développeur ; un joueur n'a aucune raison d'y 
 | [magie/](docs/90-specifications/magie/README.md) | 49 fiches : une par école, une par sort, conception des effets |
 | [cdc_magicalsystem](docs/90-specifications/cdc_magicalsystem.md) | Socle historique du système magique |
 | [cdc_mobs](docs/90-specifications/cdc_mobs.md) | Créatures hostiles : IA, groupes, nuées, butin, vol |
-| [cdc_wizardhub](docs/90-specifications/cdc_wizardhub.md) | **Le Seuil** — serveur lobby, interface de passage, carte du sorcier |
-| [cdc_wizardqueue](docs/90-specifications/cdc_wizardqueue.md) | **L'Appel** — file d'attente sur le proxy, priorité bornée |
+| [cdc_wizardhub](docs/90-specifications/cdc_wizardhub.md) | **WizardHub** — serveur lobby et repli du proxy, interface de navigation |
+| [cdc_wizardqueue](docs/90-specifications/cdc_wizardqueue.md) | **WizardQueue** — file d'attente sur le proxy, priorité bornée |
 | [cdc_intro](docs/90-specifications/cdc_intro.md) | Cinématique d'arrivée |
 | [cdc_exp_client](docs/90-specifications/cdc_exp_client.md) | Client MCP, HUD, effets |
 | [cdc_wizardcloud](docs/90-specifications/cdc_wizardcloud.md) | Distribution et mise à jour du client |
