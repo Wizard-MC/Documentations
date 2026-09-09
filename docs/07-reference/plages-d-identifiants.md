@@ -65,10 +65,18 @@ protocole du jeu de base. Chaque paquet est enregistré **dans les deux sens**.
 | 130 | `IntroPacket` | Cinématique d'arrivée |
 | 131 | `QuestPacket` | Journal de quêtes |
 | 132 | `MountPacket` | Montures |
+| **133** | `HubPacket` | **Le Seuil** — *spécifié, non livré* |
 
 ### Le prochain disponible
 
-**133.**
+**134.**
+
+L'identifiant 133 est **réservé** au Seuil par
+[`cdc_wizardhub.md`](../90-specifications/cdc_wizardhub.md) §9.1. Il n'est pas encore
+enregistré dans le client : la réservation vaut pour qu'un autre système ne le prenne pas.
+
+**La file d'attente ne consomme aucun identifiant de paquet** : elle vit sur le proxy et
+ne parle jamais au client. C'est le Seuil qui affiche son état, sur 133.
 
 ### La règle de propriété
 
@@ -153,7 +161,7 @@ Le matériau du Nexus est réglable par configuration — voir
 
 ### Pour un paquet
 
-1. Prendre le suivant disponible : **133**.
+1. Prendre le suivant disponible : **134**.
 2. L'enregistrer **dans les deux sens** dans le registre du client.
 3. Le déclarer depuis le greffon qui l'émet, pas depuis le fork.
 4. **Ajouter la ligne dans ce document.**
