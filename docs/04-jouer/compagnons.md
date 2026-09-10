@@ -93,9 +93,68 @@ Un compagnon progresse par **stades**. Chaque stade peut changer :
 Le passage de stade est annoncé. Si le stade n'a pas de nom déclaré, le message dit
 simplement le seuil atteint.
 
+### Ce qui fait monter un compagnon
+
+| Source | Comment |
+|---|---|
+| **Collecte** | Il ramasse pendant que vous êtes à côté |
+| **Combat** | Vous tuez une créature près de lui |
+| **Défense** | Il vous défend |
+| **Événements** | Ce qu'un événement accorde |
+| **Friandises** | Vous lui en donnez une |
+
+Les quatre premières sont passives : elles arrivent en jouant. La cinquième est le
+seul levier direct.
+
+### Les friandises
+
+Quatre friandises, à fabriquer avec les réactifs laissés par les créatures. Clic droit,
+compagnon invoqué.
+
+| Friandise | XP | Ce qu'il faut |
+|---|---:|---|
+| **Friandise du Familier** | 40 | 2 crocs de gobelin, sucre, blé — donne 2 friandises |
+| **Bouchée Venimeuse** | 80 | 1 glande à venin, 2 sucres |
+| **Braise Confite** | 150 | 2 poudres de blaze, 1 crème de magma, 2 pépites d'or |
+| **Festin du Dragon** | 400 | 4 lingots d'or, 2 émeraudes, 2 poudres de blaze |
+
+**Un plafond de 500 XP par jour et par joueur.** Au-delà, la friandise rend ce qu'il
+reste sous le plafond plutôt que d'être refusée — le message dit alors combien elle a
+vraiment donné. C'est un coup de pouce, pas un raccourci : sans plafond, un stock de
+friandises ferait sauter quarante niveaux en une soirée, et les paliers qui ouvrent les
+emplacements de sorts ne voudraient plus rien dire.
+
+Le plafond se règle dans `config.yml`, à `progression.treats.dailyXpCap`. À zéro, il
+n'y a plus de plafond.
+
 ---
 
-## 5. Les dragonnets sauvages
+## 5. Les accessoires
+
+Sept accessoires, un par effet, répartis sur cinq emplacements. Ils tombent des
+créatures — jamais de la boutique, puisqu'ils donnent des bonus.
+
+| Accessoire | Emplacement | Effet | Où le trouver |
+|---|---|---|---|
+| **Amulette du Sorcier** | Cou | +10 % régénération de mana | Gobelin mage, Gelée arcanique, Sylphe éplorée |
+| **Cristal de Vitesse** | Corps | +10 % vitesse | Loup maudit, Araignée d'ombre, Nyx |
+| **Cape de l'Ombre** | Dos | +10 % esquive (PvE) | Cryptique, Nyx, Araignée d'ombre |
+| **Couronne de Feu** | Tête | +10 % dégâts de feu (PvE) | Dragon Aile-de-braise, Gelée de lave |
+| **Selle de Braise** | Corps | +15 % vitesse monture, +10 % stamina de vol | Drake Terravore, Seigneur-Tonnerre céleste |
+| **Bottes de Braise** | Jambes | +10 % rayon de collecte | Golem de mousse, Écorce flétrie, Mousse malveillante |
+| **Plume de Vent** | Dos | +15 % stamina de vol | Vouivre Chuchevent, Araignée volante |
+
+**Une mise à mort ne rend jamais deux accessoires.** Quand une créature figure dans
+deux tables, les chances se partagent un seul tirage — sans quoi le pourcentage affiché
+pour chacun ne voudrait pas dire ce qu'il dit.
+
+Les bonus sont doux et hors PvP : c'est le principe
+[aucun avantage payant](../01-projet/vision-et-positionnement.md#21-aucun-avantage-payant)
+appliqué aussi à ce qui se gagne.
+
+---
+
+## 6. Les dragonnets sauvages
 
 Les deux dragonnets existent aussi **à l'état sauvage**, et ce sont alors des
 adversaires.
@@ -120,7 +179,7 @@ d'Ébène est du côté de la **Forêt d'Ébène**.
 
 ---
 
-## 6. Ce que la boutique peut et ne peut pas
+## 7. Ce que la boutique peut et ne peut pas
 
 | Autorisé | Interdit |
 |---|---|
@@ -134,7 +193,7 @@ et il n'a pas d'exception.
 
 ---
 
-## 7. Ce qui n'existe pas encore
+## 8. Ce qui n'existe pas encore
 
 Dit franchement, pour que personne ne le cherche.
 
@@ -152,7 +211,7 @@ faveur des quatre espèces actuelles.
 
 ---
 
-## 8. Les pièges
+## 9. Les pièges
 
 | Piège | Ce qui se passe | Quoi faire |
 |---|---|---|
@@ -161,6 +220,9 @@ faveur des quatre espèces actuelles.
 | S'approcher d'un dragonnet sauvage comme d'un compagnon | Six blocs de large, et hostile | Le traiter comme un boss |
 | Croire que le compagnon Aelindra est l'Éveilleuse | Ce sont deux choses différentes | L'Éveilleuse ne revient jamais |
 | Acheter une apparence en espérant un gain | Les cosmétiques ne donnent rien | C'est le principe |
+| Enchaîner les friandises | Au-delà de 500 XP dans la journée, elles ne rendent presque plus rien | En garder pour demain |
+| Manger la friandise soi-même | Impossible : le clic droit est intercepté | — |
+| Attendre un accessoire de la boutique | Ils donnent des bonus, donc ils ne s'achètent pas | Tuer la créature qui le laisse |
 
 ---
 

@@ -105,7 +105,42 @@ butin d'un ramassage.
 
 ---
 
-## 5. Les cosmétiques
+## 5. Les objets de compagnon
+
+Deux familles, ni l'une ni l'autre achetable : elles agissent sur les statistiques d'un
+familier, ce que la boutique n'a pas le droit de vendre.
+
+### Les accessoires
+
+Sept, sur cinq emplacements. Ils **tombent des créatures**, par famille cohérente — la
+Couronne de Feu de ce qui brûle, la Plume de Vent de ce qui vole. Le détail des espèces
+est dans [Compagnons §5](../04-jouer/compagnons.md#5-les-accessoires).
+
+### Les friandises
+
+Quatre, à fabriquer avec les matières de butin ci-dessus. Elles donnent de l'XP au
+compagnon actif, sous un plafond de 500 XP par joueur et par jour.
+
+| Friandise | XP | Coût |
+|---|---:|---|
+| Friandise du Familier | 40 | 2 crocs de gobelin, sucre, blé *(rend 2 friandises)* |
+| Bouchée Venimeuse | 80 | 1 glande à venin, 2 sucres |
+| Braise Confite | 150 | 2 poudres de blaze, 1 crème de magma, 2 pépites d'or |
+| Festin du Dragon | 400 | 4 lingots d'or, 2 émeraudes, 2 poudres de blaze |
+
+### Ni l'un ni l'autre n'a d'identifiant propre
+
+Accessoires et friandises empruntent des matériaux du jeu de base — une pépite d'or, une
+plume, un cookie — et se distinguent par un marqueur écrit dans leur description. Un
+identifiant neuf aurait demandé une texture côté client et une nouvelle version du client
+sur le nuage, pour des objets que personne ne regarde plus de deux secondes.
+
+C'est aussi ce qui rend leur ajout **sans effet sur les plages d'identifiants** : voir
+[Plages d'identifiants](plages-d-identifiants.md#4-les-objets).
+
+---
+
+## 6. Les cosmétiques
 
 Vingt entrées, six catégories. Aucune ne donne d'avantage.
 
@@ -123,7 +158,7 @@ avec du temps, et aucune des deux ne donne de puissance.
 
 ---
 
-## 6. Les utilitaires
+## 7. Les utilitaires
 
 | Utilitaire | Gemmes | Poussière | Plafond | Recharge |
 |---|---:|---:|---:|---:|
@@ -144,7 +179,7 @@ Un « slot de claim » payant serait refusé : il donne du territoire, donc de l
 
 ---
 
-## 7. Le Mana Brut
+## 8. Le Mana Brut
 
 Un objet, pas une monnaie abstraite.
 
