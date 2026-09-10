@@ -2,7 +2,7 @@
 
 # WizardMC — Documentation
 
-**Les Terres Fracturées** · Serveur Minecraft 1.7.10 · SMP Semi-RPG à Covens
+**Les Terres Fracturées** · Serveur Minecraft 1.7.10 · SMP Semi-RPG
 
 *Source de vérité unique : univers, conception, jeu, exploitation, création de contenu.*
 
