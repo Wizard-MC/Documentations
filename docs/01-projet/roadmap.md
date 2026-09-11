@@ -1,5 +1,14 @@
 # ROADMAP — WizardMC Coven SMP (V4)
 
+> ⚠️ **Ce document ne couvre que le socle SMP** — Covens, Nexus, Autels, Mana,
+> Pouvoirs, Ères, Boutique. Il ignore tout ce qui a été construit depuis :
+> WizardMobs, WizardQuest, WizardPets, WizardIntro, WizardHub, WizardQueue, le
+> launcher, le site et Discord.
+>
+> **Pour l'état réel de l'ensemble, lire [`etat-du-serveur.md`](etat-du-serveur.md).**
+> Cette roadmap garde sa valeur d'historique des phases S0 à S6 ; elle n'est plus la
+> source de vérité du projet.
+
 > **Source de vérité d’exécution** alignée sur [`gdd.md`](../03-gdd/gdd.md) + CDCs de ce dossier.  
 > Archive plan Faction V3 : `archive/ROADMAP_V3_FACTION.md` — **non versionné dans ce dépôt**, conservé hors ligne.  
 > Redirect racine : [`../ROADMAP.md`](roadmap.md)
@@ -26,10 +35,11 @@ Stack : MCP `wizardmc-clean` · `WizardSpigot` · `WizardCore` · cible `WizardC
 | Client FX pouvoirs / Autels / Mana / Nexus | [cdc_exp_client.md](../90-specifications/cdc_exp_client.md) | partiel ✅ | Polish HUD Coven manquant |
 | Ères 45j | [cdc_eres.md](../90-specifications/cdc_eres.md) | `EraAPI` + `SeasonAPI` compat ✅ | **Phase S4 complète** |
 | WizardCovens | [cdc_covens.md](../90-specifications/cdc_covens.md) | absent | **À faire** (T0 = FactionAdapter) |
-| Boutique | [cdc_boutique.md](../90-specifications/cdc_boutique.md) | non | À faire |
-| Magie | [cdc_magie.md](../90-specifications/cdc_magie.md) | livré ✅ | 12 écoles, 31 sorts, runtime VFX client |
+| Boutique | [cdc_boutique.md](../90-specifications/cdc_boutique.md) | **livré** ✅ | Site, offres, Stripe/PayPal, administration — voir dépôt `Website` |
+| Magie | [cdc_magie.md](../90-specifications/cdc_magie.md) | livré ✅ | **9 écoles, 41 sorts** (12 écoles sont spécifiées : `blood`, `nature`, `time` n'existent pas), runtime VFX client |
 | Cinématique d'arrivée | [cdc_intro.md](../90-specifications/cdc_intro.md) | WizardIntro 1.0.0 ✅ | packet 130 · 9 écoles · assets : icônes + map manquantes |
-| Compagnons / Spawn | stubs | non | Backlog design |
+| Compagnons | [cdc_compagnons.md](../90-specifications/cdc_compagnons.md) | **livré** ✅ | Greffon `WizardPets` : 4 espèces, progression, accessoires, friandises |
+| Spawn & map | [cdc_spawn_map.md](../90-specifications/cdc_spawn_map.md) | non | Esquisse de 60 lignes |
 
 **Transition sociale**
 
