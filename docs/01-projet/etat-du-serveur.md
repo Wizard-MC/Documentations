@@ -49,14 +49,14 @@ acceptable tant que cette page renvoie vers eux.
 |---|---|---|
 | **Magie** | WizardCore | 9 écoles, 41 sorts, 13 baguettes, sceaux, Tomes, roue, cercle d'incantation |
 | **Créatures** | WizardMobs + WizardSpigot | 49 hostiles dont 9 gelées et 4 dragons de donjon, 24 paisibles, butin, nuées |
-| **Montures** | WizardMobs | 10 montures, 4 raretés, touche dédiée et ATH |
+| **Montures** | WizardMobs | 10 montures, 4 raretés, touche dédiée et ATH, **les dix accordées par une quête** |
 | **Nexus & ville** | WizardCore | niveaux, Éclats, pose, destruction en guerre, flags |
 | **Autels & Mana** | WizardCore | types, bonus soft, convois, Forgeron itinérant |
 | **Covens** | WizardCovens | claims, rôles, relations, guerre, banque, migration Factions |
 | **Ères** | WizardCore | 45 jours, phases, reset partiel, Panthéon, Colosse de l'Ère |
 | **Cinématique** | WizardIntro | Aelindra, voix, sous-titres, choix d'école |
 | **Compagnons** | WizardPets | 4 espèces, progression, accessoires, friandises |
-| **Quêtes** | WizardQuest | 7 quêtes, journal, ATH, suivi de chemin |
+| **Quêtes** | WizardQuest | 13 quêtes, journal, ATH, suivi de chemin, maîtrise comptée, points mobiles |
 | **Boutique & site** | Website | offres, Stripe/PayPal, liaison Discord, administration |
 | **Distribution** | Launcher + WizardCloud | manifeste signé, mise à jour différentielle |
 | **Discord** | WizardBot + Bridge | liaison des comptes, chat en miroir |
@@ -80,13 +80,26 @@ acceptable tant que cette page renvoie vers eux.
 
 C'est la section à lire avant de croire un autre document. Chaque ligne a été vérifiée.
 
-### Graves — un joueur le voit
+### Graves — corrigés le 11 septembre 2026
 
-| # | Écart | Où |
-|---|---|---|
-| **E-01** | *Écailles et cendres* accorde `mount.drake` ; la monture s'appelle `drake_gold`. **La quête n'ouvre rien.** | [Q-01](../90-specifications/cdc_wizardquest.md#11-écarts-connus-entre-ce-document-et-le-code) |
-| **E-02** | **Six montures sur dix ne s'ouvrent jamais** — aucune quête n'accorde leur clé. Le manuel promet pourtant les dix. | [Q-02](../90-specifications/cdc_wizardquest.md#11-écarts-connus-entre-ce-document-et-le-code) |
-| **E-03** | Trois quêtes pointent le Forgeron à `0, 64, 0`, où il n'est jamais : il est **itinérant** sur dix points. | [Q-03](../90-specifications/cdc_wizardquest.md#11-écarts-connus-entre-ce-document-et-le-code) |
+Les quatre défauts se tenaient les uns les autres, et aucun ne levait d'erreur. Ils sont
+gardés ici le temps d'une ère : un défaut corrigé se relit utilement, et chacun a laissé
+un contrôle derrière lui.
+
+| # | Écart | État | Où |
+|---|---|---|---|
+| **E-01** | *Écailles et cendres* accordait `mount.drake` ; la monture s'appelle `drake_gold`. La quête n'ouvrait rien. | ✅ clé alignée, et WizardMobs avertit désormais en console d'une clé que personne n'accorde | [Q-01](../90-specifications/cdc_wizardquest.md#11-écarts-connus-entre-ce-document-et-le-code) |
+| **E-02** | **Six montures sur dix ne s'ouvraient jamais** — aucune quête n'accordait leur clé, quand le manuel promettait les dix. | ✅ six quêtes neuves, et un contrôle du fichier livré | [Q-02](../90-specifications/cdc_wizardquest.md#11-écarts-connus-entre-ce-document-et-le-code) |
+| **E-03** | Trois quêtes pointaient le Forgeron à `0, 64, 0`, où il n'est jamais : il est **itinérant** sur dix points. | ✅ le marqueur suit le personnage et se résout à l'envoi du journal | [Q-03](../90-specifications/cdc_wizardquest.md#11-écarts-connus-entre-ce-document-et-le-code) |
+| **E-16** | **La maîtrise ne se comptait pas.** La source rendait zéro et personne ne la remplaçait : aucun seuil ne se franchissait, la trame s'arrêtait au chapitre 2, et **une seule monture sur dix** était obtenable. | ✅ comptée dans le journal, avec un avertissement au démarrage sur les seuils morts | [Q-06](../90-specifications/cdc_wizardquest.md#11-écarts-connus-entre-ce-document-et-le-code) |
+
+> **E-16 est le plus grave des quatre, et c'est celui qui ne se voyait pas.** Les trois
+> premiers se constataient en jouant ; celui-là rendait les deux autres invisibles, parce
+> qu'aucune des quêtes concernées ne s'ouvrait.
+
+### Graves — ouverts
+
+Aucun à ce jour.
 
 ### Documents qui mentent
 
@@ -116,36 +129,40 @@ C'est la section à lire avant de croire un autre document. Chaque ligne a été
 
 Classé par ce que ça coûte au joueur, pas par ce que ça coûte à écrire.
 
-### D'abord — des choses cassées
+### D'abord — rien de cassé
 
-1. **Aligner la clé du Drake doré** (E-01). Une ligne.
-2. **Résoudre le marqueur du Forgeron à l'exécution** (E-03). Trois quêtes réparées.
-3. **Valider les clés `unlocks` au chargement du catalogue.** E-01 serait mort au
-   démarrage au lieu de passer six mois inaperçu.
-4. **Trancher les six montures fermées** (E-02) : écrire les quêtes, ou retirer la porte.
+Les quatre défauts de progression (E-01, E-02, E-03, E-16) sont corrigés. **Aucun défaut
+grave n'est ouvert à ce jour.**
 
 ### Ensuite — du contenu que le lore promet
 
-5. **Les sorts des trois compagnons muets** (E-13). Le modèle est posé par Ignis :
+1. **Les sorts des trois compagnons muets** (E-13). Le modèle est posé par Ignis :
    attaquer, se protéger, se soigner, rendre service, un coup d'éclat.
-6. **Les trois écoles manquantes** (E-09) — ou retirer leurs fiches, si elles sont
+2. **Les trois écoles manquantes** (E-09) — ou retirer leurs fiches, si elles sont
    abandonnées. Douze fiches pour neuf écoles, c'est une promesse non tenue.
-7. **Étendre la trame** au-delà du chapitre 3, et ouvrir d'autres donneurs que le
-   Forgeron.
-8. **Étoffer géographie et Panthéon** (E-14, E-15), et réconcilier les lieux (E-11, E-12).
+3. **Trancher les lieux** (E-11, E-12) : neuf des dix campements du Forgeron et les deux
+   lieux de quête ne sont pas dans la géographie. Tant que ce n'est pas tranché, **aucune
+   quête neuve ne peut poser d'objectif `REACH` honnête** — les six quêtes de montures
+   s'en passent pour cette raison.
+4. **Étendre la trame** au-delà du chapitre 3, et ouvrir d'autres donneurs que le
+   Forgeron : les treize quêtes viennent du même personnage.
+5. **Étoffer géographie et Panthéon** (E-14, E-15).
 
 ### Greffons à finir ou à spécifier
 
-9. **WizardHub** — en cours.
-10. **WizardQueue** — statut à confirmer.
-11. **CDC de WizardBungee**, et une fiche d'infrastructure pour Bot / Bridge / site /
-    launcher — quatre briques vivantes sans spécification.
-12. **Spawn & map** — l'esquisse de 60 lignes ne suffit pas à implémenter.
+6. **WizardHub** — en cours.
+7. **WizardQueue** — statut à confirmer.
+8. **CDC de WizardBungee**, et une fiche d'infrastructure pour Bot / Bridge / site /
+   launcher — quatre briques vivantes sans spécification.
+9. **Spawn & map** — l'esquisse de 60 lignes ne suffit pas à implémenter.
 
 ### Dette de référence
 
-13. **Regénérer le catalogue des sorts** depuis `spells.yml` (E-10).
-14. **Un contrôle automatique** qui compare catalogues et documents, pour que cette page
+10. **Regénérer le catalogue des sorts** depuis `spells.yml` (E-10).
+11. **Valider au chargement les clés `unlocks` des autres systèmes.** Les montures sont
+    couvertes — WizardMobs interroge `WizardQuest.grantableKeys()` au démarrage. Le
+    prochain système débloquable repartira de zéro.
+12. **Un contrôle automatique** qui compare catalogues et documents, pour que cette page
     n'ait plus à être tenue à la main.
 
 ---

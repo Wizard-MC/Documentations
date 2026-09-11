@@ -3,10 +3,10 @@
 La trame, les annexes, et les montures qu'elles débloquent. C'est la seule voie du jeu
 entièrement accessible à un joueur seul, et la seule source de montures.
 
-**Statut : livré partiellement.** Trois quêtes de trame, quatre annexes, dix montures
-déclarées — mais **trois seulement s'obtiennent réellement**. Le contenu de quêtes est
-volontairement court pour l'instant. Les écarts sont détaillés au §7 et suivis en
-[E-01 et E-02](../01-projet/etat-du-serveur.md#3-les-écarts-entre-le-code-et-les-documents).
+**Statut : livré.** Trois quêtes de trame, dix annexes, dix montures — **et les dix
+s'obtiennent**. La trame reste volontairement courte pour l'instant ; ce qui manque est
+suivi dans
+[l'état du serveur](../01-projet/etat-du-serveur.md#4-ce-quil-reste-à-faire).
 
 ---
 
@@ -19,7 +19,7 @@ volontairement court pour l'instant. Les écarts sont détaillés au §7 et suiv
 
 La trame est courte — trois chapitres — et c'est assumé : le contenu durable de
 WizardMC, c'est le monde et les autres joueurs. La trame sert à apprendre et à
-rencontrer le Forgeron.
+rencontrer le Forgeron ; les dix annexes portent les montures.
 
 ---
 
@@ -29,7 +29,7 @@ Trois niveaux, et la distinction compte :
 
 | Niveau | Règle |
 |---|---|
-| **La quête** | Un donneur, une récompense, un ou plusieurs étapes |
+| **La quête** | Un donneur, une récompense, une ou plusieurs étapes |
 | **L'étape** | Les étapes s'enchaînent **dans l'ordre écrit** |
 | **L'objectif** | Les objectifs d'une même étape se remplissent **dans n'importe quel ordre** |
 
@@ -54,6 +54,11 @@ l'écran**.
 Sans marqueur, une quête qui dit « rendez-vous aux Terres Fracturées » laisse
 chercher au hasard. Le texte décrit, le point conduit. Les objectifs de type REACH en
 exigent un.
+
+**Certains points se déplacent.** Le Forgeron est itinérant : son marqueur ne désigne pas
+une coordonnée mais le personnage lui-même, et la flèche le trouve là où il se tient. Si
+le serveur ne sait pas où il est, **aucune flèche n'apparaît** — plutôt que d'en montrer
+une qui mène ailleurs.
 
 ### Le donneur et la remise
 
@@ -84,7 +89,8 @@ minutes, un joueur a besoin de quelqu'un avant d'avoir besoin d'un adversaire.
 
 > « Une bande sans chef se disperse. Trouvez celui qui la tient. »
 
-Trois étapes. La leçon de la bande gobeline, appliquée.
+Deux étapes : traquer les brutes et réunir leurs crocs, puis revenir en parler. La leçon
+de la bande gobeline, appliquée.
 
 **Récompense** : 90 d'expérience, 10 de maîtrise, un totem de bande — et **le
 Husky**, la première monture.
@@ -93,28 +99,38 @@ Husky**, la première monture.
 
 > « Quelque chose remue sous les marais. Allez voir. »
 
-Trois étapes, dont un déplacement et une collecte.
+Deux étapes : rejoindre les marais, puis y faire le ménage. Il faut **15 de maîtrise**
+pour l'ouvrir — exactement ce que les deux premiers chapitres rapportent.
 
-**Récompense** : expérience, maîtrise, deux diamants — et **le Crabe de jade**.
+**Récompense** : 180 d'expérience, 20 de maîtrise, deux diamants — et **le Crabe de
+jade**.
 
 ---
 
 ## 4. Les annexes
 
-Quatre, toutes données par le Forgeron. Elles ne se suivent pas.
+Dix, toutes données par le Forgeron. Elles ne se suivent pas — seule leur maîtrise
+minimale décide de l'ordre.
 
-| Quête | Ce qu'elle demande | Récompense notable |
-|---|---|---|
-| ***Vermine des caves*** | Abattre des gelées | Boules de gelée |
-| ***Un lit de plumes*** | Ramasser, puis **remettre** au Forgeron | Émeraudes |
-| ***Le belvédère*** | Atteindre une crête | **Le Corbeau des augures** |
-| ***Écailles et cendres*** | Réunir quatre noyaux en fusion | **Le Drakelet d'or** |
+| Quête | Maîtrise | Ce qu'elle demande | Récompense notable |
+|---|---:|---|---|
+| ***Vermine des caves*** | — | Abattre huit gelées communes | Boules de gelée *(répétable)* |
+| ***Un lit de plumes*** | — | Ramasser seize plumes, puis les **remettre** | Émeraudes |
+| ***La sente encombrée*** | — | Dégager les golems de mousse de la sente | **Le Yak des cimes** |
+| ***Le belvédère*** | 10 | Atteindre une crête | **Le Corbeau des augures** |
+| ***Braises vives*** | 15 | Abattre les azalées de cendres | **Le Renard des braises** |
+| ***Ce que le bois garde*** | 15 | Abattre les écorces flétries | **L'Ours brun** |
+| ***Écailles et cendres*** | 20 | Réunir quatre noyaux en fusion | **Le Drakelet d'or** |
+| ***La veille du Nyx*** | 30 | Abattre le Nyx trois fois | **Murmure-de-givre** |
+| ***Ce qui dort sous la glace*** | 30 | Abattre les gelées de givre | **L'Ours des glaces** |
+| ***Le pacte de Chuchevent*** | 55 | Abattre la Vouivre Chuchevent | **Le Griffon** |
 
-*Un lit de plumes* est la seule quête qui utilise DELIVER : les objets quittent
-l'inventaire. Il faut les avoir sur soi au moment de rendre.
+Les sept dernières lignes demandent une **remise** : les objets quittent l'inventaire au
+moment de rendre, il faut donc les avoir sur soi.
 
-*Écailles et cendres* demande une maîtrise minimale : les noyaux en fusion tombent de
-la Gelée de lave, qu'il faut pouvoir tuer.
+Les maîtrises minimales ne sont pas des murs : chacune est couverte par ce que les quêtes
+ouvertes avant elle rapportent. *Le premier souffle* et *La sente encombrée* s'ouvrent
+sans rien, et tout part de là.
 
 > « Le Forgeron dort mal. Ce n'est pas votre problème, mais il paie. »
 > — *Un lit de plumes*
@@ -178,31 +194,28 @@ réglages du client.
 | Monture | Rareté | Vitesse | Vol | Comment on l'obtient |
 |---|---|---:|---|---|
 | **Husky** | Commune | 0,28 | non | Trame, chapitre 2 |
-| **Yak des cimes** | Commune | 0,26 | non | — |
+| **Yak des cimes** | Commune | 0,26 | non | *La sente encombrée* |
 | **Crabe de jade** | Rare | 0,30 | non | Trame, chapitre 3 |
-| **Renard des braises** | Rare | 0,42 | non | — |
-| **Ours brun** | Rare | 0,34 | non | — |
-| **Murmure-de-givre** | Épique | 0,46 | non | — |
-| **Ours des glaces** | Épique | 0,34 | non | — |
+| **Renard des braises** | Rare | 0,42 | non | *Braises vives* |
+| **Ours brun** | Rare | 0,34 | non | *Ce que le bois garde* |
+| **Murmure-de-givre** | Épique | 0,46 | non | *La veille du Nyx* |
+| **Ours des glaces** | Épique | 0,34 | non | *Ce qui dort sous la glace* |
 | **Corbeau des augures** | Épique | 0,50 | **oui** | *Le belvédère* |
-| **Drakelet d'or** | Légendaire | 0,58 | **oui** | *Écailles et cendres* ⚠️ |
-| **Griffon** | Légendaire | 0,62 | **oui** | — |
+| **Drakelet d'or** | Légendaire | 0,58 | **oui** | *Écailles et cendres* |
+| **Griffon** | Légendaire | 0,62 | **oui** | *Le pacte de Chuchevent* |
 
 > « Il marche de travers. On s'y fait. » — le Crabe de jade
 >
 > « Ni tout à fait aigle, ni tout à fait lion, et fier des deux. » — le Griffon
 
-### Six d'entre elles ne s'obtiennent pas
+### Les dix s'obtiennent, et une seule voie y mène
 
-Les six lignes marquées « — » n'ont **aucune quête qui les accorde**. Tant que
-WizardQuest est actif, elles restent fermées : il n'existe pas d'autre voie.
+Chaque monture a sa quête, et c'est la seule façon de l'ouvrir.
 
-Et le **Drakelet d'or** ne s'ouvre pas non plus. *Écailles et cendres* accorde la clé
-`mount.drake`, alors que la monture attend `mount.drake_gold` : la quête aboutit, la
-monture reste verrouillée, et rien ne le signale.
-
-Trois montures sur dix sont donc réellement accessibles : le Husky, le Crabe de jade et
-le Corbeau des augures. C'est un défaut connu, pas une intention de conception — voir
+Ce n'était pas vrai jusqu'ici, et l'écart était sérieux : six montures n'étaient accordées
+par aucune quête, le Drakelet d'or attendait une clé mal orthographiée, et la maîtrise ne
+se comptait pas — ce qui fermait en plus tous les seuils. **Une seule monture sur dix, le
+Husky, était réellement obtenable.** Les quatre défauts sont corrigés ; le détail est au
 [`cdc_wizardquest`](../90-specifications/cdc_wizardquest.md#11-écarts-connus-entre-ce-document-et-le-code).
 
 ### Ce que la rareté veut dire

@@ -2,7 +2,7 @@
 
 Les deux fichiers du système de quêtes, champ par champ.
 
-**Statut : livré.** Trois quêtes de trame, quatre annexes.
+**Statut : livré.** Trois quêtes de trame, dix annexes, et les dix montures accordées.
 
 ---
 
@@ -118,6 +118,7 @@ Une étape porte :
 |---|---|
 | `world` | Le monde |
 | `x`, `y`, `z` | La position |
+| `follow` | Le personnage mobile à suivre — **au lieu** de `world`/`x`/`y`/`z` |
 | `radius` | Le rayon de validation |
 | `label` | Le nom affiché sur le chemin |
 
@@ -128,6 +129,26 @@ hasard : **le texte décrit, le point conduit.**
 
 Le `radius` compte : seize blocs sur une crête laisse de la marge ; deux blocs
 demandent de trouver exactement le bon endroit, ce qui est rarement l'intention.
+
+#### `follow` — un point qui se déplace
+
+Un personnage itinérant ne se fixe pas. Le **Forgeron** change de campement : un point
+figé posé sur lui conduit à un terrain vide dès la première rotation.
+
+```yaml
+marker:
+  follow: forgeron
+  radius: 6.0
+  label: "Le Forgeron"
+```
+
+| Règle | Conséquence si elle est enfreinte |
+|---|---|
+| Un seul nom est reconnu aujourd'hui : `forgeron` | Tout autre nom **fait écarter la quête au chargement**, avec son nom en console |
+| `follow` remplace `world`/`x`/`y`/`z` ; il ne s'y ajoute pas | Les deux ensemble **font écarter la quête** — la position du moment gagne toujours, des coordonnées écrites ne serviraient jamais |
+| La position est résolue à l'envoi du journal | Si WizardCore est absent ou ne répond pas, **aucune flèche n'est envoyée**. C'est voulu : mieux vaut pas de flèche qu'une flèche qui mène ailleurs |
+
+La casse et les espaces ne comptent pas : `"  Forgeron "` vaut `forgeron`.
 
 ### 3.5. Le donneur
 
@@ -156,19 +177,45 @@ C'est ce qui empêche un nouveau joueur de prendre *Écailles et cendres* avant 
 pouvoir tuer une Gelée de lave — sans quoi il passerait son temps à mourir dans les
 profondeurs sans comprendre pourquoi.
 
+**D'où elle vient** : de la somme des récompenses `mastery` des quêtes que le joueur a
+**réclamées**. Une quête terminée mais non rendue ne compte pas encore. Rien n'est stocké
+à part : le total se refait à la lecture du journal, et un `quests.yml` rechargé le refait
+avec lui.
+
+> Conséquence pratique : **retirer une quête du fichier retire sa maîtrise** à tous ceux
+> qui l'avaient réclamée, et peut refermer une quête qu'ils avaient ouverte. Baisser une
+> récompense `mastery` a le même effet.
+
+Au démarrage, le greffon **avertit en console** d'une quête dont le `minMastery` dépasse
+tout ce que le catalogue entier sait accorder. Une telle quête n'est pas difficile : elle
+ne s'ouvrira jamais.
+
 ### Les déblocages
 
-`unlocks` est la **seule source de montures du jeu**. Quatre quêtes en accordent une :
+`unlocks` est la **seule source de montures du jeu**. Dix quêtes en accordent une :
 
 | Quête | Monture |
 |---|---|
 | *Ceux qui mènent* (trame 2) | Husky |
 | *Ce qui dort dans les fanges* (trame 3) | Crabe de jade |
-| *Le belvédère* (annexe) | Corbeau des augures |
-| *Écailles et cendres* (annexe) | Drakelet d'or |
+| *La sente encombrée* | Yak des cimes |
+| *Le belvédère* | Corbeau des augures |
+| *Braises vives* | Renard des braises |
+| *Ce que le bois garde* | Ours brun |
+| *Écailles et cendres* | Drakelet d'or |
+| *La veille du Nyx* | Murmure-de-givre |
+| *Ce qui dort sous la glace* | Ours des glaces |
+| *Le pacte de Chuchevent* | Griffon |
 
-Les six autres montures n'ont pas encore de quête qui les débloque. Sans WizardQuest,
-toutes sont ouvertes — comportement de repli.
+La clé d'une monture vaut `mount.<identifiant de la monture>`, **pas** le nom de son
+espèce : le Drakelet d'or a l'identifiant `drake_gold`, et sa clé est donc
+`mount.drake_gold`. C'est exactement la faute qui l'a tenu fermé — la quête accordait
+`mount.drake`, qui n'ouvrait rien.
+
+**Les dix montures ont chacune leur quête.** Si une clé accordée ne correspond à aucune
+monture, ou si une monture attend une clé que personne n'accorde, **WizardMobs l'écrit en
+console au démarrage** — la monture resterait sinon verrouillée sans un mot. Sans
+WizardQuest, toutes sont ouvertes : c'est un comportement de repli, pas une intention.
 
 ---
 
@@ -179,6 +226,8 @@ toutes sont ouvertes — comportement de repli.
 | Un `target` mal orthographié | L'objectif ne se valide jamais | Vérifier contre le catalogue de créatures ou la liste des matières |
 | Une récompense avec une matière inexistante | **La quête entière est écartée au chargement** | Vérifier chaque nom de matière |
 | `REACH` sans `marker` | Rien à atteindre | Un marqueur est exigé |
+| Un point fixe posé sur un personnage itinérant | La flèche conduit à un endroit vide | Écrire `follow:` — voir §3.4 |
+| Un `follow` mal orthographié | **La quête entière est écartée au chargement** | Un seul nom existe : `forgeron` |
 | Un `radius` trop petit | Le joueur ne trouve pas le point exact | Seize blocs est une valeur raisonnable |
 | Un `chapter` en double dans la trame | Deux maillons proposés en même temps | Un chapitre par quête `MAIN` |
 | Un `minMastery` trop haut | La quête n'apparaît jamais | Le comparer à ce que les quêtes précédentes rapportent |
@@ -230,6 +279,6 @@ La procédure complète d'écriture est dans
 ## À lire ensuite
 
 - [Créer une quête](../../06-creer-du-contenu/creer-une-quete.md) — la procédure
-- [Catalogue des quêtes](../../07-reference/catalogue-quetes.md) — les sept quêtes livrées
+- [Catalogue des quêtes](../../07-reference/catalogue-quetes.md) — les treize quêtes livrées
 - [Quêtes et montures](../../04-jouer/quetes-et-montures.md) — le point de vue du joueur
 - [Créer une monture](../../06-creer-du-contenu/creer-une-monture.md) — pour un nouveau déblocage

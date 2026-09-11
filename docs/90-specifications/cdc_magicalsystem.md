@@ -1,7 +1,7 @@
 # CDC TECHNIQUE — Magie (Coven SMP V1+)
 
 > **Statut** : CDC complet (**S7-T0** ✅) — **bloquant levé** pour le code S7-T1+.  
-> Remplace le stub. Aligné [`gdd.md`](../03-gdd/gdd.md) + [`ROADMAP.md`](../01-projet/roadmap.md#phase-s7--magie).  
+> Remplace le stub. Aligné [`gdd.md`](../03-gdd/gdd.md) + [`ROADMAP.md`](../01-projet/roadmap.md#phase-s7--backlog-design-stubs).  
 > Inspiration UX : mods type *Arcanum* (baguette, roue de sorts, projectiles) + jauge / GCD type **WoW / FF** — **lore & noms 100 % WizardMC** (pas d’IP Harry Potter).  
 > Réf. technique interne : dossier `archive/arcanum-inspect/` et `archive/notes_arcanum.md` — matériel d'étude **non versionné dans ce dépôt**, conservé hors ligne par le lead dev.  
 > Packet NMS : **128** (Wiki = **126**, Compagnons = **129**).
@@ -375,7 +375,7 @@ Branche Spigot : seulement si IDs custom requis avant T2 ; sinon Core-only + cli
 
 ## 15. Mapping ROADMAP S7
 
-Voir détail granulaires dans [`ROADMAP.md`](../01-projet/roadmap.md#phase-s7--magie). Synthèse :
+Voir détail granulaires dans [`ROADMAP.md`](../01-projet/roadmap.md#phase-s7--backlog-design-stubs). Synthèse :
 
 | Vague | IDs | Contenu |
 | :--- | :--- | :--- |
