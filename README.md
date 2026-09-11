@@ -22,7 +22,7 @@ d'entrée. Lisez celle qui vous concerne : personne n'a besoin de tout lire.
 | **Game master** | [Game master](docs/05-operer/game-master.md) | Événements, apparitions, scénarios, boss d'Ère |
 | **Administrateur serveur** | [Installation](docs/05-operer/installation.md) | Monter le serveur de zéro, puis configurer chaque greffon |
 | **Créateur de contenu** | [Créer du contenu](docs/06-creer-du-contenu/README.md) | Ajouter une créature, un sort, une quête, un modèle 3D |
-| **Développeur** | [Architecture logicielle](docs/01-projet/architecture-logicielle.md) | Les sept dépôts, qui possède quoi, les spécifications |
+| **Développeur** | [État du serveur](docs/01-projet/etat-du-serveur.md) | Ce qui existe, ce qui manque, et où les documents mentent — **à lire en premier** |
 | **Game designer** | [GDD](docs/03-gdd/gdd.md) | Intention, boucles, progression, économie, équilibrage |
 
 Nouveau sur le projet, sans rôle précis ? Lisez
@@ -37,10 +37,11 @@ Nouveau sur le projet, sans rôle précis ? Lisez
 
 | Document | Ce qu'il règle |
 |---|---|
+| [État du serveur](docs/01-projet/etat-du-serveur.md) | **L'inventaire réel** : dix-neuf dépôts, les systèmes livrés, les écarts code ↔ documents, ce qu'il reste à faire |
 | [Vision et positionnement](docs/01-projet/vision-et-positionnement.md) | Ce qu'est WizardMC, ce qu'il n'est pas, et pour qui |
-| [Architecture logicielle](docs/01-projet/architecture-logicielle.md) | Les sept dépôts, leurs dépendances, qui possède quelle donnée |
+| [Architecture logicielle](docs/01-projet/architecture-logicielle.md) | Les dépôts, leurs dépendances, qui possède quelle donnée |
 | [Glossaire](docs/01-projet/glossaire.md) | Tout le vocabulaire, joueur et technique |
-| [Feuille de route](docs/01-projet/roadmap.md) | Phases d'exécution et état de livraison |
+| [Feuille de route](docs/01-projet/roadmap.md) | Historique des phases S0–S6 du socle SMP — **voir l'état du serveur** pour l'ensemble |
 
 ### 02 — L'univers
 
@@ -134,6 +135,8 @@ renvoie. C'est la référence du développeur ; un joueur n'a aucune raison d'y 
 | [cdc_mobs](docs/90-specifications/cdc_mobs.md) | Créatures hostiles : IA, groupes, nuées, butin, vol |
 | [cdc_wizardhub](docs/90-specifications/cdc_wizardhub.md) | **WizardHub** — serveur lobby et repli du proxy, interface de navigation |
 | [cdc_wizardqueue](docs/90-specifications/cdc_wizardqueue.md) | **WizardQueue** — file d'attente sur le proxy, priorité bornée |
+| [cdc_wizardquest](docs/90-specifications/cdc_wizardquest.md) | **WizardQuest** — trame, annexes, journal, suivi, déblocages |
+| [cdc_compagnons](docs/90-specifications/cdc_compagnons.md) | **WizardPets** — compagnons, progression, accessoires, montures |
 | [cdc_intro](docs/90-specifications/cdc_intro.md) | Cinématique d'arrivée |
 | [cdc_exp_client](docs/90-specifications/cdc_exp_client.md) | Client MCP, HUD, effets |
 | [cdc_wizardcloud](docs/90-specifications/cdc_wizardcloud.md) | Distribution et mise à jour du client |

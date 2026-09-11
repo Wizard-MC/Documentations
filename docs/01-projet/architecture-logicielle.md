@@ -1,6 +1,6 @@
 # Architecture logicielle
 
-Les sept dépôts de WizardMC, ce que chacun possède, et dans quel ordre ils se
+Les dépôts de WizardMC, ce que chacun possède, et dans quel ordre ils se
 chargent. À lire avant de toucher à quoi que ce soit : savoir **qui possède une
 donnée** évite la moitié des bugs de ce projet.
 
@@ -8,7 +8,7 @@ donnée** évite la moitié des bugs de ce projet.
 
 ---
 
-## 1. Les sept dépôts
+## 1. Les dépôts
 
 | Dépôt | Nature | Ce qu'il possède |
 |---|---|---|
@@ -16,7 +16,9 @@ donnée** évite la moitié des bugs de ce projet.
 | **WizardCore** | Greffon serveur | Magie, Nexus, Autels, Mana Brut, Pouvoirs, Ères, contrats, boutique, coffres, enchères, occurrences, chat, profils |
 | **WizardMobs** | Greffon serveur | Le catalogue des créatures hostiles, les bêtes paisibles, les montures, l'apparition naturelle, le butin, les nuées |
 | **WizardQuest** | Greffon serveur | Les quêtes, le journal, le suivi, les récompenses, les déblocages de montures |
+| **WizardPets** | Greffon serveur | Les compagnons : les quatre espèces, la progression, l'équipement, les friandises, l'apprivoisement, la reproduction |
 | **WizardIntro** | Greffon serveur | La cinématique d'arrivée et le choix de l'école |
+| **WizardCovens** | Greffon serveur | Le socle social : Covens, claims, rôles, relations, guerre, banque |
 | **MCP** | Fork client Minecraft 1.7.10 | Tout l'affichage : moteur 3D, modèles animés, HUD, interfaces, sons, réception des paquets |
 | **ASSETS** | Dépôt de ressources | Modèles Blockbench, textures, sons, et leur inventaire |
 
@@ -30,12 +32,24 @@ C'est lui qui est dans le chemin de **chaque** tentative de connexion, et c'est 
 pour laquelle la file d'attente y vit plutôt que sur un backend — voir
 [cdc_wizardqueue](../90-specifications/cdc_wizardqueue.md) §2.1.
 
-### Ce qui est spécifié mais pas encore écrit
+### Autour du jeu
+
+| Dépôt | Nature | Ce qu'il possède |
+|---|---|---|
+| **Launcher** | Application Rust | L'authentification, l'installation et la mise à jour du client |
+| **WizardCloud** | Service de distribution | Les manifestes signés et le téléchargement différentiel du client |
+| **Website** | Application Laravel | Le site public, la boutique, le forum, l'administration, l'API du launcher et du bot |
+| **WizardBot** | Bot Discord TypeScript | La liaison des comptes et le salon en miroir du chat en jeu |
+| **WizardMC-Bridge** | Greffon serveur | Le pont HTTP signé entre le serveur, le site et Discord |
+
+Ces cinq-là **n'ont pas de CDC dans ce dépôt** : le launcher et le site documentent
+chez eux, les trois autres ne sont pas encore spécifiés. Voir
+[`etat-du-serveur.md`](etat-du-serveur.md) §1.
+
+### En cours d'écriture
 
 | Nom | Rôle | Spécification |
 |---|---|---|
-| **WizardCovens** | Le greffon social, qui doit remplacer l'adaptateur MassiveCraft | [cdc_covens](../90-specifications/cdc_covens.md) |
-| **WizardCloud** | La distribution et la mise à jour du client | [cdc_wizardcloud](../90-specifications/cdc_wizardcloud.md) |
 | **WizardHub** | Le serveur lobby et le repli du proxy, greffon **WizardSpigot** | [cdc_wizardhub](../90-specifications/cdc_wizardhub.md) |
 | **WizardQueue** | La file d'attente de connexion, greffon **WizardBungee** | [cdc_wizardqueue](../90-specifications/cdc_wizardqueue.md) |
 
@@ -46,11 +60,11 @@ pour laquelle la file d'attente y vit plutôt que sur un backend — voir
 ```text
               WizardSpigot  (fork serveur : entités, paquets, API)
                      │
-        ┌────────────┼─────────────┬──────────────┐
-        │            │             │              │
-   WizardCore   WizardMobs   WizardQuest    WizardIntro
-        │            │             │              │
-        └────────────┴──────┬──────┴──────────────┘
+   ┌──────┬──────┴──┬──────────┬──────────┬──────────┐
+   │      │         │          │          │          │
+WizardCore│    WizardMobs  WizardQuest WizardPets WizardIntro
+   │  WizardCovens  │          │          │          │
+   └──────┴─────────┴────┬─────┴──────────┴──────────┘
                             │  paquets maison 95–132
                             ▼
                           MCP  (client : tout l'affichage)
@@ -101,7 +115,7 @@ tous les autres la lisent à travers une interface.
 | Appartenance à un Coven | WizardCovens, via `FactionAdapter` | tous |
 | Journal de quêtes | WizardQuest | MCP pour le journal et le faisceau |
 | Montures débloquées | WizardMobs (catalogue) + WizardQuest (les clés de déblocage) | MCP pour la roue d'invocation |
-| Compagnon actif et son évolution | WizardCore (pets) | MCP pour le rendu et la barre de sorts |
+| Compagnon actif et son évolution | **WizardPets** | WizardSpigot porte les entités ; MCP le rendu et la barre de sorts |
 | Animations et modèles 3D | MCP (moteur) à partir de ASSETS | — |
 
 **La règle qui en découle :** le serveur décide, le client montre. Quand une valeur

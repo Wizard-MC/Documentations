@@ -3,7 +3,10 @@
 > Le **serveur lobby** : serveur de repli du proxy, et interface de navigation vers le
 > SMP. Greffon WizardSpigot.
 
-**État : spécifié.** Le cahier des charges est arrêté, le code n'existe pas.
+**État : en cours.** Le cahier des charges est arrêté et le greffon est en cours
+d'écriture — le dépôt `WizardHub` porte déjà l'essentiel de sa structure. Ce
+document reste la référence de ce qu'il doit faire ; il ne décrit pas encore
+l'existant. Voir [`etat-du-serveur.md`](../01-projet/etat-du-serveur.md).
 
 Documents liés :
 

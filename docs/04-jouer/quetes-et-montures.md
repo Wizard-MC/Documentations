@@ -1,10 +1,12 @@
 # Quêtes et montures
 
-La trame, les annexes, et les dix montures qu'elles débloquent. C'est la seule voie
-du jeu entièrement accessible à un joueur seul, et la seule source de montures.
+La trame, les annexes, et les montures qu'elles débloquent. C'est la seule voie du jeu
+entièrement accessible à un joueur seul, et la seule source de montures.
 
-**Statut : livré.** Trois quêtes de trame, quatre annexes, dix montures. Le contenu
-de quêtes est volontairement court pour l'instant.
+**Statut : livré partiellement.** Trois quêtes de trame, quatre annexes, dix montures
+déclarées — mais **trois seulement s'obtiennent réellement**. Le contenu de quêtes est
+volontairement court pour l'instant. Les écarts sont détaillés au §7 et suivis en
+[E-01 et E-02](../01-projet/etat-du-serveur.md#3-les-écarts-entre-le-code-et-les-documents).
 
 ---
 
@@ -183,12 +185,25 @@ réglages du client.
 | **Murmure-de-givre** | Épique | 0,46 | non | — |
 | **Ours des glaces** | Épique | 0,34 | non | — |
 | **Corbeau des augures** | Épique | 0,50 | **oui** | *Le belvédère* |
-| **Drakelet d'or** | Légendaire | 0,58 | **oui** | *Écailles et cendres* |
+| **Drakelet d'or** | Légendaire | 0,58 | **oui** | *Écailles et cendres* ⚠️ |
 | **Griffon** | Légendaire | 0,62 | **oui** | — |
 
 > « Il marche de travers. On s'y fait. » — le Crabe de jade
 >
 > « Ni tout à fait aigle, ni tout à fait lion, et fier des deux. » — le Griffon
+
+### Six d'entre elles ne s'obtiennent pas
+
+Les six lignes marquées « — » n'ont **aucune quête qui les accorde**. Tant que
+WizardQuest est actif, elles restent fermées : il n'existe pas d'autre voie.
+
+Et le **Drakelet d'or** ne s'ouvre pas non plus. *Écailles et cendres* accorde la clé
+`mount.drake`, alors que la monture attend `mount.drake_gold` : la quête aboutit, la
+monture reste verrouillée, et rien ne le signale.
+
+Trois montures sur dix sont donc réellement accessibles : le Husky, le Crabe de jade et
+le Corbeau des augures. C'est un défaut connu, pas une intention de conception — voir
+[`cdc_wizardquest`](../90-specifications/cdc_wizardquest.md#11-écarts-connus-entre-ce-document-et-le-code).
 
 ### Ce que la rareté veut dire
 
