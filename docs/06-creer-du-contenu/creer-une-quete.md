@@ -60,7 +60,7 @@ montrer la fin de l'histoire dès le début.
 | `target` | Ce qui est visé | selon le type |
 | `amount` | La quantité | oui |
 | `description` | Ce que le journal affiche | oui |
-| `marker` | Le point du monde | **exigé pour `REACH`** |
+| `marker` | Le point du monde, ou le personnage à suivre | **exigé pour `REACH`** |
 
 ---
 
@@ -101,6 +101,7 @@ Le destinataire est le `turnIn` de la quête, qui vaut le donneur par défaut.
 |---|---|
 | `world` | Le monde |
 | `x`, `y`, `z` | La position |
+| `follow` | Un personnage mobile, **au lieu** de `world`/`x`/`y`/`z` |
 | `radius` | Le rayon de validation |
 | `label` | Le nom affiché sur le chemin |
 
@@ -123,6 +124,30 @@ hasard. C'est la différence entre une quête et une devinette.
 ### Le `label`
 
 Il s'affiche sur le chemin. « Le belvédère » vaut mieux que « Objectif 1 ».
+
+### Ne jamais fixer un personnage qui se déplace
+
+Le **Forgeron** est itinérant : WizardCore lui donne dix campements et le fait tourner.
+Trois quêtes l'ont pointé à `world 0, 64, 0` — un point qui n'est aucun des dix. La flèche
+conduisait à un terrain vide pendant qu'il était ailleurs, et la quête semblait cassée.
+
+Pour un personnage mobile, écrire `follow:` au lieu des coordonnées :
+
+```yaml
+marker:
+  follow: forgeron
+  radius: 6.0
+  label: "Le Forgeron"
+```
+
+Le serveur lui donne sa position au moment d'envoyer le journal. Deux refus à connaître :
+un `follow` que le serveur ne sait pas situer **fait écarter la quête au chargement**, et
+`follow` mêlé à `world`/`x`/`y`/`z` aussi — la position du moment gagne toujours, des
+coordonnées écrites ne serviraient jamais.
+
+> **Il n'y a pas de solution de repli.** Si la position n'est pas joignable — WizardCore
+> absent, par exemple — aucune flèche n'est envoyée. C'est préférable à une flèche qui
+> conduit ailleurs.
 
 ---
 
@@ -147,12 +172,19 @@ qu'on a mis une majuscule est un défaut très coûteux à diagnostiquer.
 
 ### Calibrer sur les quêtes livrées
 
-| Quête | Expérience | Maîtrise |
-|---|---:|---:|
-| *Le premier souffle* (trame 1) | 40 | 5 |
-| *Ceux qui mènent* (trame 2) | 90 | 10 |
-| *Le belvédère* (annexe) | 60 | 5 |
-| *Écailles et cendres* (annexe) | 140 | 15 |
+| Quête | Maîtrise min. | Expérience | Maîtrise |
+|---|---:|---:|---:|
+| *Le premier souffle* (trame 1) | — | 40 | 5 |
+| *Ceux qui mènent* (trame 2) | — | 90 | 10 |
+| *La sente encombrée* (annexe) | — | 70 | 5 |
+| *Le belvédère* (annexe) | 10 | 60 | 5 |
+| *Braises vives* (annexe) | 15 | 150 | 10 |
+| *Écailles et cendres* (annexe) | 20 | 140 | 15 |
+| *La veille du Nyx* (annexe) | 30 | 260 | 15 |
+| *Le pacte de Chuchevent* (annexe) | 55 | 420 | 25 |
+
+L'échelle est lisible : la récompense suit le seuil, et le seuil suit ce que les quêtes
+ouvertes avant lui rapportent.
 
 ### La maîtrise est un seuil, pas une monnaie
 
@@ -161,12 +193,23 @@ Une quête peut exiger un `minMastery`. C'est ce qui empêche un nouveau joueur 
 temps à mourir dans les profondeurs sans comprendre pourquoi.
 
 **Calibrer le `minMastery` sur ce que les quêtes précédentes rapportent.** Un seuil trop
-haut rend la quête invisible.
+haut rend la quête invisible : elle reste au catalogue et ne se propose jamais.
+
+La maîtrise d'un joueur est la **somme des récompenses `mastery` des quêtes qu'il a
+réclamées** — rien d'autre, et rien de stocké à part. Les treize quêtes livrées en
+distribuent 135 en tout. Un contrôle automatique rejoue la progression sur `quests.yml` et
+échoue sur toute quête qu'aucun chemin n'ouvre ; le greffon avertit aussi en console au
+démarrage.
 
 ### Les déblocages de montures
 
-`unlocks` est la **seule source de montures du jeu**. Quatre quêtes en accordent une ; six
-montures attendent encore la leur.
+`unlocks` est la **seule source de montures du jeu**. Les dix montures ont chacune leur
+quête.
+
+La clé vaut `mount.<identifiant de la monture>` — **pas** le nom de l'espèce. Le Drakelet
+d'or a l'identifiant `drake_gold`, donc la clé `mount.drake_gold` ; écrire `mount.drake`
+n'ouvre rien, et c'est arrivé. WizardMobs avertit maintenant en console d'une monture dont
+aucune quête n'accorde la clé.
 
 Voir [Créer une monture](creer-une-monture.md).
 
@@ -272,7 +315,8 @@ Recharger avec `/quest reload`, permission `wizardmc.quest.admin`.
 | **Renommer l'identifiant** d'une quête déjà en jeu | La progression des joueurs devient orpheline. Créer une nouvelle entrée. |
 | Deux quêtes de trame au même `chapter` | Deux maillons proposés en même temps |
 | Un `REACH` sans `marker` | Rien à atteindre |
-| Un `minMastery` supérieur à ce que la trame rapporte | La quête n'apparaît jamais |
+| Un point fixe posé sur un personnage itinérant | La flèche conduit à un endroit vide |
+| Un `minMastery` supérieur à ce que les quêtes ouvertes avant lui rapportent | La quête n'apparaît jamais |
 | Un objectif `KILL` sans cible, sauf intention | Il compte tous les morts |
 
 ---
@@ -283,7 +327,7 @@ Recharger avec `/quest reload`, permission `wizardmc.quest.admin`.
 |---|---|
 | 1 | Décider trame ou annexe, et ce que la quête enseigne |
 | 2 | Découper en étapes — les étapes s'enchaînent, les objectifs non |
-| 3 | Écrire les objectifs, avec un `marker` dès qu'il faut se déplacer |
+| 3 | Écrire les objectifs, avec un `marker` dès qu'il faut se déplacer — `follow:` si la cible se déplace |
 | 4 | **Vérifier chaque nom de matière et chaque cible** |
 | 5 | Calibrer la récompense sur les quêtes voisines |
 | 6 | Écrire le texte dans le registre du lore |
@@ -297,6 +341,6 @@ Recharger avec `/quest reload`, permission `wizardmc.quest.admin`.
 ## À lire ensuite
 
 - [WizardQuest](../05-operer/configuration/wizardquest.md) — chaque champ en détail
-- [Catalogue des quêtes](../07-reference/catalogue-quetes.md) — les sept quêtes livrées
+- [Catalogue des quêtes](../07-reference/catalogue-quetes.md) — les treize quêtes livrées
 - [Créer une monture](creer-une-monture.md) — pour un nouveau déblocage
 - [Quêtes et montures](../04-jouer/quetes-et-montures.md) — le point de vue du joueur

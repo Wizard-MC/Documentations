@@ -118,11 +118,24 @@ sa récompense.
 |---|---|
 | *Ceux qui mènent* (trame 2) | Husky |
 | *Ce qui dort dans les fanges* (trame 3) | Crabe de jade |
-| *Le belvédère* (annexe) | Corbeau des augures |
-| *Écailles et cendres* (annexe) | Drakelet d'or |
+| *La sente encombrée* | Yak des cimes |
+| *Le belvédère* | Corbeau des augures |
+| *Braises vives* | Renard des braises |
+| *Ce que le bois garde* | Ours brun |
+| *Écailles et cendres* | Drakelet d'or |
+| *La veille du Nyx* | Murmure-de-givre |
+| *Ce qui dort sous la glace* | Ours des glaces |
+| *Le pacte de Chuchevent* | Griffon |
 
-Six montures n'ont pas encore de quête qui les débloque. **Les relier est une tâche
-ouverte** : une monture déclarée sans quête ne s'obtient pas.
+**Les dix montures ont chacune leur quête.** Ce n'était pas le cas : six n'en avaient
+aucune et restaient verrouillées à vie.
+
+> ⚠️ **La clé est `mount.<identifiant de la monture>`, pas le nom de l'espèce.** Le
+> Drakelet d'or a pour identifiant `drake_gold` : sa clé est `mount.drake_gold`. La quête
+> accordait `mount.drake` — elle a abouti pendant des semaines sans rien ouvrir.
+>
+> Une nouvelle monture sans quête est désormais **signalée en console au démarrage** par
+> WizardMobs. Ce n'est plus un oubli silencieux, mais ça reste un oubli.
 
 ### Le comportement de repli
 
