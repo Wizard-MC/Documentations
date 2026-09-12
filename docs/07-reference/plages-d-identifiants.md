@@ -66,13 +66,15 @@ protocole du jeu de base. Chaque paquet est enregistré **dans les deux sens**.
 | 131 | `QuestPacket` | Journal de quêtes |
 | 132 | `MountPacket` | Montures |
 | **133** | `HubPacket` | **WizardHub** — interface de navigation du lobby, *spécifié, non livré* |
+| **134** | `NameplatePacket` | **Plaques de nom** — titre, nom, coven et rôle au-dessus de la tête, *spécifié, non commencé* |
 
 ### Le prochain disponible
 
-**134.**
+**135.**
 
-L'identifiant 133 est **réservé** à WizardHub par
-[`cdc_wizardhub.md`](../90-specifications/cdc_wizardhub.md) §9.1. Il n'est pas encore
+Les identifiants 133 et 134 sont **réservés** — à WizardHub par
+[`cdc_wizardhub.md`](../90-specifications/cdc_wizardhub.md) §9.1, et aux plaques de nom par
+[`cdc_nameplates.md`](../90-specifications/cdc_nameplates.md) §5. Aucun des deux n'est encore
 enregistré dans le client : la réservation vaut pour qu'un autre système ne le prenne pas.
 
 **La file d'attente ne consomme aucun identifiant de paquet** : elle vit sur le proxy et
@@ -161,7 +163,7 @@ Le matériau du Nexus est réglable par configuration — voir
 
 ### Pour un paquet
 
-1. Prendre le suivant disponible : **134**.
+1. Prendre le suivant disponible : **135**.
 2. L'enregistrer **dans les deux sens** dans le registre du client.
 3. Le déclarer depuis le greffon qui l'émet, pas depuis le fork.
 4. **Ajouter la ligne dans ce document.**

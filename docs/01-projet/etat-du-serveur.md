@@ -72,6 +72,7 @@ acceptable tant que cette page renvoie vers eux.
 
 | Système | CDC | Note |
 |---|---|---|
+| **Plaques de nom** | [`cdc_nameplates`](../90-specifications/cdc_nameplates.md) | spécifié le 12 septembre 2026 ; paquet 134 réservé. Trois décisions à trancher avant d'écrire une ligne — voir son §11 |
 | **Spawn & map** | [`cdc_spawn_map`](../90-specifications/cdc_spawn_map.md) | 60 lignes, esquisse |
 
 ---
@@ -170,6 +171,17 @@ grave n'est ouvert à ce jour.**
 8. **CDC de WizardBungee**, et une fiche d'infrastructure pour Bot / Bridge / site /
    launcher — quatre briques vivantes sans spécification.
 9. **Spawn & map** — l'esquisse de 60 lignes ne suffit pas à implémenter.
+
+### Dette de documentation
+
+Elle a maintenant sa propre page : l'[Inventaire de la
+documentation](inventaire-documentation.md) dit où vit chaque document, ce qui manque
+(D-01 à D-08) et ce qui est hors d'atteinte. Trois points en sortent :
+
+- **sept dépôts portent près de onze mille lignes** que ce portail n'indexe pas ;
+- **WizardCore n'a aucune documentation d'orientation** — le plus gros greffon de la stack ;
+- **`internal-docs/` du dépôt MCP est ignoré par Git** : ces documents n'ont jamais quitté
+  la machine qui les écrit.
 
 ### Dette de référence
 

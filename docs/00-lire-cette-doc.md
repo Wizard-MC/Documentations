@@ -138,7 +138,10 @@ question sans y répondre.
 
 - **Le code source.** Chaque dépôt a son propre `docs/` technique : architecture
   interne, interfaces, notes d'implémentation. Voir
-  [Architecture logicielle](01-projet/architecture-logicielle.md).
+  [Architecture logicielle](01-projet/architecture-logicielle.md) pour les liens entre
+  greffons, et l'[Inventaire de la documentation](01-projet/inventaire-documentation.md)
+  pour savoir **quel dépôt documente quoi** — sept d'entre eux portent au total près de onze
+  mille lignes que ce portail ne reprend pas.
 - **Les secrets.** Aucun mot de passe, jeton, hôte de base de données ou adresse
   d'infrastructure n'a sa place ici, même en exemple. Les fichiers de
   configuration documentés indiquent *qu'une* clé existe, jamais sa valeur réelle.
