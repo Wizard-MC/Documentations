@@ -3,7 +3,8 @@
 > Le greffon de **quêtes** : trame, annexes, journal, suivi de chemin et récompenses.
 > Greffon Spigot autonome, `softdepend` WizardCore et WizardMobs.
 
-**État : livré.** Ce document décrit l'existant. Les écarts connus entre ce qui est
+**État : livré.** Ce document décrit l'existant. Les quêtes annexes **tournent chaque
+semaine** (§12), et une **forge** peut les écrire (§13). Les écarts connus entre ce qui est
 écrit ici et ce qui tourne sont listés au §11, et repris dans
 [`etat-du-serveur.md`](../01-projet/etat-du-serveur.md). **Quatre d'entre eux sont
 corrigés** — Q-01, Q-02, Q-03 et Q-06 ; deux restent ouverts, et ils tiennent à la
@@ -54,6 +55,8 @@ Quête
  │       ├─ target, amount
  │       └─ marker             (monde, x, y, z, rayon, libellé)
  │                            ou (follow, rayon, libellé) pour un point mobile
+ ├─ timeLimitMinutes          (délai, compté depuis l'acceptation)
+ ├─ weekly                    (du vivier hebdomadaire ; décidé au chargement)
  └─ Récompense
      ├─ experience             XP vanilla
      ├─ mastery                maîtrise
@@ -157,6 +160,17 @@ Une quête `SIDE` marquée `repeatable` retourne à `AVAILABLE` après réclamat
 Les actions 0–3 descendent, les actions 10–14 remontent. Le client n'invente rien :
 il demande, le serveur tranche et renvoie l'état.
 
+**Deux champs ont été ajoutés** à chaque entrée, juste après `repeatable` : la quête vient-
+elle du vivier hebdomadaire, et combien de secondes avant qu'elle soit perdue (`-1` quand
+rien ne court — sans délai, ou pas encore acceptée). Le protocole est **positionnel** : un
+champ inséré ailleurs décale tout ce qui suit, et le journal affiche alors des compteurs à
+la place des étapes sans que rien ne lève d'erreur. Les deux côtés figent donc l'ordre par
+un contrôle qui relit la trame octet par octet.
+
+Le temps restant est calculé par le serveur à chaque envoi. Laisser le client le dériver
+demanderait de lui envoyer l'horloge du serveur, et un client en avance de deux minutes
+afficherait une quête expirée qui ne l'est pas.
+
 **Le journal entier est renvoyé après une réclamation**, et non la seule quête rendue.
 Réclamer ouvre souvent le maillon suivant de la trame, qui n'apparaîtrait pas autrement.
 
@@ -167,9 +181,15 @@ Réclamer ouvre souvent le maillon suivant de la trame, qui n'apparaîtrait pas 
 La maîtrise est un **seuil**, pas une monnaie. Elle ouvre des quêtes, elle ne s'échange
 pas. `minMastery` la compare ; la récompense `mastery` l'augmente.
 
-**Elle se compte dans le journal du joueur** : `QuestMasteryLedger` somme la maîtrise
-des quêtes au statut `CLAIMED`. Rien n'est stocké à part — le total se refait à la
-lecture, et un `quests.yml` rechargé le refait avec lui.
+**Elle se compte dans le journal du joueur**, et le journal **garde le montant
+encaissé** à chaque réclamation : `QuestMasteryLedger` somme ce qui a été touché, et ne
+retombe sur la récompense du catalogue que pour les journaux écrits avant que ce montant
+y soit gardé.
+
+> Relire la récompense du catalogue à chaque fois était plus simple, et tenait tant que
+> le catalogue ne bougeait pas. Depuis que les annexes tournent, une quête qui quitte le
+> fichier aurait **reprise sa maîtrise** à qui l'avait méritée, et refermé des quêtes
+> déjà ouvertes. Un joueur ne doit pas reculer parce que le lundi est passé.
 
 > Ce n'était pas le cas. La source valait une implémentation neutre qui rendait zéro, et
 > la méthode censée la remplacer n'était appelée par personne : **aucun seuil ne se
@@ -243,10 +263,22 @@ la déconnexion.
 
 ## 8. Commandes et permissions
 
-`/quest [list|info|accept|track|abandon|claim|reload] [quête]` — alias `/quetes`,
+`/quest [list|info|accept|track|abandon|claim|semaine] [quête]` — alias `/quetes`,
 `/journal`.
 
-`wizardmc.quest.admin` (défaut `op`) — relire le catalogue.
+`/quest semaine` dit ce que la semaine propose, avec les seuils, les délais, et le temps
+restant avant la rotation.
+
+Réservé à `wizardmc.quest.admin` (défaut `op`) :
+
+| Commande | Ce qu'elle fait |
+|---|---|
+| `/quest reload` | relit le catalogue, les viviers et l'état de la semaine |
+| `/quest forge` | demande à la forge les annexes de la **semaine prochaine** |
+
+`/quest forge` ne touche jamais la semaine en cours : remplacer ses annexes retirerait à
+des joueurs des quêtes qu'ils ont déjà prises. `/quest semaine` affiche en plus, pour un
+administrateur, l'état de la forge et la semaine qu'elle prépare.
 
 ---
 
@@ -255,48 +287,70 @@ la déconnexion.
 | Sans | Conséquence |
 |---|---|
 | **WizardCore** | Les marqueurs `follow: forgeron` ne se placent plus : les trois quêtes concernées n'affichent pas de flèche. La maîtrise, elle, continue de se compter — elle vient du journal, pas de WizardCore |
-| **WizardMobs** | Les objectifs `KILL` visant une espèce custom ne se valident plus |
+| **WizardMobs** | Les objectifs `KILL` visant une espèce custom ne se valident plus, **et la forge s'abstient** : sans bestiaire, elle écrirait des quêtes visant des espèces dont elle ne sait rien |
+| **une clé d'API** | La forge ne tourne pas. Les semaines se tirent du vivier écrit à la main, et rien d'autre ne change |
 
-Les deux sont des `softdepend` : le greffon démarre sans eux.
+Les deux greffons sont des `softdepend` : le greffon démarre sans eux.
 
 ---
 
 ## 10. Le contenu livré
 
-Treize quêtes — **trois de trame, dix annexes**. La trame reste courte : elle sert
-d'abord à prouver que la chaîne fonctionne de bout en bout. Les annexes, elles, portent
-désormais les dix montures.
+**Cinquante-quatre quêtes** : huit chapitres de trame, dix annexes permanentes — dont les
+dix montures — et un vivier de trente-six annexes hebdomadaires parmi lesquelles la
+semaine se tire.
 
-| Quête | Nature | Ch. | Maîtrise | Maîtrise gagnée | Débloque |
-|---|---|---:|---:|---:|---|
-| Le premier souffle | MAIN | 1 | — | 5 | — |
-| Ceux qui mènent | MAIN | 2 | — | 10 | `mount.husky` |
-| Ce qui dort dans les fanges | MAIN | 3 | 15 | 20 | `mount.crab` |
-| Vermine des caves | SIDE *(répétable)* | — | — | — | — |
-| Un lit de plumes | SIDE | — | — | — | — |
-| La sente encombrée | SIDE | — | — | 5 | `mount.yak` |
-| Le belvédère | SIDE | — | 10 | 5 | `mount.crow` |
-| Écailles et cendres | SIDE | — | 20 | 15 | `mount.drake_gold` |
-| Braises vives | SIDE | — | 15 | 10 | `mount.foxy_red` |
-| Ce que le bois garde | SIDE | — | 15 | 10 | `mount.bear_brown` |
-| La veille du Nyx | SIDE | — | 30 | 15 | `mount.frostwhisker` |
-| Ce qui dort sous la glace | SIDE | — | 30 | 15 | `mount.bear_white` |
-| Le pacte de Chuchevent | SIDE | — | 55 | 25 | `mount.griffon` |
+### 10.1. La trame, jusqu'à sa conclusion
 
-Les treize sont données par le **Forgeron** — voir le §12, c'est un problème à part.
+| Quête | Ch. | Maîtrise | Maîtrise gagnée | Débloque |
+|---|---:|---:|---:|---|
+| Le premier souffle | 1 | — | 5 | — |
+| Ceux qui mènent | 2 | — | 10 | `mount.husky` |
+| Ce qui dort dans les fanges | 3 | 15 | 20 | `mount.crab` |
+| Ce que la mousse recouvre | 4 | 35 | 20 | — |
+| Ce qu'on ne se rappelle plus | 5 | 55 | 20 | — |
+| La Cigue | 6 | 75 | 25 | — |
+| Le Cryptique | 7 | 100 | 25 | — |
+| Ce qui saigne encore | 8 | 125 | 30 | — |
 
-**Les seuils sont franchissables dans l'ordre.** 135 de maîtrise sont distribuables en
-tout, et aucun seuil ne dépasse ce que les quêtes ouvertes avant lui rapportent :
+**La trame se suffit à elle-même.** Ses seuils sont exactement ses totaux cumulés : 5,
+15, 35, 55, 75, 100, 125. Un joueur qui ne fait que la trame la termine ; les annexes ne
+font qu'élargir la marge. C'était la condition pour que la suite des chapitres ne dépende
+pas d'un tirage hebdomadaire.
 
-```
-0 → souffle +5 → sente +5 → ceux qui mènent +10 = 20
-  → belvédère (10 ✓) +5 → fanges (15 ✓) +20 = 45
-  → braises · bois (15 ✓) +20 → écailles (20 ✓) +15 = 80
-  → Nyx · glace (30 ✓) +30 = 110 → Chuchevent (55 ✓) +25 = 135
-```
+### 10.2. Les annexes permanentes
 
-Un contrôle rejoue cette progression sur le fichier livré, prérequis compris, et échoue
-sur toute quête qu'aucun chemin n'ouvre.
+| Quête | Maîtrise | Maîtrise gagnée | Débloque |
+|---|---:|---:|---|
+| Vermine des caves *(répétable)* | — | — | — |
+| Un lit de plumes | — | — | — |
+| La sente encombrée | — | 5 | `mount.yak` |
+| Le belvédère | 10 | 5 | `mount.crow` |
+| Braises vives | 15 | 10 | `mount.foxy_red` |
+| Ce que le bois garde | 15 | 10 | `mount.bear_brown` |
+| Écailles et cendres | 20 | 15 | `mount.drake_gold` |
+| La veille du Nyx | 30 | 15 | `mount.frostwhisker` |
+| Ce qui dort sous la glace | 30 | 15 | `mount.bear_white` |
+| Le pacte de Chuchevent | 55 | 25 | `mount.griffon` |
+
+Elles ne tournent pas : **une monture derrière un tirage serait inaccessible la plupart
+des semaines**, et le joueur n'aurait aucun moyen de savoir quand l'attendre.
+
+### 10.3. Le vivier hebdomadaire
+
+Trente-six annexes dans `quetes-hebdo.yml`, dont cinq chronométrées. Six sortent chaque
+semaine. Aucune n'accorde de déblocage, et leur maîtrise est plafonnée à 8 — la trame
+doit rester la voie principale. Voir le §12.
+
+### 10.4. Ce qui vérifie tout cela
+
+Un contrôle **rejoue la progression** sur le fichier livré — prendre tout ce qui est
+ouvert et dont les prérequis sont faits, encaisser, recommencer — et échoue sur toute
+quête qu'aucun chemin n'ouvre. Un autre rejoue la même chose sur le vivier hebdomadaire,
+et un troisième vérifie contre `mobs.yml` que **chaque collecte est alimentée par la
+chasse de sa propre quête**.
+
+Tout est donné par le **Forgeron**, et c'est le problème ouvert du §14.
 
 **Aucune des six quêtes neuves ne pose d'objectif `REACH`.** Le lore ne donne de
 coordonnées canoniques pour aucun lieu ; en inventer aurait refait le Q-03 sous une autre
@@ -403,7 +457,147 @@ identifiants.
 
 ---
 
-## 12. Ce qui reste à faire
+## 12. La semaine
+
+Les quêtes annexes hebdomadaires **tournent dans la nuit de dimanche à lundi, à 00h00,
+heure de Paris**. Dit autrement, et c'est la seule façon de le programmer sans se tromper :
+elles tournent **au début du lundi**. Minuit appartient au jour qui commence.
+
+### 12.1. Trois fichiers, trois rôles
+
+| Fichier | Ce qu'il est |
+|---|---|
+| `quetes-hebdo.yml` | le vivier écrit à la main. Livré, jamais réécrit par le serveur |
+| `quetes-forgees.yml` | ce que la forge a écrit, **et pour quelle semaine**. Ignoré dès que sa semaine n'est plus la bonne |
+| `semaine.yml` | l'état : la semaine tenue, ce qu'elle propose, d'où elle sort, et l'historique |
+
+L'état est écrit, alors que le tirage est reproductible. C'est qu'il répond à une autre
+question : **la rotation a-t-elle eu lieu ?** Un serveur éteint tout le week-end doit
+tourner à son réveil, pas attendre le lundi suivant.
+
+### 12.2. Le tirage est reproductible
+
+La graine est faite de la **semaine ISO** et d'un **sel** de configuration. Conséquences :
+la même semaine donne le même tirage après n'importe quel redémarrage, deux serveurs du
+même réseau peuvent proposer la même semaine — ou des semaines différentes, en changeant
+le sel — et le vivier est trié avant d'être mélangé, pour que déplacer deux quêtes dans le
+fichier ne change pas la semaine en cours.
+
+> Un tirage au hasard à chaque démarrage changerait les quêtes un mercredi soir. Un joueur
+> à moitié d'une quête la verrait disparaître sans un mot, et cela ressemblerait à une
+> perte de sauvegarde.
+
+### 12.3. Le catalogue porte tout le vivier
+
+Et non seulement la semaine en cours. Une annexe **terminée le dimanche soir doit rester
+rendable le lundi**, et pour la payer il faut encore savoir ce qu'elle promet. C'est le
+moteur qui sait laquelle est de saison : `isInSeason` ferme la porte à l'ouverture et à
+l'acceptation, pas au catalogue.
+
+### 12.4. Ce que la rotation fait aux journaux
+
+Quatre situations, et chacune a une seule bonne réponse :
+
+| État de la quête | Au lundi |
+|---|---|
+| **proposée, jamais prise** | refermée — la laisser prenable ferait accepter une quête que le journal n'affiche plus |
+| **en cours** | perdue, compteurs à zéro. C'est la règle du rythme hebdomadaire |
+| **terminée, pas rendue** | gardée telle quelle, et toujours payable |
+| **déjà rendue** | intacte, maîtrise comprise — elle est encaissée dans le journal |
+
+Les joueurs connectés sont prévenus, et chaque quête perdue est **nommée**. Une quête qui
+disparaît du journal sans un mot se lit comme un bug, et c'est la première chose dont un
+serveur se fait accuser.
+
+### 12.5. Les quêtes à durée limitée
+
+`timeLimitMinutes` donne un délai, compté **depuis l'acceptation** et non depuis le lundi :
+attendre avant de prendre une quête ne doit pas être une faute. Une tâche vérifie les
+échéances toutes les dix secondes ; à l'expiration la quête redevient proposable,
+compteurs à zéro, et le joueur est averti.
+
+Seules les quêtes **en cours** expirent. Une quête terminée mais non réclamée est gagnée :
+la perdre parce que le joueur n'est pas repassé chez le Forgeron à temps serait lui retirer
+ce qu'il a déjà fait.
+
+Le client reçoit le temps restant dans le paquet, et `-1` quand rien ne court — quête sans
+délai, ou quête pas encore prise. Lui faire calculer l'échéance demanderait de lui envoyer
+l'horloge du serveur.
+
+---
+
+## 13. La forge
+
+Un appel à l'**API Messages d'Anthropic** écrit les annexes de la semaine. Elle travaille
+**une semaine d'avance** : engendrer pour la semaine en cours obligerait à remplacer des
+quêtes que des joueurs ont déjà prises, le lundi à midi.
+
+### 13.1. Ce qui part
+
+| Partie | D'où elle vient |
+|---|---|
+| le **brief** — lore, ton, interdits | `forge.yml`, repris de [`lore.md`](../02-univers/lore.md) §9 |
+| le **bestiaire** et ses butins | WizardMobs, par réflexion, au moment de l'appel |
+| les **bornes** | `forge.yml` |
+| le **schéma** de sortie | construit par le code, `additionalProperties: false` partout |
+
+Le brief est dans le fichier de configuration, et non dans le code, parce qu'il se relit,
+se discute et se corrige sans recompiler. Le bestiaire, lui, ne peut pas être dans le
+fichier : une liste écrite à la main vieillirait dès la prochaine espèce ajoutée, et le
+modèle écrirait des quêtes visant des créatures qui n'existent plus.
+
+### 13.2. Ce qui revient, et ce qu'on en garde
+
+**Le schéma garantit la forme ; il ne garantit rien du contenu.** Une espèce qui n'existe
+pas, une matière que rien ne lâche, une récompense de quarante diamants : tout cela est du
+JSON parfaitement valide, et aucune de ces fautes ne lève d'erreur en jeu. La quête se
+charge, s'affiche, et ne se finit jamais.
+
+Le tamis refuse donc **quête par quête**, et non la série entière — une faute sur la
+sixième ne justifie pas de jeter les cinq bonnes. Ce qu'il vérifie :
+
+- l'espèce existe au bestiaire ;
+- la matière demandée est **lâchée par une espèce que la quête elle-même fait chasser** ;
+- les quantités, seuils, récompenses et délais tiennent dans les bornes ;
+- les objets offerts sont dans une liste blanche fermée ;
+- le texte ne porte ni code couleur ni balise — les couleurs sont posées par le serveur ;
+- l'identifiant est libre, et ne collisionne avec rien ;
+- rien n'accorde de déblocage : le schéma n'a pas de champ pour ça.
+
+Ce qui manque est comblé par le vivier écrit à la main, et **la console nomme chaque
+refus** : une forge qui trébuche toujours de la même façon se corrige en changeant le
+brief, ce qui demande de savoir sur quoi elle trébuche.
+
+### 13.3. Ce qui ne peut pas mal tourner
+
+| Situation | Ce qui se passe |
+|---|---|
+| forge coupée, pas de clé, réseau tombé | la semaine se tire du vivier écrit à la main |
+| le modèle décline, ou la réponse est tronquée | idem, et la console dit lequel des deux |
+| rien ne passe le tamis | idem, avec le compte des refus |
+| WizardMobs absent | la forge s'abstient : pas de bestiaire, pas d'appel |
+
+Une semaine sans annexes serait une panne visible ; une semaine de quêtes écrites à la
+main ne l'est pas.
+
+### 13.4. La clé
+
+Elle est lue dans une **variable d'environnement du serveur**, dont `forge.yml` ne porte
+que le nom. Un fichier de configuration se copie, se versionne et se montre en capture
+d'écran ; une variable d'environnement non. La forge est **coupée par défaut**.
+
+### 13.5. Pourquoi pas le SDK officiel
+
+L'appel passe par `HttpsURLConnection` du JDK. Le SDK Java amène OkHttp, Jackson et la
+bibliothèque standard Kotlin : une douzaine de mégaoctets à relocaliser dans un greffon
+chargé par un serveur de 2014, à côté de WorldEdit et WorldGuard qui portent leurs propres
+versions des mêmes classes. Le gain serait un client typé ; le coût, un conflit de chemin
+de classes qui ne se verrait qu'en production. Ce qui est appelé ici tient en une requête
+et une réponse.
+
+---
+
+## 14. Ce qui reste à faire
 
 | # | Tâche | Pourquoi |
 |---|---|---|
@@ -413,5 +607,5 @@ identifiants.
 | 4 | Valider les clés `unlocks` des **autres** systèmes au chargement | Les montures sont couvertes ; le prochain système debloquable repartira de zéro |
 | 5 | Des objectifs `REACH` une fois la géographie tranchée | Six quêtes sur treize se résument à chasser et récolter |
 
-**Ce qui est fait et n'a plus besoin d'être suivi** : Q-01, Q-02, Q-03, Q-06, et
-l'avertissement console sur les clés non accordées.
+**Ce qui est fait et n'a plus besoin d'être suivi** : Q-01, Q-02, Q-03, Q-06,
+l'avertissement console sur les clés non accordées, et la trame jusqu'au chapitre 8.

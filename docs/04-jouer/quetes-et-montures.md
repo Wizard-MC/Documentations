@@ -3,23 +3,24 @@
 La trame, les annexes, et les montures qu'elles débloquent. C'est la seule voie du jeu
 entièrement accessible à un joueur seul, et la seule source de montures.
 
-**Statut : livré.** Trois quêtes de trame, dix annexes, dix montures — **et les dix
-s'obtiennent**. La trame reste volontairement courte pour l'instant ; ce qui manque est
-suivi dans
-[l'état du serveur](../01-projet/etat-du-serveur.md#4-ce-quil-reste-à-faire).
+**Statut : livré.** Huit chapitres de trame jusqu'à sa conclusion, dix annexes permanentes,
+dix montures — **et les dix s'obtiennent**. Les annexes **changent chaque semaine** : un
+vivier de trente-six quêtes, six par semaine, et certaines avec un chronomètre.
 
 ---
 
-## 1. Les deux natures de quête
+## 1. Les trois natures de quête
 
 | Nature | Comment elle se prend |
 |---|---|
 | **Principale** (trame) | Une chaîne ordonnée par chapitre. **Un seul maillon est proposé à la fois.** |
-| **Annexe** | Se prend et se laisse dans n'importe quel ordre |
+| **Annexe permanente** | Se prend et se laisse dans n'importe quel ordre. Toujours là |
+| **Annexe de la semaine** | Proposée du lundi au lundi. Elle disparaît ensuite, finie ou non |
 
-La trame est courte — trois chapitres — et c'est assumé : le contenu durable de
-WizardMC, c'est le monde et les autres joueurs. La trame sert à apprendre et à
-rencontrer le Forgeron ; les dix annexes portent les montures.
+La trame fait huit chapitres et se conclut. **Elle se suffit à elle-même** : chacun de ses
+seuils de maîtrise est exactement ce que les chapitres précédents rapportent, donc un
+joueur qui ne fait que la trame la termine. Les annexes élargissent la marge, portent les
+montures, et donnent de quoi faire entre deux chapitres.
 
 ---
 
@@ -72,7 +73,11 @@ couleurs et les espaces ne comptent pas.
 
 ## 3. La trame
 
-Trois chapitres, tous donnés par le **Forgeron**.
+Huit chapitres, tous donnés par le **Forgeron**, et une conclusion.
+
+Les trois premiers apprennent : parler, chasser, suivre un chemin. Les cinq suivants
+demandent de l'équipement et, à partir du sixième, d'affronter ce que la Forêt d'Ébène et
+les fanges gardent de pire.
 
 ### Chapitre 1 — *Le premier souffle*
 
@@ -105,9 +110,25 @@ pour l'ouvrir — exactement ce que les deux premiers chapitres rapportent.
 **Récompense** : 180 d'expérience, 20 de maîtrise, deux diamants — et **le Crabe de
 jade**.
 
+### Chapitres 4 à 8 — la suite
+
+| Chapitre | Maîtrise | Ce qu'il demande |
+|---|---:|---|
+| 4 — *Ce que la mousse recouvre* | 35 | Dégager la sente des cols, et rapporter ce qu'on y trouve |
+| 5 — *Ce qu'on ne se rappelle plus* | 55 | Les orbes d'oubli, et un éclat que le Forgeron réclame sans dire pourquoi |
+| 6 — *La Cigue* | 75 | Ce qui a pris racine au fond de la Forêt d'Ébène |
+| 7 — *Le Cryptique* | 100 | Une tisseuse plus vieille que les marais |
+| 8 — *Ce qui saigne encore* | 125 | Le Nyx — et la fin de la trame |
+
+Les six derniers chapitres ne sont pas détaillés ici. Une quête de trame qui raconte sa
+fin dans un manuel n'a plus grand-chose à raconter en jeu.
+
+> Le Forgeron obtient ce qu'il voulait et ne dit pas ce que c'était. Le lore ne le dira
+> pas davantage, et c'est délibéré.
+
 ---
 
-## 4. Les annexes
+## 4. Les annexes permanentes
 
 Dix, toutes données par le Forgeron. Elles ne se suivent pas — seule leur maîtrise
 minimale décide de l'ordre.
@@ -139,7 +160,54 @@ C'est le registre : sobre, factuel, et un peu sec.
 
 ---
 
-## 5. Ce qu'une quête rapporte
+## 5. La semaine
+
+**Les annexes de la semaine changent dans la nuit de dimanche à lundi, à 00h00.** Six
+sorties à la fois, tirées d'un vivier de trente-six, et ce n'est jamais la même série.
+
+`/quest semaine` dit ce qui est proposé, ce que chaque quête demande, et combien de temps
+il reste avant la rotation.
+
+### Ce qui arrive à vos quêtes le lundi
+
+| Si, au lundi, la quête est… | Alors |
+|---|---|
+| **proposée et jamais prise** | elle disparaît |
+| **en cours** | **elle est perdue**, compteurs remis à zéro |
+| **terminée mais pas rendue** | vous pouvez encore la rendre, et elle paie |
+| **déjà rendue** | rien ne change, la maîtrise est acquise pour de bon |
+
+La deuxième ligne est la seule qui coûte : une annexe de la semaine se finit dans sa
+semaine. Le serveur vous prévient au changement et nomme ce que vous avez perdu.
+
+La troisième est délibérée. Vous avez fait le travail ; ne pas être repassé chez le
+Forgeron avant minuit ne doit pas l'effacer.
+
+### Les quêtes chronométrées
+
+Certaines portent un **sablier** et un compte à rebours, au journal et à l'écran. Le temps
+part du moment où vous **acceptez**, pas du lundi : rien ne vous presse d'accepter.
+
+Sous une heure, le compte passe au rouge. À zéro, la quête redevient proposable avec ses
+compteurs à zéro — ce n'est pas une punition, juste une course perdue. Vous pouvez la
+reprendre si la semaine la propose encore.
+
+> Une quête **terminée** n'expire jamais, même chronométrée.
+
+### D'où viennent ces quêtes
+
+D'un vivier écrit par les développeurs, et parfois d'une **forge** : un modèle d'IA à qui
+l'on donne le lore, le bestiaire réel et des bornes strictes, et qui propose des annexes
+pour la semaine suivante. Rien de ce qu'il écrit n'entre en jeu sans avoir été vérifié —
+l'espèce existe, la matière demandée tombe bien de ce qu'on vous envoie chasser, et la
+récompense tient dans les clous.
+
+Vous ne verrez pas la différence, et c'est le but. Ce que vous verrez, c'est que les
+semaines ne se ressemblent pas.
+
+---
+
+## 6. Ce qu'une quête rapporte
 
 | Récompense | À quoi ça sert |
 |---|---|
@@ -152,9 +220,12 @@ La **maîtrise** est un seuil, pas une monnaie : une quête peut exiger un minim
 être proposée. C'est ce qui empêche un nouveau joueur de prendre *Écailles et cendres*
 avant de pouvoir tuer une Gelée de lave.
 
+Elle s'additionne à chaque quête **rendue**, et **ne se reprend jamais** : une annexe de la
+semaine qui disparaît du jeu vous laisse la maîtrise qu'elle a payée.
+
 ---
 
-## 6. Le journal
+## 7. Le journal
 
 **L** par défaut. Il affiche :
 
@@ -187,7 +258,7 @@ réglages du client.
 
 ---
 
-## 7. Les montures
+## 8. Les montures
 
 ### Les dix montures
 
@@ -267,7 +338,7 @@ rapides du jeu.
 
 ---
 
-## 8. Les pièges
+## 9. Les pièges
 
 | Piège | Ce qui se passe | Quoi faire |
 |---|---|---|
