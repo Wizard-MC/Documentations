@@ -61,6 +61,7 @@ montrer la fin de l'histoire dès le début.
 | `amount` | La quantité | oui |
 | `description` | Ce que le journal affiche | oui |
 | `marker` | Le point du monde, ou le personnage à suivre | **exigé pour `REACH`** |
+| `timeLimitMinutes` | Un délai, compté depuis l'acceptation | non |
 
 ---
 
@@ -321,7 +322,44 @@ Recharger avec `/quest reload`, permission `wizardmc.quest.admin`.
 
 ---
 
-## 12. La liste complète
+## 12. Écrire pour le vivier hebdomadaire
+
+Une annexe de la semaine s'écrit dans `quetes-hebdo.yml`, et trois règles changent :
+
+| Règle | Pourquoi |
+|---|---|
+| `kind` et `chapter` sont ignorés | tout y est annexe ; une quête de trame qui disparaîtrait le lundi casserait la chaîne |
+| **pas de `unlocks`** | une monture derrière un tirage serait inaccessible la plupart des semaines |
+| maîtrise faible, 8 au plus | la trame doit rester la voie principale |
+
+Et une contrainte de forme : **elle doit tenir dans une semaine.** Deux étapes au plus,
+trois objectifs par étape, et de quoi la finir en une ou deux soirées. Une quête qui demande
+quinze heures sort du vivier au lundi suivant, finie ou non.
+
+### Le délai
+
+`timeLimitMinutes` part de l'**acceptation**, pas du lundi : attendre avant de la prendre ne
+doit jamais être une faute. Entre trois heures et deux jours ; au-delà, le délai ne veut
+plus rien dire dans une semaine qui en compte sept.
+
+Une quête **terminée** n'expire pas, même chronométrée. Le joueur a fait le travail.
+
+### Ce que la forge écrit à votre place
+
+Un modèle peut remplir le vivier de la semaine — voir
+[`cdc_wizardquest`](../90-specifications/cdc_wizardquest.md#13-la-forge). Deux choses à en
+retenir quand on écrit à la main :
+
+1. **Le vivier écrit à la main reste le sol.** Il sert dès que la forge est coupée, échoue,
+   ou rend quelque chose qui ne passe pas le tamis. Plus il est grand, moins les semaines se
+   répètent.
+2. **Le tamis de la forge applique les règles ci-dessus.** Un fichier écrit à la main n'a
+   aucune raison d'avoir plus de droits qu'un modèle : les contrôles du projet vérifient le
+   vivier exactement comme le tamis vérifie la forge.
+
+---
+
+## 13. La liste complète
 
 | # | Étape |
 |---|---|

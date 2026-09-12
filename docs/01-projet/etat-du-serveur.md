@@ -2,7 +2,7 @@
 
 Ce que WizardMC contient aujourd'hui, ce qu'il lui manque, et où les documents mentent.
 
-**Mis à jour le 11 septembre 2026.** Cette page est la seule qui prétende dire l'état
+**Mis à jour le 12 septembre 2026.** Cette page est la seule qui prétende dire l'état
 réel de l'ensemble. Elle est vérifiée contre le code, pas contre les intentions : quand
 une ligne dit « livré », c'est qu'on a lu le code qui le fait.
 
@@ -56,7 +56,7 @@ acceptable tant que cette page renvoie vers eux.
 | **Ères** | WizardCore | 45 jours, phases, reset partiel, Panthéon, Colosse de l'Ère |
 | **Cinématique** | WizardIntro | Aelindra, voix, sous-titres, choix d'école |
 | **Compagnons** | WizardPets | 4 espèces, progression, accessoires, friandises |
-| **Quêtes** | WizardQuest | 13 quêtes, journal, ATH, suivi de chemin, maîtrise comptée, points mobiles |
+| **Quêtes** | WizardQuest | 8 chapitres de trame, 10 annexes permanentes, 36 annexes hebdomadaires en rotation, quêtes chronométrées, forge IA, journal, ATH, suivi de chemin |
 | **Boutique & site** | Website | offres, Stripe/PayPal, liaison Discord, administration |
 | **Distribution** | Launcher + WizardCloud | manifeste signé, mise à jour différentielle |
 | **Discord** | WizardBot + Bridge | liaison des comptes, chat en miroir |
@@ -101,6 +101,20 @@ un contrôle derrière lui.
 
 Aucun à ce jour.
 
+### À surveiller — la forge
+
+Elle est **coupée par défaut** et n'a encore jamais tourné en production. Ce qui mérite
+d'être regardé au premier lundi où elle sera allumée :
+
+| Point | Pourquoi |
+|---|---|
+| le taux de refus au tamis | une forge qui trébuche toujours sur la même règle se corrige dans le brief, pas dans le code |
+| la répétition d'une semaine sur l'autre | l'historique des identifiants est envoyé au modèle ; s'il se répète quand même, c'est le brief qu'il faut durcir |
+| le coût par semaine | un appel par semaine, effort `high` — négligeable, mais à constater plutôt qu'à supposer |
+
+Ce n'est pas un écart : rien ne contredit le code. C'est une fonction neuve dont personne
+n'a encore vu le comportement réel.
+
 ### Documents qui mentent
 
 | # | Écart | Correction |
@@ -144,8 +158,9 @@ grave n'est ouvert à ce jour.**
    lieux de quête ne sont pas dans la géographie. Tant que ce n'est pas tranché, **aucune
    quête neuve ne peut poser d'objectif `REACH` honnête** — les six quêtes de montures
    s'en passent pour cette raison.
-4. **Étendre la trame** au-delà du chapitre 3, et ouvrir d'autres donneurs que le
-   Forgeron : les treize quêtes viennent du même personnage.
+4. **Ouvrir d'autres donneurs que le Forgeron.** La trame va maintenant jusqu'au
+   chapitre 8 et se conclut, mais les cinquante-quatre quêtes viennent du même
+   personnage — y compris celles qui promettent un griffon.
 5. **Étoffer géographie et Panthéon** (E-14, E-15).
 
 ### Greffons à finir ou à spécifier

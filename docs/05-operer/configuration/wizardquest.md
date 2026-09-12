@@ -1,17 +1,26 @@
 # Configuration de WizardQuest
 
-Les deux fichiers du système de quêtes, champ par champ.
+Les fichiers du système de quêtes, champ par champ.
 
-**Statut : livré.** Trois quêtes de trame, dix annexes, et les dix montures accordées.
+**Statut : livré.** Huit chapitres de trame, dix annexes permanentes dont les dix montures,
+et un vivier de trente-six annexes hebdomadaires.
 
 ---
 
-## 1. Les deux fichiers
+## 1. Les fichiers
 
-| Fichier | Ce qu'il porte |
-|---|---|
-| `config.yml` | Où vont les journaux de quête |
-| `quests.yml` | Les quêtes, leurs étapes, leurs objectifs, leurs récompenses |
+| Fichier | Ce qu'il porte | Écrit par |
+|---|---|---|
+| `config.yml` | Où vont les journaux de quête | vous |
+| `quests.yml` | La trame et les annexes permanentes | vous |
+| `quetes-hebdo.yml` | Le vivier des annexes hebdomadaires | vous |
+| `forge.yml` | L'IA qui écrit des annexes, et ses bornes | vous |
+| `quetes-forgees.yml` | Ce que la forge a écrit, et pour quelle semaine | **le serveur** |
+| `semaine.yml` | La semaine tenue, ce qu'elle propose, l'historique | **le serveur** |
+
+Les deux derniers se réécrivent tout seuls : les éditer à la main n'a de sens que pour
+forcer une rotation en développement, et ce que vous y mettez sera remplacé au lundi
+suivant.
 
 ---
 
@@ -245,7 +254,104 @@ Les contrôles automatisés du projet détectent ce cas. Après toute modificati
 
 ---
 
-## 5. Les objectifs qui visent une créature custom
+## 5. `quetes-hebdo.yml` — le vivier de la semaine
+
+Le même format que `quests.yml`, avec trois différences que le chargeur impose :
+
+| Différence | Pourquoi |
+|---|---|
+| `kind` et `chapter` sont ignorés — tout est annexe | une quête de trame qui disparaîtrait le lundi casserait la chaîne des chapitres |
+| tout ce qui vient de ce fichier est **hebdomadaire** | le marquer quête par quête permettrait d'écrire une permanente marquée hebdomadaire, donc effacée au lundi |
+| `unlocks` n'a rien à y faire | une monture derrière un tirage serait inaccessible la plupart des semaines |
+
+Six quêtes en sortent chaque semaine. **Plus le vivier est grand, moins les semaines se
+répètent** — rien n'empêche d'en écrire cent.
+
+### `timeLimitMinutes`
+
+Donne un délai à une quête. Compté **depuis son acceptation**, pas depuis le lundi :
+attendre avant de la prendre ne doit pas être une faute.
+
+| Valeur | Effet |
+|---|---|
+| absent ou `0` | aucun délai |
+| `180` à `2880` | de trois heures à deux jours — l'intervalle que les contrôles acceptent |
+
+À l'expiration, la quête redevient proposable avec ses compteurs à zéro, et le joueur est
+averti. Une quête **terminée** mais non réclamée n'expire jamais : elle est gagnée.
+
+---
+
+## 6. `forge.yml` — l'IA qui écrit des annexes
+
+Chaque lundi, le vivier de la semaine peut venir de la forge au lieu du fichier écrit à la
+main. La forge travaille **une semaine d'avance**, et tout ce qu'elle rend passe par un
+tamis avant d'entrer au catalogue.
+
+> ⚠️ **La clé d'API ne s'écrit pas dans ce fichier.** `apiKeyEnv` ne porte que le **nom**
+> d'une variable d'environnement du serveur ; c'est là que la clé se met. Un fichier de
+> configuration se copie, se versionne et se montre en capture d'écran.
+
+### Les réglages
+
+| Champ | Ce qu'il règle | Défaut |
+|---|---|---|
+| `enabled` | la forge tourne-t-elle | `false` |
+| `apiKeyEnv` | le **nom** de la variable qui porte la clé | `WIZARDMC_ANTHROPIC_KEY` |
+| `model` | le modèle appelé | `claude-opus-5` |
+| `maxTokens` | la place accordée à la réponse | `16000` |
+| `effort` | `low` à `max` | `high` |
+| `timeoutSeconds` | l'attente maximale | `240` |
+| `count` | annexes proposées par semaine | `6` |
+| `timed` | combien d'entre elles portent un délai | `2` |
+| `salt` | le sel du tirage | `wizardmc` |
+| `timezone` | le fuseau qui décide de l'heure de rotation | `Europe/Paris` |
+| `giver` | le personnage qui propose les quêtes engendrées | `forgeron` |
+| `rewardItems` | la liste blanche des objets offerts | douze matières |
+| `brief` | le prompt : lore, ton, interdits | écrit, long |
+
+`bounds` plafonne ce qu'une quête engendrée a le droit de demander et de payer : seuil,
+maîtrise, expérience, quantités, nombre d'étapes, objets, et l'intervalle des délais. Ces
+bornes ne sont pas de la défiance — une quête engendrée entre dans le **même catalogue**
+que la trame, et une seule récompense démesurée abîme l'économie d'une Ère.
+
+### Le brief
+
+C'est le cœur de la forge, et c'est pour cela qu'il est dans un fichier et non dans le
+code : il se relit, se discute et se corrige sans recompiler. Son contenu est repris de
+[`lore.md`](../../02-univers/lore.md) §9 — les règles d'écriture du lore.
+
+> **Le changer ici sans le changer là-bas** donne des quêtes cohérentes avec un univers qui
+> n'est plus le nôtre. C'est la seule duplication du dispositif, et elle est assumée : le
+> modèle ne peut pas lire la documentation.
+
+Le bestiaire, lui, n'est **pas** dans le fichier : il est lu chez WizardMobs au moment de
+l'appel, avec les butins de chaque espèce. Une liste écrite à la main vieillirait dès la
+prochaine espèce ajoutée.
+
+### Ce qui se passe quand ça échoue
+
+| Situation | Conséquence |
+|---|---|
+| `enabled: false`, pas de clé, réseau coupé | la semaine se tire du vivier écrit à la main |
+| le modèle décline, ou la réponse est tronquée | idem ; la console dit lequel des deux |
+| une quête ne passe pas le tamis | elle seule est écartée, nommée en console, et le vivier comble |
+| WizardMobs absent | la forge s'abstient entièrement |
+
+**Une semaine sans annexes serait une panne visible ; une semaine de quêtes écrites à la
+main ne l'est pas.** C'est tout le sens du vivier.
+
+### Les commandes
+
+| Commande | Qui | Ce qu'elle fait |
+|---|---|---|
+| `/quest semaine` | tout le monde | la semaine en cours, les délais, le temps avant rotation |
+| `/quest forge` | `wizardmc.quest.admin` | demande les annexes de la semaine **prochaine** |
+| `/quest reload` | `wizardmc.quest.admin` | relit tout, y compris l'état de la semaine |
+
+---
+
+## 7. Les objectifs qui visent une créature custom
 
 `KILL` accepte une espèce custom ou un type de créature ordinaire. Attention à une
 subtilité :
@@ -261,7 +367,7 @@ valider.**
 
 ---
 
-## 6. Avant de changer quoi que ce soit
+## 8. Avant de changer quoi que ce soit
 
 1. **Sauvegarder les journaux.** Un changement de `quests.yml` ne les efface pas, mais
    un identifiant de quête renommé rend la progression orpheline.
@@ -271,6 +377,11 @@ valider.**
 4. **Lancer les contrôles.**
 5. **Recharger** avec `/quest reload`, permission `wizardmc.quest.admin`.
 
+Pour le vivier hebdomadaire, un dernier point : **retirer une quête du fichier retire sa
+maîtrise** à personne — le montant encaissé est gardé dans le journal du joueur. En
+revanche une quête retirée pendant qu'elle est proposée disparaît du tirage au rechargement
+suivant, et ceux qui l'avaient en cours la perdent.
+
 La procédure complète d'écriture est dans
 [Créer une quête](../../06-creer-du-contenu/creer-une-quete.md).
 
@@ -279,6 +390,6 @@ La procédure complète d'écriture est dans
 ## À lire ensuite
 
 - [Créer une quête](../../06-creer-du-contenu/creer-une-quete.md) — la procédure
-- [Catalogue des quêtes](../../07-reference/catalogue-quetes.md) — les treize quêtes livrées
+- [Catalogue des quêtes](../../07-reference/catalogue-quetes.md) — tout ce qui est livré
 - [Quêtes et montures](../../04-jouer/quetes-et-montures.md) — le point de vue du joueur
 - [Créer une monture](../../06-creer-du-contenu/creer-une-monture.md) — pour un nouveau déblocage
