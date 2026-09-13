@@ -258,8 +258,10 @@ est renvoyé au portail avant même que la permission de forum soit consultée.
 | `FO-D3` | Les compteurs sont recalculés à chaque écriture. Sur un salon de plusieurs milliers de sujets, cela fait deux agrégats par réponse. Acceptable aujourd'hui, à surveiller. | performance |
 | `FO-D4` | `POST /forum/preview` est limité à trente appels par minute et par compte. La limite est un garde-fou, pas une mesure : elle n'a pas été éprouvée sous charge réelle. | à mesurer |
 | `FO-D5` | L'historique des révisions n'est **consultable par aucun écran**. Il est écrit, il n'est pas lu. | manque |
-| `FO-D6` | Sur un champ **pré-rempli**, la première frappe fait écrire à l'éditeur une erreur de sélection dans la console. La saisie, l'enregistrement et l'aperçu fonctionnent. Défaut antérieur au forum v2, partagé avec l'administration — détail dans `website/docs/FORUM.md`. | cosmétique |
-| `FO-D7` | Une liste à puces revenait **numérotée** après édition : l'éditeur n'écrit qu'un type de liste et distingue les deux par un attribut que le filtre ne garde pas. Corrigé côté éditeur ; les contenus déjà abîmés ne se réparent pas tout seuls. | **corrigé** |
+| `FO-D6` | Sur un champ **pré-rempli**, l'éditeur levait une erreur de sélection qui **interrompait sa propre boucle d'écouteurs** : la recopie vers le champ soumis ne se faisait plus, et modifier un sujet ne changeait rien. Corrigé en remplaçant l'éditeur (voir `FO-D8`). | **corrigé** |
+| `FO-D7` | Une liste à puces revenait **numérotée** après édition : l'éditeur n'écrivait qu'un type de liste et distinguait les deux par un attribut que le filtre ne garde pas. Le nouvel éditeur produit directement `<ul>` et `<ol>` ; les contenus déjà abîmés, eux, ne se réparent pas tout seuls. | **corrigé** |
+| `FO-D8` | L'éditeur est passé de Quill 2 à TipTap (MIT, bâti sur ProseMirror). TinyMCE, demandé, a été écarté : sa version communautaire est sous GPL-2.0-or-later, et son éditeur vend une licence commerciale pour lever l'ambiguïté sur un site marchand. | **corrigé** |
+| `FO-D9` | Les téléversements d'images de la boutique et des articles écrivaient sur le disque public du site mais renvoyaient une adresse `cloud.wizardmc.fr`, où le fichier n'existait pas : toute image ainsi ajoutée était introuvable. `cloud.wizardmc.fr` ne sert que les versions du client et du launcher. | **corrigé** |
 
 ---
 
