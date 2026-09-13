@@ -103,12 +103,21 @@ une annonce, une présentation ou un règlement n'ont pas à attendre qu'on les 
 | Règle | Énoncé |
 |---|---|
 | `F-01` | Un salon **sans aucune ligne** dans `forum_permissions` est visible de tous, et ouvert à tout compte authentifié. |
-| `F-02` | Dès qu'une ligne existe pour un salon, l'accès passe par les rôles — et **les visiteurs anonymes sont refusés**. |
+| `F-02` | **La lecture est publique tant qu'aucune ligne ne coche `can_view`.** Dès qu'une ligne la revendique, la lecture se limite aux rôles qui l'ont. |
+| `F-02bis` | L'**écriture**, elle, se restreint dès qu'une ligne existe : publier et répondre demandent alors une ligne qui l'accorde. |
 | `F-03` | `forums.locked` coupe la création et la réponse avant même que les permissions soient consultées. |
 | `F-04` | Un modérateur du salon passe outre `F-02` et `F-03`. |
 
-`F-02` a une conséquence qu'il faut connaître : **ouvrir un salon à un rôle le ferme
-à tous les autres**, y compris aux visiteurs non connectés.
+Ces deux règles sont volontairement dissymétriques, parce que les intentions le
+sont : **on lit par défaut, on écrit sur autorisation.**
+
+La version précédente les confondait — une ligne, quelle qu'elle soit, refusait
+les visiteurs. Accorder au staff le droit de publier dans *Annonces* faisait donc
+disparaître le salon pour tous ses lecteurs. Voir `FO-D1`.
+
+Conséquence à connaître, dans l'autre sens : **cocher `can_view` sur un seul rôle
+ferme la lecture à tous les autres**, visiteurs compris. C'est le geste qui rend
+un salon privé, et il n'y en a pas d'autre.
 
 ### Édition
 
@@ -253,7 +262,8 @@ est renvoyé au portail avant même que la permission de forum soit consultée.
 
 | Réf. | Défaut | Portée |
 |---|---|---|
-| `FO-D1` | Le passage à un salon restreint **ferme le salon aux visiteurs anonymes** dès la première ligne de permission. Un salon qu'on voulait « ouvert en lecture, réservé en écriture » demande une ligne explicite pour le rôle des joueurs connectés, et reste invisible aux visiteurs. | conception, assumée |
+| `FO-D1` | Une ligne de permission, quelle qu'elle soit, **fermait le salon aux visiteurs** : un salon « ouvert en lecture, réservé en écriture » était impossible à exprimer. La lecture est désormais publique tant que personne ne coche `can_view` (`F-02`). | **corrigé** |
+| `FO-D10` | Les seize sujets officiels, rédigés en texte brut pour un forum qui affichait les messages échappés, s'affichaient en pavé une fois le forum passé au HTML : ni titres, ni listes, ni liens. Traduits à l'écriture par `PlainTextToHtml`. | **corrigé** |
 | `FO-D2` | Un message supprimé reste lisible par les modérateurs, mais le **motif** de la suppression n'est visible que dans le journal, pas au fil de la discussion. | confort |
 | `FO-D3` | Les compteurs sont recalculés à chaque écriture. Sur un salon de plusieurs milliers de sujets, cela fait deux agrégats par réponse. Acceptable aujourd'hui, à surveiller. | performance |
 | `FO-D4` | `POST /forum/preview` est limité à trente appels par minute et par compte. La limite est un garde-fou, pas une mesure : elle n'a pas été éprouvée sous charge réelle. | à mesurer |
