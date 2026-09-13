@@ -28,7 +28,7 @@ une ligne dit « livré », c'est qu'on a lu le code qui le fait.
 | **WizardBungee** | Le proxy | livré | [`cdc_wizardbungee`](../90-specifications/cdc_wizardbungee.md) + [`cdc_connexion`](../90-specifications/cdc_connexion.md) |
 | **Launcher** | Le launcher Rust | livré | doc dans son dépôt |
 | **WizardCloud** | La distribution du client | livré | [`cdc_wizardcloud`](../90-specifications/cdc_wizardcloud.md) |
-| **Website** | Le site, la boutique, l'administration | livré | **aucune** — doc dans son dépôt |
+| **Website** | Le site, la boutique, l'administration | livré | [`cdc_forum`](../90-specifications/cdc_forum.md) pour le forum ; le reste dans son dépôt |
 | **WizardBot** | Le bot Discord | livré | **aucune** |
 | **WizardMC-Bridge** | Le pont serveur ↔ site ↔ Discord | livré | **aucune** |
 | **ASSETS** | Modèles, textures, sons | livré | [`pipeline-bbmodel`](../06-creer-du-contenu/pipeline-bbmodel.md) |
@@ -37,7 +37,9 @@ une ligne dit « livré », c'est qu'on a lu le code qui le fait.
 
 **Trois dépôts vivants n'ont aucune spécification** : WizardBot, WizardMC-Bridge,
 Wiki-WizardMC. Le site et le launcher documentent chez eux, ce qui est acceptable tant
-que cette page renvoie vers eux.
+que cette page renvoie vers eux — à une exception près : le **forum** touche à la
+modération, qui est une affaire de staff et non de développeur, et il a donc sa
+spécification ici ([`cdc_forum`](../90-specifications/cdc_forum.md)).
 
 Le proxy, lui, en a une depuis que `cdc_wizardbungee` existe — et elle a fait remonter
 sept défauts, dont **trois de gravité élevée** : rien n'authentifie le joueur dans le

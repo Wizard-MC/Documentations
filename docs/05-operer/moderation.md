@@ -79,6 +79,37 @@ nettoie l'affichage.
 > **Toute correction se note** : qui, quoi, quand, pourquoi. Sans trace, une correction
 > devient indiscernable d'un abus, et c'est le staff qui y perd.
 
+### Le forum du site
+
+Le forum de wizardmc.fr a ses propres outils, séparés de ceux du jeu. Les règles du
+[§1](#1-le-principe) valent aussi là-bas : on y traite le harcèlement, la publicité et
+l'usurpation, pas le désaccord.
+
+| Où | Qui y accède | Ce qu'on y fait |
+|---|---|---|
+| `/forum/moderation` | tout modérateur, **limité à ses salons** | traiter les sujets, réponses et signalements en attente |
+| `/admin/forum-moderation` | `admin.forum.view` | la même file, sur **tous** les salons |
+| `/admin/forum-threads` | `admin.forum.view` | retrouver un sujet **déjà en ligne** — publié, masqué, rejeté ou supprimé |
+| `/admin/forum-posts` | `admin.forum.view` | retrouver ce qu'un joueur a écrit, où que ce soit |
+| `/admin/forum-reports` | `admin.forum.view` | les signalements ouverts **et** leur historique |
+| `/admin/forum-log` | `admin.forum.view` | toutes les décisions, en lecture seule |
+
+Quatre choses valent d'être sues avant de décider :
+
+1. **Un signalement n'a rien fait.** Il n'a ni masqué le message, ni averti son auteur.
+   Le retenir ne le masque pas non plus : masquer est une action à part. C'est
+   volontaire — sinon le bouton « signaler » deviendrait une arme.
+2. **Rien n'est perdu.** Un message modifié garde sa version précédente, un message
+   supprimé se rétablit, un sujet supprimé aussi. On peut donc décider vite et
+   corriger ensuite.
+3. **Fermer un sujet depuis l'administration le ferme « par le staff »** : son auteur
+   ne pourra pas le rouvrir de son côté. Sur son propre fil, il le peut.
+4. **Le journal enregistre tout et ne s'efface pas**, y compris pour un
+   administrateur. C'est la même exigence que ci-dessus, appliquée au site.
+
+Le détail technique — états, permissions, règles numérotées — est dans
+[`cdc_forum.md`](../90-specifications/cdc_forum.md).
+
 ---
 
 ## 3. La procédure
@@ -247,6 +278,7 @@ La seconde demande une équipe d'au moins deux personnes disponibles.
 ## À lire ensuite
 
 - [Game master](game-master.md) — animer plutôt que surveiller
+- [CDC du forum](../90-specifications/cdc_forum.md) — les règles du forum du site, en détail
 - [Runbooks](runbooks.md) — quand c'est technique
 - [Permissions](../07-reference/permissions.md) — les nœuds, et des rôles prêts à l'emploi
 - [Commandes](../07-reference/commandes.md) — les 129 commandes
