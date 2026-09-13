@@ -37,6 +37,18 @@ Point d'entrée pour un administrateur.
 | `config.yml` | Où vont les journaux de quête | [Référence](wizardquest.md#2-configyml) |
 | `quests.yml` | Les quêtes, leurs étapes, leurs récompenses | [Référence](wizardquest.md#3-questsyml) |
 
+### WizardBungee — le proxy
+
+| Fichier | Ce qu'il règle | Détail |
+|---|---|---|
+| `config.yml` | Écouteurs, serveurs, mode d'identité, transfert d'IP, bornes réseau | [Référence](wizardbungee.md#3-configyml--les-clés-qui-comptent) |
+| `optimus.yml` | Les empreintes de client et le gonflage d'effectif | [Référence](wizardbungee.md#2-optimusyml--les-clés-wizardmc) |
+
+> Ce greffon-ci n'est pas un greffon : c'est le proxy lui-même. Ses deux fichiers ont une
+> particularité qui n'est vraie nulle part ailleurs — **une clé absente est réécrite dans
+> le fichier avec sa valeur par défaut**. La règle du §2 ci-dessous ne s'y applique donc
+> pas de la même façon.
+
 ### WizardIntro
 
 La cinématique d'arrivée a sa propre configuration, documentée dans le dépôt
@@ -115,6 +127,8 @@ outils, mais la leçon vaut pour les fichiers de configuration aussi.
 | `mysqlPassword` | Mot de passe de base de données |
 | `azLinkToken` | Jeton d'intégration |
 | Le mot de passe MySQL de WizardQuest | Idem |
+| `authorized-client-hash`, `bypass-client-hash` | Empreintes de client du proxy — **faibles par construction**, voir [Configuration du proxy §5](wizardbungee.md#5-changer-lempreinte-de-client) |
+| `handshakeSecret` (WizardCore) | La **même valeur** que l'empreinte du proxy. Les trois se changent ensemble |
 
 Aucun de ces éléments n'a sa place dans un dépôt, une capture d'écran, un rapport
 d'incident ou un message de support. Cette documentation dit **qu'une** clé existe ;

@@ -2,11 +2,11 @@
 
 Où se trouve chaque document du projet, et ce qui n'est écrit nulle part.
 
-**Mis à jour le 12 septembre 2026.** Cette page existe parce qu'une question revient :
+**Mis à jour le 13 septembre 2026.** Cette page existe parce qu'une question revient :
 « est-ce qu'on a documenté ça ? » — et que la réponse est souvent *oui, mais pas ici*.
 
-> **Ce dépôt n'est pas la seule documentation du projet.** Sept autres dépôts portent leur
-> propre dossier `docs/`, pour un total d'environ **onze mille lignes** qu'aucun sommaire de
+> **Ce dépôt n'est pas la seule documentation du projet.** Huit autres dépôts portent leur
+> propre dossier `docs/`, pour un total d'environ **douze mille lignes** qu'aucun sommaire de
 > ce portail ne mentionne. Ce n'est pas un défaut d'organisation à corriger d'un coup : une
 > documentation d'installation a sa place à côté du code qu'elle installe. C'en est un de ne
 > pas savoir qu'elle existe.
@@ -15,7 +15,7 @@ Où se trouve chaque document du projet, et ce qui n'est écrit nulle part.
 
 ## 1. Ce dépôt
 
-120 fichiers, organisés par intention plutôt que par dépôt — voir
+124 fichiers, organisés par intention plutôt que par dépôt — voir
 [`00-lire-cette-doc.md`](../00-lire-cette-doc.md).
 
 | Dossier | Ce qu'on y cherche |
@@ -59,6 +59,17 @@ portail.
 | `docs/WizardSpigot/VFX_INTEGRATION.md` | 177 | comment les effets remontent au client |
 | `docs/WizardSpigot/MAGIC_INTEGRATION.md` | 153 | comment la magie s'accroche au serveur |
 
+### wizardbungee — le proxy
+
+| Document | Lignes | Ce qu'il couvre |
+|---|---:|---|
+| `docs/WizardBungee/MODIFICATIONS.md` | 338 | **chaque modification Optimus, fichier et ligne** — la seule trace de ce qui nous appartient dans l'arbre patché |
+| `docs/WizardBungee/SECURITY.md` | 264 | les barrières de la connexion, et les sept défauts |
+| `docs/WizardBungee/CONFIGURATION.md` | 173 | `config.yml` et `optimus.yml`, et où chaque clé est lue |
+| `docs/WizardBungee/ARCHITECTURE.md` | 154 | la filiation, ce qui compile, et le piège de l'outillage de patches |
+| `docs/WizardBungee/BUILD.md` | 153 | compiler, et contourner la dépendance `brigadier` disparue |
+| `CONTRIBUTING.md` | 99 | réécrit : l'amont demandait de lancer une commande qui effacerait le travail WizardMC |
+
 ### website — le site et la boutique
 
 | Document | Lignes | Ce qu'il couvre |
@@ -94,8 +105,12 @@ n'a aucun point d'entrée.
 | **wizardquest** | les quêtes | rien | un README ; le CDC est dans ce portail |
 | **wizardpets** | les compagnons | 2 lignes | un README ; le CDC est dans ce portail |
 | **wizardhub** | le lobby | rien | un README ; le CDC est dans ce portail, marqué non livré |
-| **wizardbungee** | le proxy Waterfall | 46 lignes | **un CDC** — voir le §4 |
 | **ASSETS** | modèles, textures, sons | rien | un README disant comment le dépôt est rangé et ce qui s'y dépose |
+
+> `wizardbungee` **est sorti de ce tableau** : il porte maintenant cinq documents et un
+> guide de contribution, listés au §2. Le README amont de Travertine a été remplacé, et le
+> `CONTRIBUTING.md` aussi — celui-ci demandait de lancer `./travertine p`, ce qui aurait
+> effacé toutes les modifications WizardMC.
 
 > `WizardCore` est le cas le plus sérieux. C'est le greffon qui porte la magie, les Nexus,
 > les Autels, le Mana, les Ères et la boutique, et il n'a pas une ligne d'orientation. Ses
@@ -110,14 +125,14 @@ Vérifié contre le code, pas contre les intentions.
 
 | # | Manque | Pourquoi ça coûte |
 |---|---|---|
-| **D-01** | **CDC de WizardBungee** | le proxy est une brique vivante de la production. Un fork de Waterfall sans spécification est un fork qu'on n'ose pas mettre à jour |
+| ~~**D-01**~~ | ~~**CDC de WizardBungee**~~ — **fait** : [`cdc_wizardbungee`](../90-specifications/cdc_wizardbungee.md) et [`cdc_connexion`](../90-specifications/cdc_connexion.md) | le diagnostic était juste, et pire que prévu : ce n'était pas un fork qu'on n'osait pas mettre à jour, c'est un fork qui **ne se recompile pas** |
 | **D-02** | **Fiche d'infrastructure** — qui tourne où, quels ports, quels secrets, quelles dépendances entre bot, bridge, site, launcher et serveurs | quatre briques vivantes sans vue d'ensemble. La connaissance est dans une seule tête |
 | **D-03** | **Architecture de WizardCore** | le plus gros greffon de la stack, sans carte |
 | **D-04** | `cdc_exp_client.md` est de l'ère V4 et fait 71 lignes | il décrit un HUD qui a doublé de surface depuis, et ne mentionne ni les quêtes, ni les montures, ni les compagnons |
 | **D-05** | `cdc_spawn_map.md` fait 60 lignes | une esquisse ne suffit pas à implémenter |
 | **D-06** | **Catalogue des sorts à regénérer** depuis `spells.yml` | 32 fiches pour 41 sorts, les deux ensembles divergent |
 | **D-07** | **Procédure de publication du client** — build MCP, signature, manifeste, mise en ligne | la question a déjà été posée deux fois, et la réponse n'est nulle part |
-| **D-08** | **Ce portail n'indexe pas les onze mille lignes du §2** | on redocumente ce qui existe déjà, ou on cherche longtemps |
+| **D-08** | **Ce portail n'indexe pas les douze mille lignes du §2** | on redocumente ce qui existe déjà, ou on cherche longtemps |
 
 ---
 
