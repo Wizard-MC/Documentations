@@ -140,7 +140,7 @@ question sans y répondre.
   interne, interfaces, notes d'implémentation. Voir
   [Architecture logicielle](01-projet/architecture-logicielle.md) pour les liens entre
   greffons, et l'[Inventaire de la documentation](01-projet/inventaire-documentation.md)
-  pour savoir **quel dépôt documente quoi** — sept d'entre eux portent au total près de onze
+  pour savoir **quel dépôt documente quoi** — huit d'entre eux portent au total près de douze
   mille lignes que ce portail ne reprend pas.
 - **Les secrets.** Aucun mot de passe, jeton, hôte de base de données ou adresse
   d'infrastructure n'a sa place ici, même en exemple. Les fichiers de

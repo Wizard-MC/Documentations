@@ -25,7 +25,7 @@ une ligne dit « livré », c'est qu'on a lu le code qui le fait.
 | **WizardCovens** | Le socle social | livré | [`cdc_covens`](../90-specifications/cdc_covens.md) |
 | **WizardHub** | Le lobby, repli du proxy | **en cours** — 89 classes | [`cdc_wizardhub`](../90-specifications/cdc_wizardhub.md) |
 | **WizardQueue** | La file d'attente du proxy | **en cours** | [`cdc_wizardqueue`](../90-specifications/cdc_wizardqueue.md) |
-| **WizardBungee** | Le proxy | livré | **aucune** |
+| **WizardBungee** | Le proxy | livré | [`cdc_wizardbungee`](../90-specifications/cdc_wizardbungee.md) + [`cdc_connexion`](../90-specifications/cdc_connexion.md) |
 | **Launcher** | Le launcher Rust | livré | doc dans son dépôt |
 | **WizardCloud** | La distribution du client | livré | [`cdc_wizardcloud`](../90-specifications/cdc_wizardcloud.md) |
 | **Website** | Le site, la boutique, l'administration | livré | **aucune** — doc dans son dépôt |
@@ -35,9 +35,15 @@ une ligne dit « livré », c'est qu'on a lu le code qui le fait.
 | **Documentations** | Ce dépôt | livré | — |
 | **Wiki-WizardMC** | Le wiki public | inconnu | **aucune** |
 
-**Quatre dépôts vivants n'ont aucune spécification** : WizardBungee, WizardBot,
-WizardMC-Bridge, Wiki-WizardMC. Le site et le launcher documentent chez eux, ce qui est
-acceptable tant que cette page renvoie vers eux.
+**Trois dépôts vivants n'ont aucune spécification** : WizardBot, WizardMC-Bridge,
+Wiki-WizardMC. Le site et le launcher documentent chez eux, ce qui est acceptable tant
+que cette page renvoie vers eux.
+
+Le proxy, lui, en a une depuis que `cdc_wizardbungee` existe — et elle a fait remonter
+sept défauts, dont **trois de gravité élevée** : rien n'authentifie le joueur dans le
+chemin réseau, les empreintes de client sont en clair dans trois dépôts, et **le proxy ne
+se recompile pas** en l'état. Voir le
+[§9 du CDC](../90-specifications/cdc_wizardbungee.md#9-défauts-relevés).
 
 ---
 
@@ -168,9 +174,14 @@ grave n'est ouvert à ce jour.**
 
 6. **WizardHub** — en cours.
 7. **WizardQueue** — statut à confirmer.
-8. **CDC de WizardBungee**, et une fiche d'infrastructure pour Bot / Bridge / site /
-   launcher — quatre briques vivantes sans spécification.
-9. **Spawn & map** — l'esquisse de 60 lignes ne suffit pas à implémenter.
+8. **Réparer la compilation du proxy** (`PX-D7`), puis trancher entre fork à patches et
+   fork à sources (`PX-B1`) : en l'état, une commande de l'outillage amont effacerait
+   toutes les modifications WizardMC.
+9. **Authentifier le joueur** (`CX-D1`) — un jeton de session émis par le site et vérifié
+   par le proxy. Le launcher et le site ont déjà leur moitié du travail.
+10. **Une fiche d'infrastructure** pour Bot / Bridge / site / launcher — trois briques
+   vivantes sans spécification.
+11. **Spawn & map** — l'esquisse de 60 lignes ne suffit pas à implémenter.
 
 ### Dette de documentation
 
@@ -178,7 +189,7 @@ Elle a maintenant sa propre page : l'[Inventaire de la
 documentation](inventaire-documentation.md) dit où vit chaque document, ce qui manque
 (D-01 à D-08) et ce qui est hors d'atteinte. Trois points en sortent :
 
-- **sept dépôts portent près de onze mille lignes** que ce portail n'indexe pas ;
+- **huit dépôts portent près de douze mille lignes** que ce portail n'indexe pas ;
 - **WizardCore n'a aucune documentation d'orientation** — le plus gros greffon de la stack ;
 - **`internal-docs/` du dépôt MCP est ignoré par Git** : ces documents n'ont jamais quitté
   la machine qui les écrit.

@@ -24,13 +24,19 @@ donnée** évite la moitié des bugs de ce projet.
 
 ### Le proxy
 
-| Dépôt | Nature | Ce qu'il possède |
-|---|---|---|
-| **WizardBungee** | Fork Travertine — Waterfall avec le support du protocole 1.7 | Le routage entre serveurs, la poignée de main, le repli sur expulsion |
+| Dépôt | Nature | Ce qu'il possède | Spécification |
+|---|---|---|---|
+| **WizardBungee** | Fork Travertine — Waterfall avec le support du protocole 1.7 | Le routage entre serveurs, la poignée de main, le repli sur expulsion | [cdc_wizardbungee](../90-specifications/cdc_wizardbungee.md) |
 
 C'est lui qui est dans le chemin de **chaque** tentative de connexion, et c'est la raison
 pour laquelle la file d'attente y vit plutôt que sur un backend — voir
 [cdc_wizardqueue](../90-specifications/cdc_wizardqueue.md) §2.1.
+
+Il porte aussi les modifications **Optimus** : un numéro de protocole qui n'est celui
+d'aucune version publique, et une empreinte de client ajoutée au paquet de connexion.
+C'est ce qui fait qu'un client Minecraft ordinaire ne peut pas entrer. Le chemin complet,
+du clic sur « Jouer » jusqu'au premier pas en jeu, est dans
+[cdc_connexion](../90-specifications/cdc_connexion.md).
 
 ### Autour du jeu
 

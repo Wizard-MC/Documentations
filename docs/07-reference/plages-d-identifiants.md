@@ -25,6 +25,9 @@ journal : elle se voit en jeu, longtemps après, et la cause est à l'autre bout
 Le client et le serveur se parlent par des paquets à identifiant réservé, en plus du
 protocole du jeu de base. Chaque paquet est enregistré **dans les deux sens**.
 
+> Le **numéro de protocole réseau** est lui aussi un identifiant réservé, et il n'est pas
+> dans cette table parce qu'il n'y en a qu'un : voir le [§8](#8-le-numéro-de-protocole-réseau).
+
 | Identifiant | Paquet | Système |
 |---:|---|---|
 | 95 | `ScoreboardPacket` | Tableau de score |
@@ -198,6 +201,43 @@ Ces vérifications ont été faites en cherchant la cause d'un système qui ne r
 Elles n'ont rien trouvé — et c'est précisément ce qu'on veut pouvoir dire : **une plage
 vérifiée et documentée permet d'éliminer une hypothèse en quelques minutes** plutôt qu'en
 une journée.
+
+---
+
+## 8. Le numéro de protocole réseau
+
+Ce n'est pas une plage, c'est **une seule valeur**, et elle a sa place ici parce qu'une
+collision y coûte exactement aussi cher : un client qui annonce le mauvais numéro est
+refusé sans explication utilisable.
+
+| | |
+|---|---:|
+| Protocole Minecraft 1.7.2 | 4 |
+| Protocole Minecraft 1.7.6 – 1.7.10, chez Mojang | 5 |
+| **Protocole WizardMC** | **10** |
+
+Le proxy a **redéfini** la constante de 1.7.6 à 10 : le numéro 5 n'apparaît plus dans la
+liste des versions acceptées. Un client Minecraft vanilla est donc refusé à la première
+trame de sa connexion.
+
+### Les six emplacements à changer ensemble
+
+| Dépôt | Emplacement |
+|---|---|
+| MCP | `OptimusClientAuth.PROTOCOL_VERSION` — la source |
+| MCP | `ServerData` |
+| MCP | `RealmsSharedConstants` |
+| MCP | le *ping* du serveur intégré, dans `MinecraftServer` |
+| wizardbungee | `ProtocolConstants.MINECRAFT_1_7_6` |
+| WizardSpigot | `NetHandlerHandshakeTCP` |
+
+> **Un numéro changé dans cinq emplacements sur six ne produit aucune erreur de
+> compilation.** Il produit des joueurs qui lisent « client obsolète », ou un écran de
+> liste de serveurs qui se croit périmé. Le changement se fait en un seul lot.
+
+Le raisonnement complet — pourquoi 10 fonctionne sans toucher aux tables de paquets, et
+ce qui casserait si on remettait 5 dans la liste — est au
+[§3 du CDC du proxy](../90-specifications/cdc_wizardbungee.md#3-le-protocole-10).
 
 ---
 
