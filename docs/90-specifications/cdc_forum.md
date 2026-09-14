@@ -103,21 +103,31 @@ une annonce, une présentation ou un règlement n'ont pas à attendre qu'on les 
 | Règle | Énoncé |
 |---|---|
 | `F-01` | Un salon **sans aucune ligne** dans `forum_permissions` est visible de tous, et ouvert à tout compte authentifié. |
-| `F-02` | **La lecture est publique tant qu'aucune ligne ne coche `can_view`.** Dès qu'une ligne la revendique, la lecture se limite aux rôles qui l'ont. |
-| `F-02bis` | L'**écriture**, elle, se restreint dès qu'une ligne existe : publier et répondre demandent alors une ligne qui l'accorde. |
+| `F-02` | **La lecture se règle sur le salon, par la case `forums.guest_view` (« Salon public »), et nulle part ailleurs.** Cochée : tout le monde lit, connecté ou non. Décochée : le visiteur est écarté, et parmi les membres, tous — sauf si une ligne coche `can_view`, auquel cas les seuls rôles qui la cochent. |
+| `F-02bis` | L'**écriture** se restreint dès qu'une ligne existe : publier et répondre demandent alors une ligne qui l'accorde. Tant que `guest_view` est coché, les lignes ne parlent **que** de cela. |
 | `F-03` | `forums.locked` coupe la création et la réponse avant même que les permissions soient consultées. |
 | `F-04` | Un modérateur du salon passe outre `F-02` et `F-03`. |
 
-Ces deux règles sont volontairement dissymétriques, parce que les intentions le
+Les deux règles sont volontairement dissymétriques, parce que les intentions le
 sont : **on lit par défaut, on écrit sur autorisation.**
 
-La version précédente les confondait — une ligne, quelle qu'elle soit, refusait
-les visiteurs. Accorder au staff le droit de publier dans *Annonces* faisait donc
-disparaître le salon pour tous ses lecteurs. Voir `FO-D1`.
+Elles ont longtemps été confondues, et cela a coûté deux fois dans le même sens —
+sur *Annonces*, *Guides* et *Règles*, où une ligne existe pour que le staff soit
+seul à publier. Les lignes de `forum_permissions` parlent de **rôles** :
 
-Conséquence à connaître, dans l'autre sens : **cocher `can_view` sur un seul rôle
-ferme la lecture à tous les autres**, visiteurs compris. C'est le geste qui rend
-un salon privé, et il n'y en a pas d'autre.
+1. Une ligne, quelle qu'elle soit, refusait les visiteurs. Accorder au staff le
+   droit de publier dans *Annonces* faisait disparaître le salon pour tous ses
+   lecteurs.
+2. La lecture des visiteurs corrigée, l'inverse est apparu : le visiteur lisait
+   les annonces, **pas** le membre connecté sans le rôle. Le forum était plus
+   ouvert déconnecté que connecté.
+
+Voir `FO-D1` et `FO-D11`.
+
+**Comment rendre un salon privé :** décocher « Salon public ». C'est le geste, et
+il n'y en a pas d'autre. Y ajouter une ligne `can_view` restreint encore, aux
+seuls rôles qui la cochent — c'est la forme du salon de staff. Un salon privé se
+déclare donc, il ne s'obtient plus par ricochet d'une case qui parle d'écriture.
 
 ### Édition
 
@@ -168,13 +178,36 @@ Le troisième passage n'est pas une redondance : il convertit aussi les **ancien
 messages en texte brut** en paragraphes, de sorte que la vue publique n'a qu'un
 seul cas à traiter.
 
-L'éditeur côté navigateur est Quill, chargé à la demande, partagé avec
+L'éditeur côté navigateur est TipTap, chargé à la demande, partagé avec
 l'administration. **Le champ réellement soumis reste un `<textarea>`** : sans
 JavaScript, la page fonctionne, la mise en forme s'écrit en HTML, et le filtrage
 serveur est identique. L'éditeur est un confort de saisie, jamais une condition.
 
 Le profil de filtrage n'est **pas** un paramètre de la requête d'aperçu : tout le
 forum écrit en profil `rich`.
+
+### La mise en page
+
+Au-delà du gras et des listes : alignement, couleur du texte, surlignage,
+tableaux, ligne de séparation, et une **vue « code source »** pour écrire le HTML
+à la main — de quoi composer un guide, un tableau de sorts, un encadré
+d'avertissement.
+
+Écrire le HTML soi-même n'est **pas** une autorisation. Le serveur le filtre
+exactement comme le reste, et l'aperçu montre le résultat filtré avant
+publication. Le style en ligne demande deux décisions, prises à deux endroits :
+
+| Question | Qui tranche |
+|---|---|
+| Cette balise, cet attribut ont-ils le droit d'exister ? | `ContentSanitizer` |
+| Cette déclaration CSS a-t-elle le droit d'exister ? | `StyleFilter` |
+
+Le sanitiseur ne sait rien du CSS : un `style` autorisé passerait entier,
+`url()` et `position: fixed` compris. `StyleFilter` tient la liste blanche des
+propriétés — alignement, couleurs, graisse, style, décoration, taille bornée —
+et chacun de ses motifs **interdit la parenthèse ouvrante** sauf dans
+`rgb()`/`rgba()` : `url()` et `expression()` sont exclus par construction, et non
+par énumération de ce à quoi on a pensé.
 
 ### Ce que le forum n'accepte pas
 
@@ -214,7 +247,8 @@ et ne se supprime pas, y compris par un administrateur.
 
 | Écran | Adresse | Ce qu'on y fait |
 |---|---|---|
-| Salon | `/forum/{salon}` | lire la liste des sujets, ouvrir un sujet |
+| Salon | `/forum/{salon}` | lire la liste des sujets, ouvrir un sujet, chercher dans ce salon |
+| Recherche | `/forum/recherche` | chercher dans les titres et les messages, filtrer par salon, auteur et portée |
 | Nouveau sujet | `/forum/{salon}/threads/create` | titre, message enrichi, réponses ouvertes ou non |
 | Sujet | `/forum/{salon}/threads/{sujet}` | lire, répondre, citer, modifier, supprimer, signaler |
 | Modifier un sujet | `…/threads/{sujet}/edit` | titre et premier message, ensemble |
@@ -223,6 +257,33 @@ et ne se supprime pas, y compris par un administrateur.
 
 La citation passe par l'adresse (`?quote=42`) et non par du JavaScript : le bouton
 reste un lien, il fonctionne sans script, et le contenu cité ressort du même filtre.
+
+#### La recherche
+
+Accessible **sans être connecté** : ce qui est lisible doit être trouvable, sans
+quoi les guides et les annonces du serveur n'existent que pour ceux qui savent
+déjà où ils sont. Les résultats sont bornés aux salons que ce lecteur-là peut
+lire, par `F-02` ; les salons qu'il ne lit pas ne sont pas même proposés dans le
+filtre.
+
+Le formulaire est en **GET** : une recherche est une adresse, elle se partage, se
+met en favori et se recharge.
+
+| Choix | Ce qui a été retenu |
+|---|---|
+| Un résultat | **Un sujet**, pas un message. XenForo renvoie des messages, et un fil où le mot revient huit fois occupe huit lignes : on cherche une discussion, on obtient un écho. |
+| L'extrait | Le passage du message où le terme apparaît d'abord, terme surligné. Le lien mène **droit à ce message**, page calculée comprise. |
+| Plusieurs mots | Ils se cumulent (ET). Chacun peut être satisfait ailleurs dans le même sujet — l'un dans le titre, l'autre dans une réponse. |
+| Une expression | Les guillemets la cherchent entière. |
+| Filtres | Salon, auteur (celui du **message trouvé**, pas du sujet), portée (titres seuls ou titres et messages), ordre. |
+| Ce qui ne ressort pas | Les sujets masqués, les messages supprimés, les salons qu'on ne lit pas. La recherche ne défait pas la modération. |
+
+La recherche s'appuie sur `LIKE`, non sur un index plein texte : le site tourne
+sur SQLite en développement et MySQL en production, dont les index plein texte ne
+se ressemblent ni en syntaxe, ni en classement, ni en mots vides — une recherche
+qui ne se comporterait pas pareil aux deux endroits ne serait pas testable. Sur
+un forum qui compte ses messages en milliers, c'est instantané. À surveiller
+le jour où la table grossit (`FO-D14`).
 
 ### Côté administration
 
@@ -265,12 +326,16 @@ est renvoyé au portail avant même que la permission de forum soit consultée.
 | `FO-D1` | Une ligne de permission, quelle qu'elle soit, **fermait le salon aux visiteurs** : un salon « ouvert en lecture, réservé en écriture » était impossible à exprimer. La lecture est désormais publique tant que personne ne coche `can_view` (`F-02`). | **corrigé** |
 | `FO-D10` | Les seize sujets officiels, rédigés en texte brut pour un forum qui affichait les messages échappés, s'affichaient en pavé une fois le forum passé au HTML : ni titres, ni listes, ni liens. Traduits à l'écriture par `PlainTextToHtml`. | **corrigé** |
 | `FO-D2` | Un message supprimé reste lisible par les modérateurs, mais le **motif** de la suppression n'est visible que dans le journal, pas au fil de la discussion. | confort |
+| `FO-D14` | La recherche parcourt `forum_posts` au `LIKE`, sans index plein texte — choix assumé pour que SQLite et MySQL se comportent pareil. Instantané sur quelques milliers de messages, à remesurer bien avant la centaine de milliers. Seul `ForumSearchService::search()` serait à remplacer. | performance |
 | `FO-D3` | Les compteurs sont recalculés à chaque écriture. Sur un salon de plusieurs milliers de sujets, cela fait deux agrégats par réponse. Acceptable aujourd'hui, à surveiller. | performance |
 | `FO-D4` | `POST /forum/preview` est limité à trente appels par minute et par compte. La limite est un garde-fou, pas une mesure : elle n'a pas été éprouvée sous charge réelle. | à mesurer |
 | `FO-D5` | L'historique des révisions n'est **consultable par aucun écran**. Il est écrit, il n'est pas lu. | manque |
 | `FO-D6` | Sur un champ **pré-rempli**, l'éditeur levait une erreur de sélection qui **interrompait sa propre boucle d'écouteurs** : la recopie vers le champ soumis ne se faisait plus, et modifier un sujet ne changeait rien. Corrigé en remplaçant l'éditeur (voir `FO-D8`). | **corrigé** |
 | `FO-D7` | Une liste à puces revenait **numérotée** après édition : l'éditeur n'écrivait qu'un type de liste et distinguait les deux par un attribut que le filtre ne garde pas. Le nouvel éditeur produit directement `<ul>` et `<ol>` ; les contenus déjà abîmés, eux, ne se réparent pas tout seuls. | **corrigé** |
 | `FO-D8` | L'éditeur est passé de Quill 2 à TipTap (MIT, bâti sur ProseMirror). TinyMCE, demandé, a été écarté : sa version communautaire est sous GPL-2.0-or-later, et son éditeur vend une licence commerciale pour lever l'ambiguïté sur un site marchand. | **corrigé** |
+| `FO-D11` | Symétrique de `FO-D1`, apparu en le corrigeant : le **visiteur** lisait *Annonces*, *Guides* et *Règles*, mais le **membre connecté** sans le rôle Staff recevait un 404 sur les mêmes salons. Le forum était plus ouvert déconnecté que connecté. La lecture ne se déduit plus des lignes de rôle : elle se lit sur `forums.guest_view` (`F-02`). | **corrigé** |
+| `FO-D12` | La vue « code source » s'ouvrait **vide** sur un document ne contenant qu'un tableau ou qu'une image, et le champ soumis partait vide avec elle : `editor.isEmpty` de TipTap répond sur le texte seul. L'éditeur tranche désormais sur le HTML produit, et `ContentSanitizer::isEmpty()` compte l'image et la ligne de séparation comme du contenu — une capture d'écran seule est un message légitime. | **corrigé** |
+| `FO-D13` | Les extraits de résultats de recherche étaient tronqués **avant** qu'on y cherche le terme : un mot trouvé en base au-delà de la coupe donnait un résultat sans surlignage, une ligne qui semblait n'avoir aucune raison d'être là. `Post::plainText()` sépare désormais dépouiller et tronquer. | **corrigé** |
 | `FO-D9` | Les téléversements d'images de la boutique et des articles écrivaient sur le disque public du site mais renvoyaient une adresse `cloud.wizardmc.fr`, où le fichier n'existait pas : toute image ainsi ajoutée était introuvable. `cloud.wizardmc.fr` ne sert que les versions du client et du launcher. | **corrigé** |
 
 ---
@@ -280,7 +345,6 @@ est renvoyé au portail avant même que la permission de forum soit consultée.
 | Réf. | Piste |
 |---|---|
 | `FO-B1` | Un écran d'historique des révisions d'un message (`FO-D5`). |
-| `FO-B2` | Une recherche. Le forum public n'en a **aucune** ; l'administration se contente d'un `LIKE`. |
 | `FO-B3` | Un abonnement à un sujet, et la notification d'une réponse. |
 | `FO-B4` | Un profil public qui liste les messages d'un joueur. |
 | `FO-B5` | Le marquage « lu / non lu » par lecteur. |
